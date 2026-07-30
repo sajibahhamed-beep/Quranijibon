@@ -30,13 +30,13 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="relative bg-cover bg-center bg-no-repeat text-white overflow-hidden border-t border-teal-900/40"
-      style={{ backgroundImage: `url('/assets/footer background.png')` }}
+      className="relative bg-gradient-to-r from-[#203935] via-[#152e2a] to-[#007C7A] text-white overflow-hidden py-16 border-t border-teal-800/40"
     >
-      {/* Dark Translucent Tint Overlay for optimal readability */}
-      <div className="absolute inset-0 bg-[#004d40]/80 backdrop-brightness-95 pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-16 pb-8">
+      {/* Middle Content Area containing the footer background graphics */}
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: `url('/assets/footer background.png')` }}
+      >
         {/* Top Subscription Row */}
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6 pb-12 border-b border-teal-700/60 mb-14">
           <h3 className="text-xl sm:text-2xl font-bold text-white text-center lg:text-left">
