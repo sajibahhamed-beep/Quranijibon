@@ -12,7 +12,7 @@ export default function RecentBlogSection() {
       date: "২৮ জুলাই ২০২৬",
       readTime: "৫ মিনিট পড়া",
       excerpt: "ব্যস্ত জীবনের মধ্যেও যেভাবে প্রতিদিন নিয়ম করে কুরআন তিলাওয়াত ও সহীহ তাজবীদ শিক্ষা সম্পন্ন করবেন...",
-      img: "/assets/figma_section_37_1987.png",
+      img: "/assets/figma_img_37_1993.png",
     },
     {
       title: "কেন শিশুদের শৈশবেই দ্বীনি শিক্ষা দেওয়া জরুরি?",
@@ -20,7 +20,7 @@ export default function RecentBlogSection() {
       date: "২৫ জুলাই ২০২৬",
       readTime: "৪ মিনিট পড়া",
       excerpt: "শিশুদের কচি মনে তাওহীদের শিক্ষা এবং কুরআনের মহব্বত জাগ্রত করার গুরুত্বপূর্ণ গাইডলাইন...",
-      img: "/assets/figma_section_37_2328.png",
+      img: "/assets/figma_img_37_1997.png",
     },
     {
       title: "অনলাইন কুরআন ক্লাসের সুবিধা ও অনলাইন নিরাপত্তা",
@@ -28,7 +28,7 @@ export default function RecentBlogSection() {
       date: "২০ জুলাই ২০২৬",
       readTime: "৬ মিনিট পড়া",
       excerpt: "ঘরে বসেই অভিজ্ঞ ও বিশ্বস্ত শিক্ষকদের সান্নিধ্যে শুদ্ধভাবে কুরআন শিক্ষার আধুনিক ডিজিটাল মাধ্যম...",
-      img: "/assets/figma_section_37_2094.png",
+      img: "/assets/figma_img_37_2001.png",
     },
   ];
 
@@ -73,32 +73,35 @@ export default function RecentBlogSection() {
               </div>
 
               <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-4 text-xs text-slate-500 font-medium">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-4 text-xs font-semibold text-slate-500">
                     <span className="flex items-center space-x-1">
                       <Calendar className="w-3.5 h-3.5 text-emerald-600" />
                       <span>{b.date}</span>
                     </span>
                     <span className="flex items-center space-x-1">
-                      <Clock className="w-3.5 h-3.5 text-teal-600" />
+                      <Clock className="w-3.5 h-3.5 text-emerald-600" />
                       <span>{b.readTime}</span>
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-slate-900 hover:text-emerald-700 transition-colors leading-snug">
+                  <h3 className="text-xl font-extrabold text-slate-900 hover:text-emerald-700 transition-colors line-clamp-2">
                     {b.title}
                   </h3>
 
-                  <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
+                  <p className="text-slate-600 text-sm leading-relaxed line-clamp-3">
                     {b.excerpt}
                   </p>
                 </div>
 
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-emerald-700 font-bold text-sm flex items-center space-x-1 group">
+                <div className="pt-2 border-t border-slate-100">
+                  <Link
+                    href="#blogs"
+                    className="text-emerald-700 font-bold text-sm inline-flex items-center space-x-1 hover:space-x-2 transition-all"
+                  >
                     <span>বিস্তারিত পড়ুন</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
               </div>
             </article>
