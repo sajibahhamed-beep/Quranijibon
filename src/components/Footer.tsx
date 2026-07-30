@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Brand Col */}
           <div className="lg:col-span-4 space-y-4">
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <div className="w-10 h-10 rounded-full bg-linear-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
                 <BookOpen className="w-5 h-5 text-white" />
               </div>
               <div className="flex flex-col">
@@ -19,7 +19,7 @@ export default function Footer() {
                   কুরআন জীবন
                 </span>
                 <span className="text-[11px] text-emerald-400 font-bold tracking-wider">
-                  QURAN IJIBON
+                  QURANIJIBON
                 </span>
               </div>
             </Link>

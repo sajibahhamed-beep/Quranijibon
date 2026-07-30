@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import WhyLearnSection from "@/components/WhyLearnSection";
 import AppFeaturesSection from "@/components/AppFeaturesSection";
+import PricingSection from "@/components/PricingSection";
 import RecentBlogSection from "@/components/RecentBlogSection";
 import FaqSection from "@/components/FaqSection";
 import FloatingContact from "@/components/FloatingContact";
@@ -15,6 +16,7 @@ export default function Home() {
       <HeroSection />
       <WhyLearnSection />
       <AppFeaturesSection />
+      <PricingSection />
       <RecentBlogSection />
       <FaqSection />
       <Footer />
