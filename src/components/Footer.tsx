@@ -31,34 +31,41 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="relative bg-cover bg-center bg-no-repeat text-white overflow-hidden py-16 border-t border-teal-800/40 w-full bg-linear-to-r from-[#007C7A]  to-[#203935]"
-
+      className="relative bg-cover bg-center bg-no-repeat text-white overflow-hidden py-16 border-t border-teal-800/40 w-full bg-gradient-to-r from-[#007C7A] to-[#203935]"
     >
+      <Image
+        src="/assets/footer background2.png"
+        alt="footer background"
+        width={900}
+        height={600}
+        className="absolute w-full bottom-0 h-[70%] object-cover pointer-events-none opacity-40"
+      />
 
-      <Image src="/assets/footer background2.png" alt="footer background" width={900} height={600} className="absolute w-full bottom-0 h-[70%]" />
-
-      {/* Inner Content Area - Clean without background styling */}
+      {/* Inner Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Top Subscription Row */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 pb-12 border-b border-teal-700/60 mb-14">
-          <h3 className="text-xl sm:text-2xl font-bold text-white text-center lg:text-left">
+        {/* Subscription Banner Box */}
+        <div className="bg-[#034D46] border border-teal-600/40 rounded-2xl p-6 sm:p-8 lg:p-10 flex flex-col lg:flex-row items-center justify-between gap-6 shadow-xl mb-16">
+          <h3 className="text-xl sm:text-2xl font-black text-white text-center lg:text-left leading-snug">
             নিয়মিত ফ্রি কোর্সের আপডেট পেতে সাবস্ক্রাইব করুন।
           </h3>
 
-          <form onSubmit={handleSubscribe} className="flex items-center w-full lg:w-auto max-w-md gap-3">
-            <div className="relative flex-1">
+          <form
+            onSubmit={handleSubscribe}
+            className="flex flex-col sm:flex-row items-center w-full lg:w-auto gap-3.5"
+          >
+            <div className="w-full sm:w-80">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@mail.com"
                 required
-                className="w-full px-4 py-3 rounded-lg bg-white/95 text-slate-800 placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 shadow-inner"
+                className="w-full px-4 py-3 rounded-xl bg-white text-slate-800 placeholder:text-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-300 shadow-inner"
               />
             </div>
             <button
               type="submit"
-              className="px-6 py-3 rounded-lg bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-sm flex items-center space-x-2 transition-all shadow-md active:scale-95 flex-shrink-0"
+              className="w-full sm:w-auto px-7 py-3 rounded-xl bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-sm flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95 flex-shrink-0"
             >
               <span>{subscribed ? "Subscribed!" : "Submit"}</span>
               <Send className="w-4 h-4 ml-1" />
@@ -75,25 +82,25 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5 text-sm font-medium">
               <li>
-                <Link href="#about" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
+                <Link href="/about" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
                   <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
                   <span>আমাদের সম্পর্কে</span>
                 </Link>
               </li>
               <li>
-                <Link href="#pricing" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
+                <Link href="/#pricing" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
                   <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
                   <span>প্যাকেজসমূহ</span>
                 </Link>
               </li>
               <li>
-                <Link href="#contact" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
+                <Link href="/donate" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
                   <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
                   <span>ডোনেট করুন</span>
                 </Link>
               </li>
               <li>
-                <Link href="#blogs" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
+                <Link href="/#blogs" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
                   <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
                   <span>লেখাসমূহ</span>
                 </Link>
@@ -108,16 +115,16 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5 text-sm font-medium">
               <li>
-                <a href="#refund" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
+                <Link href="/refund-policy" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
                   <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
                   <span>রিফান্ড পলিসি</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#cookies" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
+                <Link href="/cookie-policy" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
                   <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
                   <span>কুকিজ পলিসি</span>
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -129,16 +136,16 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5 text-sm font-medium">
               <li>
-                <a href="#terms" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
+                <Link href="/terms" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
                   <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
                   <span>টার্মস অ্যান্ড কন্ডিসনস</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#privacy" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
+                <Link href="/privacy-policy" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
                   <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
                   <span>গোপনীয় নীতি</span>
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -225,11 +232,11 @@ export default function Footer() {
             </div>
           </div>
         </div>
-
       </div>
+
       {/* Bottom Copyright Text */}
-      <div className="pt-8 text-center text-xs text-teal-200/80 font-medium absolute bottom-0 flex items-center justify-center w-full">
-        <p className="inline">Copyright © JibonQuran 2026. All Right Reserved.</p>
+      <div className="pt-8 text-center text-xs text-teal-200/80 font-medium">
+        <p>Copyright © JibonQuran 2026. All Right Reserved.</p>
       </div>
     </footer>
   );
