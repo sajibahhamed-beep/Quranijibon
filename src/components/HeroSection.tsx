@@ -17,22 +17,20 @@ export default function HeroSection() {
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setActiveBranch("mohila")}
-                className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
-                  activeBranch === "mohila"
-                    ? "bg-[#D0F4F0] text-[#00695C] border-2 border-[#00A89C] shadow-xs"
-                    : "bg-white text-slate-700 border border-slate-300 hover:border-slate-400"
-                }`}
+                className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${activeBranch === "mohila"
+                  ? "bg-[#D0F4F0] text-[#00695C] border-2 border-[#00A89C] shadow-xs"
+                  : "bg-white text-slate-700 border border-slate-300 hover:border-slate-400"
+                  }`}
               >
                 মহিলা শাখা
               </button>
 
               <button
                 onClick={() => setActiveBranch("purus")}
-                className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
-                  activeBranch === "purus"
-                    ? "bg-[#D0F4F0] text-[#00695C] border-2 border-[#00A89C] shadow-xs"
-                    : "bg-white text-slate-700 border border-slate-300 hover:border-slate-400"
-                }`}
+                className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${activeBranch === "purus"
+                  ? "bg-[#D0F4F0] text-[#00695C] border-2 border-[#00A89C] shadow-xs"
+                  : "bg-white text-slate-700 border border-slate-300 hover:border-slate-400"
+                  }`}
               >
                 পুরুষ শাখা
               </button>
@@ -45,7 +43,7 @@ export default function HeroSection() {
             </h1>
 
             {/* Description (Dynamic per active branch) */}
-            <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl">
+            <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl text-justify pr-20">
               {activeBranch === "mohila" ? (
                 <>
                   আপনার সুবিধামতো সময়ে ঘরে বসেই অভিজ্ঞ শিক্ষকের সঙ্গে One-to-One কুরআন শিক্ষা। মহিলা শিক্ষার্থীদের জন্য রয়েছে অভিজ্ঞ মহিলা শিক্ষিকার ব্যবস্থা। শিক্ষার্থীদের জন্য{" "}

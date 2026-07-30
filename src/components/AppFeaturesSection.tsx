@@ -30,26 +30,24 @@ export default function AppFeaturesSection() {
   return (
     <section id="features" className="py-24 bg-[#fafbfc] relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Column - Showcase Render */}
-          <div className="lg:col-span-6 relative">
-            <div className="relative rounded-3xl overflow-hidden border border-slate-200 shadow-xl bg-white">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+          {/* Left Column - Image covers full column height */}
+          <div className="lg:col-span-6 relative flex flex-col">
+            <div className="relative w-full h-full min-h-[380px] lg:min-h-full rounded-3xl overflow-hidden border border-slate-200 shadow-xl bg-white">
               <Image
-                src="/assets/figma_section_37_2094.png"
+                src="/assets/why_learn_video_37_1931.png"
                 alt="কুরআন জীবন অনলাইন ক্লাসরুম ফিচারসমূহ"
-                width={800}
-                height={600}
-                className="w-full h-auto object-cover"
+                fill
+                className="object-cover w-full h-full"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority
               />
             </div>
           </div>
 
           {/* Right Column - Feature Cards */}
-          <div className="lg:col-span-6 space-y-8">
+          <div className="lg:col-span-6 space-y-8 flex flex-col justify-center">
             <div>
-              <span className="text-emerald-700 font-bold text-sm tracking-wide uppercase bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
-                আমাদের সার্ভিসসমূহ
-              </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-3 leading-tight">
                 সহজ ও মানসম্মত পদ্ধতিতে <br />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-600">
