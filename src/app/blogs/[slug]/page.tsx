@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
-import { BLOG_POSTS, BlogPost } from "@/data/blogs";
+import { getBlogPostByIdOrSlug, getBlogsData } from "@/data/blogsStorage";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -24,7 +24,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = await params;
-  const post = BLOG_POSTS.find((b) => b.slug === resolvedParams.slug);
+  const post = await getBlogPostByIdOrSlug(resolvedParams.slug);
   if (!post) return { title: "ব্লগ পাওয়া যায়নি | কুরআন জীবন" };
 
   return {
@@ -39,16 +39,16 @@ export default async function BlogDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = await params;
-  const post = BLOG_POSTS.find((b) => b.slug === resolvedParams.slug);
+  const post = await getBlogPostByIdOrSlug(resolvedParams.slug);
 
   if (!post) {
     notFound();
   }
 
-  const relatedPosts = BLOG_POSTS.filter((b) => b.slug !== post.slug).slice(
-    0,
-    2
-  );
+  const allData = await getBlogsData();
+  const relatedPosts = allData.posts
+    .filter((b) => b.slug !== post.slug)
+    .slice(0, 2);
 
   return (
     <main className="min-h-screen bg-[#FAFBFC] text-[#0F172A] relative font-sans">
@@ -58,7 +58,7 @@ export default async function BlogDetailPage({
       {/* Top Hero Banner Section */}
       <section className="relative w-full min-h-[380px] sm:min-h-[420px] bg-black/90 text-white flex items-end overflow-hidden py-12 border-b border-slate-200">
         <Image
-          src={post.img}
+          src={post.img || "/assets/why_learn_video_37_1931.png"}
           alt={post.title}
           fill
           className="object-cover opacity-35"
@@ -79,7 +79,7 @@ export default async function BlogDetailPage({
             {/* Author & Meta */}
             <div className="flex items-center space-x-3 text-xs sm:text-sm font-semibold text-slate-200">
               <div className="w-8 h-8 rounded-full bg-[#00796B] text-white font-bold flex items-center justify-center text-sm shadow-md">
-                {post.authorAvatar}
+                {post.authorAvatar || post.author?.charAt(0)}
               </div>
               <div>
                 <span className="font-bold text-white block">
@@ -128,14 +128,16 @@ export default async function BlogDetailPage({
               </div>
 
               {/* Intro Text */}
-              <p className="text-base sm:text-lg text-slate-800 font-semibold leading-relaxed border-b border-slate-200 pb-6">
-                {post.content.intro}
-              </p>
+              {post.content?.intro && (
+                <p className="text-base sm:text-lg text-slate-800 font-semibold leading-relaxed border-b border-slate-200 pb-6">
+                  {post.content.intro}
+                </p>
+              )}
 
               {/* Content Sections */}
               <div className="space-y-10">
-                {post.content.sections.map((sec) => (
-                  <div key={sec.id} id={sec.id} className="space-y-4">
+                {post.content?.sections?.map((sec, idx) => (
+                  <div key={sec.id || idx} id={`sec-${idx + 1}`} className="space-y-4">
                     <h2 className="text-2xl font-black text-slate-900 leading-snug">
                       {sec.heading}
                     </h2>
@@ -148,11 +150,15 @@ export default async function BlogDetailPage({
                     {sec.arabic && (
                       <div className="p-6 rounded-2xl bg-[#E0F2F1]/60 border-l-4 border-[#00A89C] space-y-2 my-4">
                         <p className="text-lg sm:text-xl font-bold text-[#004D40] leading-relaxed">
-                          আর কুরআন তিলাওয়াত করুন ধীরে ধীরে, স্পষ্টভাবে —{" "}
-                          <span className="font-serif text-2xl text-slate-900">
+                          <span className="font-serif text-2xl text-slate-900 font-normal">
                             {sec.arabic}
                           </span>
                         </p>
+                        {sec.translation && (
+                          <p className="text-sm font-semibold text-slate-700">
+                            {sec.translation}
+                          </p>
+                        )}
                         {sec.citation && (
                           <p className="text-xs font-bold text-[#00796B]">
                             {sec.citation}
@@ -190,30 +196,34 @@ export default async function BlogDetailPage({
               </div>
 
               {/* Conclusion Section */}
-              <div className="space-y-3 pt-4 border-t border-slate-200">
-                <h3 className="text-2xl font-black text-slate-900">পরিশেষে</h3>
-                <p className="text-slate-700 text-base leading-relaxed font-medium">
-                  {post.content.conclusion}
-                </p>
-              </div>
+              {post.content?.conclusion && (
+                <div className="space-y-3 pt-4 border-t border-slate-200">
+                  <h3 className="text-2xl font-black text-slate-900">পরিশেষে</h3>
+                  <p className="text-slate-700 text-base leading-relaxed font-medium">
+                    {post.content.conclusion}
+                  </p>
+                </div>
+              )}
 
               {/* Tags Row */}
-              <div className="flex flex-wrap items-center gap-2 pt-4">
-                <span className="text-xs font-bold text-slate-500">ট্যাগসমূহ:</span>
-                {post.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="bg-[#E0F2F1] text-[#004D40] text-xs font-bold px-3 py-1 rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+              {post.tags && post.tags.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 pt-4">
+                  <span className="text-xs font-bold text-slate-500">ট্যাগসমূহ:</span>
+                  {post.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="bg-[#E0F2F1] text-[#004D40] text-xs font-bold px-3 py-1 rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
 
               {/* Author Box */}
               <div className="bg-[#F8FAF9] p-6 rounded-3xl border border-slate-200/90 flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-5 shadow-xs">
                 <div className="w-14 h-14 rounded-full bg-[#00796B] text-white font-bold flex items-center justify-center text-xl flex-shrink-0 shadow-md">
-                  {post.authorAvatar}
+                  {post.authorAvatar || post.author?.charAt(0)}
                 </div>
                 <div className="space-y-1">
                   <span className="text-[11px] font-bold text-[#00796B] uppercase tracking-wider">
@@ -223,7 +233,7 @@ export default async function BlogDetailPage({
                     {post.author}
                   </h4>
                   <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                    {post.authorBio}
+                    {post.authorBio || `${post.authorRole || "লেখক"} - কুরআন জীবন একাডেমি`}
                   </p>
                 </div>
               </div>
@@ -232,52 +242,56 @@ export default async function BlogDetailPage({
             {/* Right Sidebar Column */}
             <aside className="w-full lg:w-[340px] space-y-6 flex-shrink-0 sticky top-24">
               {/* Widget 1: বিষয়সূচি (TOC) */}
-              <div className="bg-[#FFF8F6] p-6 rounded-3xl border border-rose-100 shadow-xs space-y-4">
-                <h3 className="font-black text-slate-900 text-base border-b border-rose-200/60 pb-2">
-                  বিষয়সূচি
-                </h3>
-                <ol className="space-y-2.5 text-xs sm:text-sm font-extrabold text-slate-700">
-                  {post.toc.map((item) => (
-                    <li key={item.num} className="hover:text-[#00796B] transition-colors">
-                      <a href={`#sec-${item.num}`} className="flex items-start space-x-2">
-                        <span className="text-[#00796B]">{item.num}.</span>
-                        <span className="line-clamp-1">{item.title}</span>
-                      </a>
-                    </li>
-                  ))}
-                </ol>
-              </div>
+              {post.toc && post.toc.length > 0 && (
+                <div className="bg-[#FFF8F6] p-6 rounded-3xl border border-rose-100 shadow-xs space-y-4">
+                  <h3 className="font-black text-slate-900 text-base border-b border-rose-200/60 pb-2">
+                    বিষয়সূচি
+                  </h3>
+                  <ol className="space-y-2.5 text-xs sm:text-sm font-extrabold text-slate-700">
+                    {post.toc.map((item) => (
+                      <li key={item.num} className="hover:text-[#00796B] transition-colors">
+                        <a href={`#sec-${item.num}`} className="flex items-start space-x-2">
+                          <span className="text-[#00796B]">{item.num}.</span>
+                          <span className="line-clamp-1">{item.title}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
 
               {/* Widget 2: আরও পড়ুন */}
-              <div className="bg-[#F8FAF9] p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
-                <h3 className="font-black text-slate-900 text-base border-b border-slate-200 pb-2">
-                  আরও পড়ুন
-                </h3>
-                <div className="space-y-4">
-                  {relatedPosts.map((rel) => (
-                    <Link
-                      key={rel.id}
-                      href={`/blogs/${rel.slug}`}
-                      className="block space-y-2 group"
-                    >
-                      <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-100">
-                        <Image
-                          src={rel.img}
-                          alt={rel.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
-                      <span className="bg-[#E0F2F1] text-[#004D40] text-[10px] font-bold px-2.5 py-0.5 rounded-full inline-block">
-                        ● {rel.category}
-                      </span>
-                      <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-[#00796B] transition-colors line-clamp-2 leading-snug">
-                        {rel.title}
-                      </h4>
-                    </Link>
-                  ))}
+              {relatedPosts.length > 0 && (
+                <div className="bg-[#F8FAF9] p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+                  <h3 className="font-black text-slate-900 text-base border-b border-slate-200 pb-2">
+                    আরও পড়ুন
+                  </h3>
+                  <div className="space-y-4">
+                    {relatedPosts.map((rel) => (
+                      <Link
+                        key={rel.id}
+                        href={`/blogs/${rel.slug}`}
+                        className="block space-y-2 group"
+                      >
+                        <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-100">
+                          <Image
+                            src={rel.img || "/assets/why_learn_video_37_1931.png"}
+                            alt={rel.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+                        <span className="bg-[#E0F2F1] text-[#004D40] text-[10px] font-bold px-2.5 py-0.5 rounded-full inline-block">
+                          ● {rel.category}
+                        </span>
+                        <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-[#00796B] transition-colors line-clamp-2 leading-snug">
+                          {rel.title}
+                        </h4>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Widget 3: নতুন লেখার আপডেট পান (Newsletter) */}
               <div className="bg-[#00796B] text-white p-6 rounded-3xl space-y-4 shadow-lg border border-teal-600">
