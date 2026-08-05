@@ -17,6 +17,7 @@ import {
   Search,
   ExternalLink,
   ShieldAlert,
+  HelpCircle,
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -93,6 +94,12 @@ export default function AdminLayout({
       href: "/admin/donations",
       icon: HeartHandshake,
       active: pathname === "/admin/donations",
+    },
+    {
+      label: "FAQ ও প্রশ্নাবলী",
+      href: "/admin/faqs",
+      icon: HelpCircle,
+      active: pathname === "/admin/faqs",
     },
   ];
 
