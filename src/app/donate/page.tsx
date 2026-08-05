@@ -54,7 +54,7 @@ export default function DonatePage() {
               </div>
               <div className="p-5 rounded-2xl bg-teal-50/60 border border-teal-200 space-y-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#00695C]">পার্সোনাল নম্বর:</span>
-                <p className="text-2xl sm:text-3xl font-black text-[#007C7A]">01730-986832</p>
+                <p className="text-2xl sm:text-3xl font-black text-[#007C7A]">01775551325</p>
                 <p className="text-xs text-slate-500 font-medium">বিকাশ সেন্ড মানি / নগদ সেন্ড মানি করুন</p>
               </div>
             </div>
@@ -68,8 +68,8 @@ export default function DonatePage() {
               <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-sm font-medium">
                 <p><strong>ব্যাংক নাম:</strong> ইসলামী ব্যাংক বাংলাদেশ লিমিটেড</p>
                 <p><strong>অ্যাকাউন্ট নাম:</strong> কুরআন জীবন ট্রাস্ট</p>
-                <p><strong>অ্যাকাউন্ট নম্বর:</strong> ২০৫০৭৭৭০১০১১২২৩৩</p>
-                <p><strong>শাখা:</strong> ধানমন্ডি শাখা, ঢাকা</p>
+                <p><strong>অ্যাকাউন্ট নম্বর:</strong> ২০৫০0000000000000</p>
+                <p><strong>শাখা:</strong> ধান শাখা, ঢাকা</p>
               </div>
             </div>
           </div>
