@@ -48,7 +48,7 @@ export default function AppFeaturesSection() {
           {/* Right Column - Feature Cards */}
           <div className="lg:col-span-6 space-y-8 flex flex-col justify-center">
             <div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-3 leading-tight">
+              <h2 className="text-4xl sm:text-5xl lg:text-5xl font-extrabold text-slate-900 mt-3 leading-tight">
                 সহজ ও মানসম্মত পদ্ধতিতে <br />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-600">
                   কুরআন শিক্ষার সুযোগ
