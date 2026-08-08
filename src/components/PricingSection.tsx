@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Check, Star, Clock, Calendar, X, Sparkles, Send, CheckCircle2 } from "lucide-react";
-import { recordUserInteraction } from "@/data/notifyClient";
+import { registerStudentAction } from "@/data/studentsClient";
+import { StudentRecord } from "@/data/adminStore";
 
 export default function PricingSection() {
   const [selectedDays, setSelectedDays] = useState<string>("৩ দিন");
@@ -29,11 +30,20 @@ export default function PricingSection() {
     if (!studentName || !studentPhone) return;
 
     setIsSubmitting(true);
-    await recordUserInteraction({
-      title: `নতুন ভর্তি আবেদন: ${selectedPackage}`,
-      message: `${studentName} (${studentPhone}) '${selectedPackage}' প্যাকেজে ভর্তি হতে চান। শিডিউল: ${selectedDays}/সপ্তাহ, ${selectedDuration}, পছন্দের সময়: ${preferredTime}`,
-      category: "admission",
-      link: "/admin/students",
+    let pkgCategory: StudentRecord["package"] = "কাস্টম প্রিমিয়াম";
+    if (selectedPackage?.includes("সাশ্রয়ী")) {
+      pkgCategory = "সাশ্রয়ী (৳৩২০)";
+    } else if (selectedPackage?.includes("ফ্রি") || selectedPackage?.includes("বিনামূল্যে")) {
+      pkgCategory = "বিনামূল্যে";
+    }
+
+    await registerStudentAction({
+      name: studentName,
+      phone: studentPhone,
+      package: pkgCategory,
+      schedule: `সপ্তাহে ${selectedDays}, ${selectedDuration} (${preferredTime})`,
+      teacherPreference: "যে কোনটি",
+      notes: `প্যাকেজ: ${selectedPackage}`,
     });
 
     setIsSubmitting(false);
@@ -299,8 +309,9 @@ export default function PricingSection() {
             ) : (
               <form onSubmit={handleEnrollSubmit} className="space-y-4">
                 <div>
-                  <span className="bg-[#D0F4F0] text-[#00695C] text-xs font-bold px-3 py-1 rounded-full inline-block mb-1">
-                    কোর্স রেজিস্ট্রেশন
+                  <span className="bg-[#D0F4F0] text-[#00695C] border border-[#00A89C]/30 text-xs font-black px-3 py-1 rounded-full inline-flex items-center gap-1 mb-1">
+                    <Sparkles className="w-3 h-3" />
+                    নতুন আবেদন
                   </span>
                   <h3 className="text-xl font-black text-slate-900">
                     {selectedPackage}

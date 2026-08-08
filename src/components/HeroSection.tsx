@@ -8,7 +8,7 @@ export default function HeroSection() {
   const [activeBranch, setActiveBranch] = useState<"mohila" | "purus">("mohila");
 
   return (
-    <section id="home" className="relative py-12 md:py-20 bg-[#F9FBFB] overflow-hidden">
+    <section id="home" className="relative py-12 md:py-20 bg-[#F9FBFB] border-b border-slate-200 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column: Branch Buttons, Headline, Description, CTAs */}

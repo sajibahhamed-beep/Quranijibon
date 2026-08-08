@@ -1,0 +1,62 @@
+[
+  {
+    "id": "STU-101",
+    "name": "মেহেদী হাসান",
+    "phone": "+880 1712-345678",
+    "email": "mehedi@example.com",
+    "package": "সাশ্রয়ী (৳৩২০)",
+    "schedule": "সপ্তাহে ৩ দিন (রাত ৮:০০)",
+    "teacherPreference": "পুরুষ শিক্ষক",
+    "assignedTeacher": "উস্তাদ রফিকুল ইসলাম",
+    "status": "সক্রিয়",
+    "date": "২০২৫-০৭-২৮"
+  },
+  {
+    "id": "STU-102",
+    "name": "ফাতেমা আক্তার",
+    "phone": "+880 1823-456789",
+    "email": "fatema@example.com",
+    "package": "কাস্টম প্রিমিয়াম",
+    "schedule": "সপ্তাহে ৫ দিন (সকাল ১০:০০)",
+    "teacherPreference": "মহিলা শিক্ষিকা",
+    "assignedTeacher": "নুসরাত জাহান",
+    "status": "সক্রিয়",
+    "date": "২০২৫-০৭-২৯"
+  },
+  {
+    "id": "STU-103",
+    "name": "আরিফুল ইসলাম",
+    "phone": "+880 1934-567890",
+    "email": "arif@example.com",
+    "package": "বিনামূল্যে",
+    "schedule": "সপ্তাহে ২ দিন (বিকাল ৪:০০)",
+    "teacherPreference": "পুরুষ শিক্ষক",
+    "assignedTeacher": "হাফেজ আব্দুল্লাহ",
+    "status": "নতুন আবেদন",
+    "date": "২০২৫-০৮-০১"
+  },
+  {
+    "id": "STU-104",
+    "name": "নুসরাত তাবাসসুম",
+    "phone": "+880 1645-678901",
+    "email": "tabassum@example.com",
+    "package": "সাশ্রয়ী (৳৩২০)",
+    "schedule": "সপ্তাহে ৩ দিন (সন্ধ্যা ৭:০০)",
+    "teacherPreference": "মহিলা শিক্ষিকা",
+    "assignedTeacher": "নুসরাত জাহান",
+    "status": "অপেক্ষমাণ",
+    "date": "২০২৫-০৮-০২"
+  },
+  {
+    "id": "STU-105",
+    "name": "কামরুল হাসান",
+    "phone": "+880 1756-789012",
+    "email": "kamrul@example.com",
+    "package": "কাস্টম প্রিমিয়াম",
+    "schedule": "সপ্তাহে ৬ দিন (রাত ৯:০০)",
+    "teacherPreference": "পুরুষ শিক্ষক",
+    "assignedTeacher": "উস্তাদ রফিকুল ইসলাম",
+    "status": "সক্রিয়",
+    "date": "২০২৫-০৮-০৩"
+  }
+]

@@ -20,21 +20,21 @@
       "platform": "youtube",
       "label": "YouTube",
       "url": "https://youtube.com",
-      "active": false
+      "active": true
     },
     {
       "id": "3",
       "platform": "instagram",
       "label": "Instagram",
       "url": "https://instagram.com",
-      "active": false
+      "active": true
     },
     {
       "id": "4",
       "platform": "twitter",
       "label": "Twitter / X",
       "url": "https://x.com",
-      "active": false
+      "active": true
     },
     {
       "id": "5",
