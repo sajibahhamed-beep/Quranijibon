@@ -34,8 +34,8 @@ export default function AdminLoginPage() {
   };
 
   const handleQuickDemoLogin = () => {
-    setEmail("admin@quranijibon.com");
-    setPassword("admin123");
+    setEmail("admin@sajib.com");
+    setPassword("Sajib#123456");
     setLoading(true);
     setTimeout(() => {
       localStorage.setItem("quranijibon_admin_session", "authenticated");
@@ -130,18 +130,6 @@ export default function AdminLoginPage() {
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
-
-          {/* Quick Demo Login Box */}
-          <div className="pt-4 border-t border-slate-700/60">
-            <button
-              onClick={handleQuickDemoLogin}
-              type="button"
-              className="w-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold py-2.5 px-4 rounded-xl text-xs transition-all flex items-center justify-center space-x-2"
-            >
-              <KeyRound className="w-4 h-4 text-amber-400" />
-              <span>১-ক্লিকে টেস্ট ডেমো প্রবেশ (Quick Demo)</span>
-            </button>
-          </div>
         </div>
 
         {/* Back to main website link */}
