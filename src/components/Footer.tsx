@@ -3,37 +3,60 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
+  Send,
   Mail,
   Phone,
   MapPin,
-  Send,
   ChevronRight,
   Facebook,
   Youtube,
   Instagram,
   Linkedin,
+  MessageCircle,
+  Share2,
 } from "lucide-react";
-import Image from "next/image";
+import { recordUserInteraction } from "@/data/notifyClient";
+import { getSiteSettings } from "@/data/siteSettingsStorage";
+
+const SOCIAL_ICONS: Record<string, any> = {
+  facebook: Facebook,
+  youtube: Youtube,
+  instagram: Instagram,
+  linkedin: Linkedin,
+  telegram: Send,
+  whatsapp: MessageCircle,
+};
 
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const settings = getSiteSettings();
+
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
+      const subscriberEmail = email;
       setSubscribed(true);
       setEmail("");
+      await recordUserInteraction({
+        title: "নতুন কোর্স আপডেট সাবস্ক্রিপশন",
+        message: `${subscriberEmail} নিয়মিত ফ্রি কোর্সের আপডেটের জন্য সাবস্ক্রাইব করেছেন।`,
+        category: "admission",
+      });
       setTimeout(() => setSubscribed(false), 4000);
     }
   };
+
+  const activeSocialLinks = (settings.socialLinks || []).filter((s) => s.active);
 
   return (
     <footer
       id="footer"
       className="relative bg-cover bg-center bg-no-repeat text-white overflow-hidden py-16 border-t border-teal-800/40 w-full bg-gradient-to-r from-[#007C7A] to-[#203935]"
     >
-      <Image
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src="/assets/footer background2.png"
         alt="footer background"
         width={900}
@@ -65,7 +88,7 @@ export default function Footer() {
             </div>
             <button
               type="submit"
-              className="w-full sm:w-auto px-7 py-3 rounded-xl bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-sm flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95 flex-shrink-0"
+              className="w-full sm:w-auto px-7 py-3 rounded-xl bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-sm flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95 flex-shrink-0 cursor-pointer"
             >
               <span>{subscribed ? "Subscribed!" : "Submit"}</span>
               <Send className="w-4 h-4 ml-1" />
@@ -81,30 +104,17 @@ export default function Footer() {
               প্রধান মেনু
             </h4>
             <ul className="space-y-2.5 text-sm font-medium">
-              <li>
-                <Link href="/about" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
-                  <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
-                  <span>আমাদের সম্পর্কে</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/#pricing" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
-                  <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
-                  <span>প্যাকেজসমূহ</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/donate" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
-                  <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
-                  <span>ডোনেট করুন</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/#blogs" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
-                  <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
-                  <span>লেখাসমূহ</span>
-                </Link>
-              </li>
+              {(settings.footerMenuLinks || []).map((link) => (
+                <li key={link.id}>
+                  <Link
+                    href={link.url}
+                    className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5 text-teal-300 flex-shrink-0" />
+                    <span>{link.label}</span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -114,40 +124,28 @@ export default function Footer() {
               অন্যান্য পলিসি
             </h4>
             <ul className="space-y-2.5 text-sm font-medium">
-              <li>
-                <Link href="/refund-policy" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
-                  <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
-                  <span>রিফান্ড পলিসি</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/cookie-policy" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
-                  <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
-                  <span>কুকিজ পলিসি</span>
-                </Link>
-              </li>
+              {(settings.footerPolicyLinks || []).map((link) => (
+                <li key={link.id}>
+                  <Link
+                    href={link.url}
+                    className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5 text-teal-300 flex-shrink-0" />
+                    <span>{link.label}</span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Col 3: অন্যান্য লিঙ্ক */}
+          {/* Col 3: প্রতিষ্ঠান পরিচিতি */}
           <div className="lg:col-span-3 space-y-4">
             <h4 className="text-lg font-bold text-white tracking-wide border-b border-teal-600/60 pb-2 inline-block">
-              অন্যান্য লিঙ্ক
+              কুরআন জীবন
             </h4>
-            <ul className="space-y-2.5 text-sm font-medium">
-              <li>
-                <Link href="/terms" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
-                  <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
-                  <span>টার্মস অ্যান্ড কন্ডিসনস</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy-policy" className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors">
-                  <ChevronRight className="w-3.5 h-3.5 text-teal-300" />
-                  <span>গোপনীয় নীতি</span>
-                </Link>
-              </li>
-            </ul>
+            <p className="text-xs sm:text-sm text-teal-100/90 leading-relaxed">
+              আন্তর্জাতিক অনলাইন কুরআন শিক্ষা প্রতিষ্ঠান। আমাদের উদ্দেশ্য বিশ্বজুড়ে মুসলিম উম্মাহর প্রতিটি ঘরে সহীহ কুরআন শিক্ষা পৌঁছে দেওয়া।
+            </p>
           </div>
 
           {/* Col 4: যোগাযোগ করুন */}
@@ -158,85 +156,49 @@ export default function Footer() {
             <ul className="space-y-3 text-sm font-medium">
               <li className="flex items-center space-x-2.5">
                 <Mail className="w-4 h-4 text-teal-300 flex-shrink-0" />
-                <span>sajibahhamed@gmail.com</span>
+                <span className="break-all">{settings.email || "sajibahhamed@gmail.com"}</span>
               </li>
               <li className="flex items-center space-x-2.5">
                 <Phone className="w-4 h-4 text-teal-300 flex-shrink-0" />
-                <span>01730-986832</span>
+                <span>{settings.phone1 || "01730-986832"}</span>
               </li>
               <li className="flex items-start space-x-2.5">
                 <MapPin className="w-4 h-4 text-teal-300 flex-shrink-0 mt-0.5" />
                 <span className="leading-snug">
-                  Skinner Hollow Road <br />
-                  Days Creek, OR 97429
+                  {settings.addressLine1 || "Skinner Hollow Road"} <br />
+                  {settings.addressLine2 || "Days Creek, OR 97429"}
                 </span>
               </li>
             </ul>
 
             {/* Social Media Circular Buttons Row */}
-            <div className="flex flex-wrap gap-2 pt-3">
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-teal-800/80 hover:bg-teal-600 flex items-center justify-center transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-4 h-4 text-white" />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-teal-800/80 hover:bg-teal-600 flex items-center justify-center transition-colors"
-                aria-label="YouTube"
-              >
-                <Youtube className="w-4 h-4 text-white" />
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-teal-800/80 hover:bg-teal-600 flex items-center justify-center transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-4 h-4 text-white" />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-teal-800/80 hover:bg-teal-600 flex items-center justify-center transition-colors"
-                aria-label="X / Twitter"
-              >
-                <span className="font-bold text-xs">X</span>
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-teal-800/80 hover:bg-teal-600 flex items-center justify-center transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="w-4 h-4 text-white" />
-              </a>
-              <a
-                href="https://telegram.org"
-                target="_blank"
-                rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-teal-800/80 hover:bg-teal-600 flex items-center justify-center transition-colors"
-                aria-label="Telegram"
-              >
-                <Send className="w-4 h-4 text-white" />
-              </a>
-            </div>
+            {activeSocialLinks.length > 0 && (
+              <div className="flex flex-wrap gap-2 pt-3">
+                {activeSocialLinks.map((social) => {
+                  const Icon = SOCIAL_ICONS[social.platform.toLowerCase()] || Share2;
+                  return (
+                    <a
+                      key={social.id}
+                      href={social.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-8 h-8 rounded-full bg-teal-800/80 hover:bg-teal-600 flex items-center justify-center transition-colors shadow-xs"
+                      aria-label={social.label}
+                      title={social.label}
+                    >
+                      <Icon className="w-4 h-4 text-white" />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Bottom Copyright Text */}
       <div className="pt-8 text-center text-xs text-teal-200/80 font-medium">
-        <p>Copyright © JibonQuran 2026. All Right Reserved.</p>
+        <p>{settings.copyrightText || "Copyright © JibonQuran 2026. All Right Reserved."}</p>
       </div>
     </footer>
   );

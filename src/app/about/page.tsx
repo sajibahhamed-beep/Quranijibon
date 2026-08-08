@@ -36,7 +36,7 @@ export default function AboutPage() {
         <div className="absolute right-0 bottom-0 pointer-events-none h-44 sm:h-56 lg:h-64 hidden md:block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/assets/Section → sec-botm-mckp-768x115.webp.png"
+            src="/assets/mosque_silhouette.png"
             alt="Mosque Silhouette Vector"
             className="h-full w-auto object-contain object-bottom-right opacity-90"
           />

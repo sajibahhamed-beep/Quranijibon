@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { ArrowRightCircle } from "lucide-react";
+import { recordUserInteraction } from "@/data/notifyClient";
 
 export default function HeroSection() {
   const [activeBranch, setActiveBranch] = useState<"mohila" | "purus">("mohila");
@@ -60,13 +60,21 @@ export default function HeroSection() {
             {/* Action Buttons */}
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <a
-                href="#about"
+                href="/about"
                 className="px-6 py-3.5 rounded-lg border-2 border-[#00A89C] text-[#00A89C] font-bold text-base hover:bg-[#00A89C]/10 transition-colors"
               >
                 আমাদের সম্পর্কে জানুন
               </a>
               <a
-                href="#contact"
+                href="#pricing"
+                onClick={() => {
+                  recordUserInteraction({
+                    title: "ভিজিটর 'শেখা শুরু করুন' বাটনে ক্লিক করেছেন",
+                    message: "হোমপেজের হিরো ব্যানার থেকে ভিজিটর কুরআন শেখা শুরু করার আগ্রহ প্রকাশ করেছেন।",
+                    category: "admission",
+                    link: "/#pricing",
+                  });
+                }}
                 className="px-7 py-3.5 rounded-lg bg-[#00A89C] text-white font-bold text-base hover:bg-[#00897B] transition-colors flex items-center space-x-2 shadow-md shadow-[#00A89C]/20"
               >
                 <span>শেখা শুরু করুন</span>
@@ -78,7 +86,8 @@ export default function HeroSection() {
           {/* Right Column: Dynamic Branch Illustration Image */}
           <div className="lg:col-span-5 flex justify-center">
             <div className="relative w-full max-w-lg transition-all duration-300">
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={
                   activeBranch === "mohila"
                     ? "/assets/Mohila section illustration.png"
@@ -92,7 +101,6 @@ export default function HeroSection() {
                 width={600}
                 height={500}
                 className="w-full h-auto object-contain drop-shadow-md"
-                priority
               />
             </div>
           </div>

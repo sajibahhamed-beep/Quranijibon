@@ -1,0 +1,98 @@
+{
+  "whatsappNumber": "8801775551325",
+  "whatsappDisplayText": "সরাসরি কথা বলুন....",
+  "phone1": "01730-986832",
+  "phone2": "+880 1775-551325",
+  "email": "sajibahhamed@gmail.com",
+  "addressLine1": "Skinner Hollow Road",
+  "addressLine2": "Days Creek, OR 97429",
+  "copyrightText": "Copyright © JibonQuran 2026. All Right Reserved.",
+  "socialLinks": [
+    {
+      "id": "1",
+      "platform": "facebook",
+      "label": "Facebook",
+      "url": "https://facebook.com",
+      "active": false
+    },
+    {
+      "id": "2",
+      "platform": "youtube",
+      "label": "YouTube",
+      "url": "https://youtube.com",
+      "active": false
+    },
+    {
+      "id": "3",
+      "platform": "instagram",
+      "label": "Instagram",
+      "url": "https://instagram.com",
+      "active": false
+    },
+    {
+      "id": "4",
+      "platform": "twitter",
+      "label": "Twitter / X",
+      "url": "https://x.com",
+      "active": false
+    },
+    {
+      "id": "5",
+      "platform": "linkedin",
+      "label": "LinkedIn",
+      "url": "https://linkedin.com",
+      "active": true
+    },
+    {
+      "id": "6",
+      "platform": "telegram",
+      "label": "Telegram",
+      "url": "https://telegram.org",
+      "active": true
+    }
+  ],
+  "footerMenuLinks": [
+    {
+      "id": "1",
+      "label": "আমাদের সম্পর্কে",
+      "url": "/about"
+    },
+    {
+      "id": "2",
+      "label": "প্যাকেজসমূহ",
+      "url": "/#pricing"
+    },
+    {
+      "id": "3",
+      "label": "ডোনেট করুন",
+      "url": "/donate"
+    },
+    {
+      "id": "4",
+      "label": "লেখাসমূহ",
+      "url": "/#blogs"
+    }
+  ],
+  "footerPolicyLinks": [
+    {
+      "id": "1",
+      "label": "রিফান্ড পলিসি",
+      "url": "/refund-policy"
+    },
+    {
+      "id": "2",
+      "label": "কুকিজ পলিসি",
+      "url": "/cookie-policy"
+    },
+    {
+      "id": "3",
+      "label": "টার্মস অ্যান্ড কন্ডিসনস",
+      "url": "/terms"
+    },
+    {
+      "id": "4",
+      "label": "গোপনীয় নীতি",
+      "url": "/privacy-policy"
+    }
+  ]
+}

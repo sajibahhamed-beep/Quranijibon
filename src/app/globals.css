@@ -3,7 +3,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    font-family: var(--font-hind), 'Noto Sans Bengali', sans-serif;
+    font-family: var(--font-hind), "Noto Sans Bengali", sans-serif;
   }
 }
 

@@ -1,14 +1,47 @@
+"use client";
+
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
-import { Mail, Phone, MapPin, Send, MessageSquare } from "lucide-react";
-
-export const metadata = {
-  title: "যোগাযোগ করুন | কুরআন জীবন",
-  description: "কুরআন জীবনের সরাসরি কাস্টমার সাপোর্ট, হোয়াটসঅ্যাপ হেল্পলাইন এবং যোগাযোগের ঠিকানা।",
-};
+import { Mail, Phone, MapPin, Send, MessageSquare, CheckCircle2 } from "lucide-react";
+import { recordUserInteraction } from "@/data/notifyClient";
+import { getSiteSettings } from "@/data/siteSettingsStorage";
 
 export default function ContactPage() {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const settings = getSiteSettings();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !phone || !message) return;
+
+    setLoading(true);
+    await recordUserInteraction({
+      title: "যোগাযোগ ফর্ম থেকে নতুন বার্তা",
+      message: `${name} (${phone}, ${email || "ইমেইল নেই"}) লিখেছেন: "${message}"`,
+      category: "message",
+      link: "/contact",
+    });
+
+    setLoading(false);
+    setSubmitted(true);
+    setName("");
+    setPhone("");
+    setEmail("");
+    setMessage("");
+
+    setTimeout(() => {
+      setSubmitted(false);
+    }, 6000);
+  };
+
   return (
     <main className="min-h-screen bg-[#FAFBFC] text-[#0F172A] relative">
       <FloatingContact />
@@ -35,7 +68,7 @@ export default function ContactPage() {
         <div className="absolute right-0 bottom-0 pointer-events-none h-44 sm:h-56 lg:h-64 hidden md:block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/assets/Section → sec-botm-mckp-768x115.webp.png"
+            src="/assets/mosque_silhouette.png"
             alt="Mosque Silhouette Vector"
             className="h-full w-auto object-contain object-bottom-right opacity-90"
           />
@@ -60,8 +93,10 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-900 text-sm">হেল্পলাইন ফোন</h4>
-                      <p className="text-slate-600 text-sm font-medium">01730-986832</p>
-                      <p className="text-slate-600 text-sm font-medium">+880 1775-551325</p>
+                      <p className="text-slate-600 text-sm font-medium">{settings.phone1 || "01730-986832"}</p>
+                      {settings.phone2 && (
+                        <p className="text-slate-600 text-sm font-medium">{settings.phone2}</p>
+                      )}
                     </div>
                   </div>
 
@@ -71,7 +106,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-900 text-sm">ইমেইল সাপোর্ট</h4>
-                      <p className="text-slate-600 text-sm font-medium">sajibahhamed@gmail.com</p>
+                      <p className="text-slate-600 text-sm font-medium">{settings.email || "sajibahhamed@gmail.com"}</p>
                     </div>
                   </div>
 
@@ -82,8 +117,8 @@ export default function ContactPage() {
                     <div>
                       <h4 className="font-bold text-slate-900 text-sm">অফিস ঠিকানা</h4>
                       <p className="text-slate-600 text-sm font-medium leading-relaxed">
-                        Skinner Hollow Road<br />
-                        Days Creek, OR 97429
+                        {settings.addressLine1 || "Skinner Hollow Road"}<br />
+                        {settings.addressLine2 || "Days Creek, OR 97429"}
                       </p>
                     </div>
                   </div>
@@ -91,10 +126,10 @@ export default function ContactPage() {
 
                 <div className="pt-4 border-t border-slate-100">
                   <a
-                    href="https://wa.me/8801775551325"
+                    href={`https://wa.me/${(settings.whatsappNumber || "8801775551325").replace(/[^0-9]/g, "")}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95"
+                    className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95 cursor-pointer"
                   >
                     <MessageSquare className="w-5 h-5" />
                     <span>হোয়াটসঅ্যাপে সরাসরি মেসেজ করুন</span>
@@ -105,14 +140,24 @@ export default function ContactPage() {
 
             {/* Contact Form */}
             <div className="lg:col-span-7">
-              <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-xs space-y-6">
+              <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-xs space-y-6 relative">
                 <h3 className="text-2xl font-black text-slate-900">ইনকোয়ারি বার্তা পাঠান</h3>
-                <form className="space-y-4">
+
+                {submitted && (
+                  <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-sm font-bold flex items-center space-x-2 animate-in fade-in">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                    <span>আপনার বার্তা সফলভাবে পাঠানো হয়েছে! আমাদের টিম শীঘ্রই আপনার সাথে যোগাযোগ করবে।</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-700 uppercase mb-1">আপনার নাম</label>
                       <input
                         type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                         placeholder="উদা: মাহমুদ হাসান"
                         required
                         className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
@@ -122,6 +167,8 @@ export default function ContactPage() {
                       <label className="block text-xs font-bold text-slate-700 uppercase mb-1">ফোন নম্বর</label>
                       <input
                         type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
                         placeholder="01700-000000"
                         required
                         className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
@@ -130,11 +177,12 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase mb-1">ইমেইল ঠিকানা</label>
+                    <label className="block text-xs font-bold text-slate-700 uppercase mb-1">ইমেইল ঠিকানা (ঐচ্ছিক)</label>
                     <input
                       type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       placeholder="your@mail.com"
-                      required
                       className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
                     />
                   </div>
@@ -143,6 +191,8 @@ export default function ContactPage() {
                     <label className="block text-xs font-bold text-slate-700 uppercase mb-1">বার্তা বা প্রশ্ন</label>
                     <textarea
                       rows={4}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
                       placeholder="আপনার প্রশ্ন বা মতামত সংক্ষেপে লিখুন..."
                       required
                       className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
@@ -151,9 +201,10 @@ export default function ContactPage() {
 
                   <button
                     type="submit"
+                    disabled={loading}
                     className="w-full py-4 rounded-xl bg-[#00A89C] hover:bg-[#00897B] text-white font-black text-sm flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95"
                   >
-                    <span>মেসেজ জমা দিন</span>
+                    <span>{loading ? "পাঠানো হচ্ছে..." : "মেসেজ জমা দিন"}</span>
                     <Send className="w-4 h-4 ml-1" />
                   </button>
                 </form>

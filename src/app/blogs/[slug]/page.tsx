@@ -71,7 +71,7 @@ export default async function BlogDetailPage({
             ● {post.category}
           </span>
 
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black leading-tight tracking-tight drop-shadow-md max-w-4xl">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black leading-snug tracking-tight drop-shadow-md max-w-3xl">
             {post.title}
           </h1>
 

@@ -78,25 +78,25 @@ export default function BlogsPage() {
           <>
             {/* Hero Featured Article Banner Card */}
             {featuredPost && (
-              <section className="relative rounded-3xl overflow-hidden shadow-2xl min-h-[420px] sm:min-h-[460px] flex items-end">
+              <section className="relative rounded-3xl overflow-hidden shadow-2xl min-h-[380px] sm:min-h-[420px] lg:min-h-[440px] flex items-end">
                 {/* Background Image */}
                 <Image
                   src={featuredPost.img || "/assets/why_learn_video_37_1931.png"}
                   alt={featuredPost.title}
                   fill
-                  className="object-cover"
+                  className="object-cover object-center"
                   priority
                 />
-                {/* Dark Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/20" />
+                {/* Dark Overlay Gradient on Left Side to Keep Right Image Bright & Visible */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent sm:bg-gradient-to-r sm:from-black/85 sm:via-black/45 sm:to-transparent" />
 
                 {/* Banner Content */}
-                <div className="relative z-10 p-6 sm:p-10 lg:p-12 space-y-4 max-w-4xl text-white">
-                  <span className="bg-[#E0F2F1] text-[#004D40] text-xs font-black px-4 py-1.5 rounded-full inline-block tracking-wide shadow-sm">
+                <div className="relative z-10 p-6 sm:p-8 lg:p-10 space-y-3 max-w-xl lg:max-w-2xl text-white">
+                  <span className="bg-[#E0F2F1] text-[#004D40] text-xs font-black px-3.5 py-1 rounded-full inline-block tracking-wide shadow-sm">
                     ● {featuredPost.category}
                   </span>
 
-                  <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight drop-shadow-md">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-black leading-snug tracking-tight drop-shadow-md">
                     <Link
                       href={`/blogs/${featuredPost.slug}`}
                       className="hover:text-teal-200 transition-colors"
@@ -105,21 +105,21 @@ export default function BlogsPage() {
                     </Link>
                   </h1>
 
-                  <p className="text-slate-200 text-sm sm:text-base leading-relaxed line-clamp-2 font-medium max-w-3xl">
+                  <p className="text-slate-200 text-xs sm:text-sm leading-relaxed line-clamp-2 font-medium max-w-lg">
                     {featuredPost.excerpt}
                   </p>
 
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t border-white/15">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-3 border-t border-white/15">
                     {/* Author Info */}
-                    <div className="flex items-center space-x-3 text-xs sm:text-sm font-semibold">
-                      <div className="w-8 h-8 rounded-full bg-[#00796B] text-white font-bold flex items-center justify-center text-sm shadow-md">
+                    <div className="flex items-center space-x-3 text-xs font-semibold">
+                      <div className="w-8 h-8 rounded-full bg-[#00796B] text-white font-bold flex items-center justify-center text-xs shadow-md">
                         {featuredPost.authorAvatar || featuredPost.author?.charAt(0)}
                       </div>
                       <div>
                         <span className="font-bold block text-white">
                           {featuredPost.author}
                         </span>
-                        <span className="text-slate-300 text-xs">
+                        <span className="text-slate-300 text-[11px]">
                           {featuredPost.date} • {featuredPost.readTime}
                         </span>
                       </div>
@@ -128,10 +128,10 @@ export default function BlogsPage() {
                     {/* Action Button */}
                     <Link
                       href={`/blogs/${featuredPost.slug}`}
-                      className="inline-flex items-center space-x-2 bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-md text-white font-bold text-xs sm:text-sm px-6 py-2.5 rounded-full transition-all shadow-md active:scale-95"
+                      className="inline-flex items-center space-x-2 bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-md text-white font-bold text-xs px-5 py-2 rounded-full transition-all shadow-md active:scale-95"
                     >
                       <span>পুরা লেখা পড়ুন</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
                 </div>

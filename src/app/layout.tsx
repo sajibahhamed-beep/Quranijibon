@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="bn" className={hindSiliguri.variable}>
+    <html lang="bn" className={hindSiliguri.variable} suppressHydrationWarning>
       <body className="antialiased bg-[#fafbfc] text-[#0f172a]" suppressHydrationWarning>
         <ErrorGuard />
         {children}
