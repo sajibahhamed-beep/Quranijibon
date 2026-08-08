@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   GraduationCap,
   Plus,
@@ -14,8 +14,16 @@ import {
   CheckCircle2,
   X,
   Edit,
+  Sparkles,
+  AlertCircle,
 } from "lucide-react";
 import { INITIAL_STUDENTS, INITIAL_TEACHERS, StudentRecord } from "@/data/adminStore";
+import {
+  fetchStudentsAction,
+  registerStudentAction,
+  changeStudentStatusAction,
+  saveStudentAction,
+} from "@/data/studentsClient";
 
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState<StudentRecord[]>(INITIAL_STUDENTS);
@@ -36,6 +44,14 @@ export default function AdminStudentsPage() {
   const [teacherPref, setTeacherPref] = useState<StudentRecord["teacherPreference"]>("পুরুষ শিক্ষক");
   const [assignedTeacher, setAssignedTeacher] = useState("উস্তাদ রফিকুল ইসলাম");
 
+  useEffect(() => {
+    fetchStudentsAction().then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setStudents(data);
+      }
+    });
+  }, []);
+
   const openAddModal = () => {
     setName("");
     setPhone("");
@@ -47,51 +63,53 @@ export default function AdminStudentsPage() {
     setIsAddModalOpen(true);
   };
 
-  const handleSaveStudent = (e: React.FormEvent) => {
+  const handleSaveStudent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !phone) return;
 
     if (editingStudent) {
-      setStudents((prev) =>
-        prev.map((s) =>
-          s.id === editingStudent.id
-            ? {
-                ...s,
-                name,
-                phone,
-                email,
-                package: pkg,
-                schedule,
-                teacherPreference: teacherPref,
-                assignedTeacher,
-              }
-            : s
-        )
-      );
-      setEditingStudent(null);
-    } else {
-      const newStudent: StudentRecord = {
-        id: `STU-${100 + students.length + 1}`,
+      const updated: StudentRecord = {
+        ...editingStudent,
         name,
         phone,
-        email: email || `${phone.replace(/\D/g, "")}@example.com`,
+        email,
         package: pkg,
         schedule,
         teacherPreference: teacherPref,
         assignedTeacher,
-        status: "নতুন আবেদন",
-        date: new Date().toISOString().split("T")[0],
       };
-      setStudents([newStudent, ...students]);
+      setStudents((prev) =>
+        prev.map((s) => (s.id === editingStudent.id ? updated : s))
+      );
+      setEditingStudent(null);
+      await saveStudentAction(updated);
+    } else {
+      const newStudent = await registerStudentAction({
+        name,
+        phone,
+        email,
+        package: pkg,
+        schedule,
+        teacherPreference: teacherPref,
+      });
+
+      if (newStudent) {
+        setStudents((prev) => [newStudent, ...prev]);
+      }
       setIsAddModalOpen(false);
     }
   };
 
-  const handleStatusChange = (id: string, newStatus: StudentRecord["status"]) => {
+  const handleStatusChange = async (id: string, newStatus: StudentRecord["status"]) => {
     setStudents((prev) =>
       prev.map((s) => (s.id === id ? { ...s, status: newStatus } : s))
     );
+    await changeStudentStatusAction(id, newStatus);
   };
+
+  const newApplicationsCount = students.filter((s) => s.status === "নতুন আবেদন").length;
+  const activeCount = students.filter((s) => s.status === "সক্রিয়").length;
+  const waitingCount = students.filter((s) => s.status === "অপেক্ষমাণ").length;
 
   const filteredStudents = students.filter((student) => {
     const matchesSearch =
@@ -126,6 +144,34 @@ export default function AdminStudentsPage() {
           <Plus className="w-4 h-4" />
           <span>নতুন শিক্ষার্থী ভর্তি করুন</span>
         </button>
+      </div>
+
+      {/* Summary KPI Badges */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+          <span className="text-slate-400 text-xs font-semibold">মোট শিক্ষার্থী</span>
+          <div className="text-2xl font-black text-white mt-1">{students.length} জন</div>
+        </div>
+
+        <div className="bg-slate-900 border border-rose-500/30 p-4 rounded-2xl bg-rose-500/5">
+          <div className="flex items-center justify-between">
+            <span className="text-rose-400 text-xs font-bold">নতুন আবেদন</span>
+            <span className="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full">
+              নতুন আবেদন
+            </span>
+          </div>
+          <div className="text-2xl font-black text-rose-400 mt-1">{newApplicationsCount} টি</div>
+        </div>
+
+        <div className="bg-slate-900 border border-emerald-500/30 p-4 rounded-2xl bg-emerald-500/5">
+          <span className="text-emerald-400 text-xs font-bold">সক্রিয় শিক্ষার্থী</span>
+          <div className="text-2xl font-black text-emerald-400 mt-1">{activeCount} জন</div>
+        </div>
+
+        <div className="bg-slate-900 border border-amber-500/30 p-4 rounded-2xl bg-amber-500/5">
+          <span className="text-amber-400 text-xs font-bold">অপেক্ষমাণ</span>
+          <div className="text-2xl font-black text-amber-400 mt-1">{waitingCount} জন</div>
+        </div>
       </div>
 
       {/* Filters Bar */}
@@ -194,9 +240,16 @@ export default function AdminStudentsPage() {
                 filteredStudents.map((student) => (
                   <tr key={student.id} className="hover:bg-slate-800/40 transition-colors">
                     <td className="p-4 font-semibold">
-                      <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono block w-max mb-1">
-                        {student.id}
-                      </span>
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono block w-max">
+                          {student.id}
+                        </span>
+                        {student.status === "নতুন আবেদন" && (
+                          <span className="text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/40 px-1.5 py-0.2 rounded font-bold">
+                            নতুন আবেদন
+                          </span>
+                        )}
+                      </div>
                       <div className="text-sm font-black text-white">{student.name}</div>
                       <div className="text-[11px] text-slate-400 font-normal">
                         পছন্দ: {student.teacherPreference}
@@ -279,9 +332,14 @@ export default function AdminStudentsPage() {
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 w-full max-w-xl rounded-3xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h2 className="text-lg font-black text-white">
-                {editingStudent ? "শিক্ষার্থীর তথ্য আপডেট করুন" : "নতুন শিক্ষার্থী এনরোল করুন"}
-              </h2>
+              <div>
+                <span className="bg-[#00A89C]/20 text-[#00A89C] border border-[#00A89C]/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full inline-block mb-1">
+                  নতুন আবেদন
+                </span>
+                <h2 className="text-lg font-black text-white">
+                  {editingStudent ? "শিক্ষার্থীর তথ্য আপডেট করুন" : "নতুন শিক্ষার্থী এনরোল করুন"}
+                </h2>
+              </div>
               <button
                 onClick={() => {
                   setIsAddModalOpen(false);

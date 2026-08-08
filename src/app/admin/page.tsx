@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   GraduationCap,
@@ -19,24 +19,34 @@ import {
 } from "lucide-react";
 import { INITIAL_STUDENTS, StudentRecord } from "@/data/adminStore";
 import { BLOG_POSTS } from "@/data/blogs";
+import { fetchStudentsAction, changeStudentStatusAction } from "@/data/studentsClient";
 
 export default function AdminDashboardPage() {
   const [students, setStudents] = useState<StudentRecord[]>(INITIAL_STUDENTS);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("সব");
 
+  useEffect(() => {
+    fetchStudentsAction().then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setStudents(data);
+      }
+    });
+  }, []);
+
   // Metrics
-  const totalStudentsCount = 428;
+  const totalStudentsCount = 428 + (students.length > INITIAL_STUDENTS.length ? students.length - INITIAL_STUDENTS.length : 0);
   const activeTeachersCount = 18;
   const monthlyRevenue = "৳১,৩৫,০০০";
   const pendingApplicationsCount = students.filter(
     (s) => s.status === "নতুন আবেদন" || s.status === "অপেক্ষমাণ"
   ).length;
 
-  const handleStatusChange = (id: string, newStatus: StudentRecord["status"]) => {
+  const handleStatusChange = async (id: string, newStatus: StudentRecord["status"]) => {
     setStudents((prev) =>
       prev.map((s) => (s.id === id ? { ...s, status: newStatus } : s))
     );
+    await changeStudentStatusAction(id, newStatus);
   };
 
   const filteredStudents = students.filter((student) => {
