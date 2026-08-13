@@ -27,11 +27,40 @@ export async function generateMetadata({
   const post = await getBlogPostByIdOrSlug(resolvedParams.slug);
   if (!post) return { title: "ব্লগ পাওয়া যায়নি | কুরআন জীবন" };
 
+  const title = `${post.title} | কুরআন জীবন`;
+  const description = post.excerpt;
+  const articleImage = post.img || "/assets/why-learn-video-preview.webp";
+
   return {
-    title: `${post.title} | কুরআন জীবন`,
-    description: post.excerpt,
+    title,
+    description,
+    alternates: {
+      canonical: `/blogs/${post.slug}`,
+    },
+    openGraph: {
+      type: "article",
+      url: `https://quranijibon.com/blogs/${post.slug}`,
+      title,
+      description,
+      siteName: "কুরআন জীবন",
+      locale: "bn_BD",
+      images: [
+        {
+          url: articleImage,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [articleImage],
+    },
   };
 }
+
+import StructuredData from "@/components/seo/StructuredData";
 
 export default async function BlogDetailPage({
   params,
@@ -50,15 +79,69 @@ export default async function BlogDetailPage({
     .filter((b) => b.slug !== post.slug)
     .slice(0, 2);
 
+  const blogPostingSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": post.excerpt,
+    "image": post.img
+      ? (post.img.startsWith("http") ? post.img : `https://quranijibon.com${post.img}`)
+      : "https://quranijibon.com/assets/why-learn-video-preview.webp",
+    "url": `https://quranijibon.com/blogs/${post.slug}`,
+    "datePublished": post.date,
+    "author": {
+      "@type": "Person",
+      "name": post.author || "কুরআন জীবন টিম",
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "কুরআন জীবন",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://quranijibon.com/assets/website%20logo.png",
+      },
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://quranijibon.com/blogs/${post.slug}`,
+    },
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "হোম",
+        "item": "https://quranijibon.com",
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "ব্লগ",
+        "item": "https://quranijibon.com/blogs",
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": post.title,
+        "item": `https://quranijibon.com/blogs/${post.slug}`,
+      },
+    ],
+  };
+
   return (
     <main className="min-h-screen bg-[#FAFBFC] text-[#0F172A] relative font-sans">
+      <StructuredData data={[blogPostingSchema, breadcrumbSchema]} />
       <FloatingContact />
       <Navbar />
 
       {/* Top Hero Banner Section */}
       <section className="relative w-full min-h-[380px] sm:min-h-[420px] bg-black/90 text-white flex items-end overflow-hidden py-12 border-b border-slate-200">
         <Image
-          src={post.img || "/assets/why_learn_video_37_1931.png"}
+          src={post.img || "/assets/why-learn-video-preview.webp"}
           alt={post.title}
           fill
           className="object-cover opacity-35"
@@ -275,7 +358,7 @@ export default async function BlogDetailPage({
                       >
                         <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-100">
                           <Image
-                            src={rel.img || "/assets/why_learn_video_37_1931.png"}
+                            src={rel.img || "/assets/why-learn-video-preview.webp"}
                             alt={rel.title}
                             fill
                             className="object-cover group-hover:scale-105 transition-transform duration-500"

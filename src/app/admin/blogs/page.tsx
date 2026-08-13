@@ -22,7 +22,7 @@ import {
 import { BlogPost } from "@/data/blogs";
 
 const PRESET_IMAGES = [
-  { label: "তাজবীদ / ক্লাস", url: "/assets/why_learn_video_37_1931.png" },
+  { label: "তাজবীদ / ক্লাস", url: "/assets/why-learn-video-preview.webp" },
   { label: "হিফজ / বই", url: "/assets/figma_img_37_1993.png" },
   { label: "মাখরাজ / নিয়ম", url: "/assets/figma_img_37_1997.png" },
   { label: "জীবনধারা / রু ক্বিয়াহ", url: "/assets/figma_img_37_2001.png" },
@@ -49,7 +49,7 @@ export default function AdminBlogsPage() {
   const [formAuthor, setFormAuthor] = useState("উস্তাদ রফিকুল ইসলাম");
   const [formAuthorRole, setFormAuthorRole] = useState("তাজবীদ ও কুরআন বিজ্ঞান শিক্ষক");
   const [formReadTime, setFormReadTime] = useState("৬ মিনিট পড়া");
-  const [formImg, setFormImg] = useState("/assets/why_learn_video_37_1931.png");
+  const [formImg, setFormImg] = useState("/assets/why-learn-video-preview.webp");
   const [formFeatured, setFormFeatured] = useState(false);
   const [formExcerpt, setFormExcerpt] = useState("");
   const [formContentIntro, setFormContentIntro] = useState("");
@@ -100,7 +100,7 @@ export default function AdminBlogsPage() {
     setFormAuthor("উস্তাদ রফিকুল ইসলাম");
     setFormAuthorRole("তাজবীদ ও কুরআন বিজ্ঞান শিক্ষক");
     setFormReadTime("৬ মিনিট পড়া");
-    setFormImg("/assets/why_learn_video_37_1931.png");
+    setFormImg("/assets/why-learn-video-preview.webp");
     setFormFeatured(false);
     setFormExcerpt("");
     setFormContentIntro("");
@@ -122,7 +122,7 @@ export default function AdminBlogsPage() {
     setFormAuthor(post.author);
     setFormAuthorRole(post.authorRole || "ইসলামি গবেষক");
     setFormReadTime(post.readTime);
-    setFormImg(post.img || "/assets/why_learn_video_37_1931.png");
+    setFormImg(post.img || "/assets/why-learn-video-preview.webp");
     setFormFeatured(!!post.featured);
     setFormExcerpt(post.excerpt);
     setFormContentIntro(post.content.intro);
@@ -551,7 +551,7 @@ export default function AdminBlogsPage() {
                     type="text"
                     value={formImg}
                     onChange={(e) => setFormImg(e.target.value)}
-                    placeholder="/assets/why_learn_video_37_1931.png"
+                    placeholder="/assets/why-learn-video-preview.webp"
                     className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-[#00A89C]"
                   />
                 </div>

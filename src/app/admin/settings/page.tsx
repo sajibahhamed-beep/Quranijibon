@@ -253,7 +253,7 @@ export default function AdminSettingsPage() {
           <div className="flex items-center rounded-tl-full rounded-bl-full space-x-3 px-5 py-2.5 bg-[#00A89C] text-white font-extrabold text-xs shadow-lg">
             <div className="relative flex items-center justify-center">
               <Image
-                src="/assets/Whatsapp logo.png"
+                src="/assets/whatsapp-logo.png"
                 alt="WhatsApp Logo"
                 width={20}
                 height={20}

@@ -5,13 +5,60 @@ import { CheckCircle } from "lucide-react";
 import Image from "next/image";
 
 export const metadata = {
-  title: "আমাদের সম্পর্কে | কুরআন জীবন",
-  description: "কুরআন জীবন - আন্তর্জাতিক অনলাইন কুরআন শিক্ষা প্রতিষ্ঠান। আমাদের লক্ষ্য ও উদ্দেশ্য সম্পর্কে বিস্তারিত জানুন।",
+  title: "কুরআন জীবন সম্পর্কে | অনলাইন কুরআন শিক্ষা",
+  description:
+    "কুরআন জীবনের লক্ষ্য ও উদ্দেশ্য সম্পর্কে জানুন। বিশ্বজুড়ে প্রতিটি ঘরে নিবিড় One-to-One ক্লাসের মাধ্যমে সহীহ-শুদ্ধ কুরআন তিলাওয়াত পৌঁছে দিতে আমরা নিবেদিত।",
+  openGraph: {
+    type: "website",
+    url: "https://quranijibon.com/about",
+    title: "কুরআন জীবন সম্পর্কে | অনলাইন কুরআন শিক্ষা",
+    description:
+      "কুরআন জীবনের লক্ষ্য ও উদ্দেশ্য সম্পর্কে জানুন। বিশ্বজুড়ে প্রতিটি ঘরে নিবিড় One-to-One ক্লাসের মাধ্যমে সহীহ-শুদ্ধ কুরআন তিলাওয়াত পৌঁছে দিতে আমরা নিবেদিত।",
+    siteName: "কুরআন জীবন",
+    locale: "bn_BD",
+    images: [
+      {
+        url: "/assets/why-learn-video-preview.webp",
+        width: 1200,
+        height: 525,
+        alt: "কুরআন জীবন সম্পর্কে",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "কুরআন জীবন সম্পর্কে | অনলাইন কুরআন শিক্ষা",
+    description:
+      "কুরআন জীবনের লক্ষ্য ও উদ্দেশ্য সম্পর্কে জানুন। বিশ্বজুড়ে প্রতিটি ঘরে নিবিড় One-to-One ক্লাসের মাধ্যমে সহীহ-শুদ্ধ কুরআন তিলাওয়াত পৌঁছে দিতে আমরা নিবেদিত।",
+    images: ["/assets/why-learn-video-preview.webp"],
+  },
 };
 
+import StructuredData from "@/components/seo/StructuredData";
+
 export default function AboutPage() {
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "হোম",
+        "item": "https://quranijibon.com",
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "আমাদের সম্পর্কে",
+        "item": "https://quranijibon.com/about",
+      },
+    ],
+  };
+
   return (
     <main className="min-h-screen bg-[#FAFBFC] text-[#0F172A] relative">
+      <StructuredData data={breadcrumbSchema} />
       <FloatingContact />
       <Navbar />
 
@@ -34,10 +81,13 @@ export default function AboutPage() {
 
         {/* Right Mosque Vector Image Aligned to Bottom Right */}
         <div className="absolute right-0 bottom-0 pointer-events-none h-44 sm:h-56 lg:h-64 hidden md:block">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/assets/mosque_silhouette.png"
-            alt="Mosque Silhouette Vector"
+          <Image
+            src="/assets/mosque-silhouette.png"
+            alt=""
+            aria-hidden="true"
+            width={300}
+            height={200}
+            loading="lazy"
             className="h-full w-auto object-contain object-bottom-right opacity-90"
           />
         </div>

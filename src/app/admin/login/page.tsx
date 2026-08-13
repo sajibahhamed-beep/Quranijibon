@@ -55,7 +55,7 @@ export default function AdminLoginPage() {
           <Link href="/" className="inline-block hover:opacity-90 transition-opacity">
             <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 inline-flex items-center justify-center">
               <Image
-                src="/assets/website logo.png"
+                src="/assets/website-logo.png"
                 alt="Quranijibon Logo"
                 width={200}
                 height={50}
