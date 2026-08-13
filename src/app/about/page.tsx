@@ -1,7 +1,8 @@
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, ArrowRight } from "lucide-react";
 import Image from "next/image";
 
 export const metadata = {
@@ -35,6 +36,7 @@ export const metadata = {
 };
 
 import StructuredData from "@/components/seo/StructuredData";
+import MentorSection from "@/components/MentorSection";
 
 export default function AboutPage() {
   const breadcrumbSchema = {
@@ -121,6 +123,16 @@ export default function AboutPage() {
                   <span>২৪ ঘণ্টার সুবিধাজনক সময়ে কাস্টম ক্লাস স্লট</span>
                 </div>
               </div>
+
+              <div className="pt-4">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center space-x-2 bg-[#00A89C] hover:bg-[#00897B] text-white px-6 py-3.5 rounded-2xl font-bold text-sm transition-all shadow-lg shadow-[#00A89C]/20 active:scale-95 cursor-pointer"
+                >
+                  <span>যোগাযোগ করুন</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
             </div>
 
             <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
@@ -134,6 +146,8 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      <MentorSection />
 
       <Footer />
     </main>

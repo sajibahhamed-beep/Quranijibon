@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @layer base {
@@ -5,6 +6,26 @@
     scroll-behavior: smooth;
     font-family: var(--font-hind), "Noto Sans Bengali", sans-serif;
   }
+
+  h1, h2, h3, h4, h5, h6,
+  .font-hind,
+  .font-siliguri,
+  .heading,
+  .title,
+  .card-title,
+  .card-heading,
+  .section-title,
+  .section-heading {
+    font-family: 'Hind Siliguri', var(--font-hind), "Noto Sans Bengali", sans-serif;
+  }
+}
+
+@utility font-hind {
+  font-family: 'Hind Siliguri', var(--font-hind), "Noto Sans Bengali", sans-serif;
+}
+
+@utility font-siliguri {
+  font-family: 'Hind Siliguri', var(--font-hind), "Noto Sans Bengali", sans-serif;
 }
 
 body {

@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { getStudents, addStudent } from "@/data/studentsStorage";
 import { recordUserInteraction } from "@/data/notifyClient";
+import { sendStudentApplicationEmail } from "@/lib/sendEmail";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
   try {
@@ -45,6 +49,17 @@ export async function POST(request: Request) {
     } catch (e) {
       console.error("Error creating notification for student registration", e);
     }
+
+    // Send email notification to admins (non-blocking)
+    sendStudentApplicationEmail({
+      name: newStudent.name,
+      phone: newStudent.phone,
+      email: newStudent.email,
+      package: newStudent.package,
+      schedule: newStudent.schedule,
+      teacherPreference: newStudent.teacherPreference,
+      notes: newStudent.notes,
+    }).catch((err) => console.error("Student email error:", err));
 
     return NextResponse.json(
       { success: true, message: "Student registered successfully", student: newStudent },

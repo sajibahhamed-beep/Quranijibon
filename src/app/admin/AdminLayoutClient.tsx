@@ -20,6 +20,7 @@ import {
   HelpCircle,
   Settings,
   PhoneCall,
+  RotateCw,
 } from "lucide-react";
 
 export default function AdminLayoutClient({
@@ -31,9 +32,31 @@ export default function AdminLayoutClient({
   const router = useRouter();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchUnreadCount();
+    router.refresh();
+    setTimeout(() => setIsRefreshing(false), 800);
+  };
 
   // Exclude login page from layout wrapping logic
   const isLoginPage = pathname === "/admin/login";
+
+  const fetchUnreadCount = async () => {
+    try {
+      const res = await fetch("/api/notifications");
+      const data = await res.json();
+      if (data.success && Array.isArray(data.notifications)) {
+        const count = data.notifications.filter((n: any) => !n.read).length;
+        setUnreadCount(count);
+      }
+    } catch (e) {
+      console.error("Failed to fetch unread notifications count:", e);
+    }
+  };
 
   useEffect(() => {
     if (isLoginPage) {
@@ -45,6 +68,10 @@ export default function AdminLayoutClient({
       localStorage.setItem("quranijibon_admin_session", "authenticated");
     }
     setIsAuthenticated(true);
+
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 10000);
+    return () => clearInterval(interval);
   }, [pathname, isLoginPage, router]);
 
   if (isLoginPage) {
@@ -131,13 +158,26 @@ export default function AdminLayoutClient({
         </Link>
 
         <div className="flex items-center space-x-2">
+          <button
+            type="button"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="p-2 text-slate-400 hover:text-white rounded-lg bg-slate-800 flex items-center justify-center cursor-pointer"
+            title="ডাটা রিফ্রেশ করুন"
+          >
+            <RotateCw className={`w-4 h-4 text-[#00A89C] ${isRefreshing ? "animate-spin" : ""}`} />
+          </button>
           <Link
             href="/admin/notifications"
-            className="p-2 text-slate-400 hover:text-white rounded-lg bg-slate-800 relative"
+            className="p-2 text-slate-400 hover:text-white rounded-lg bg-slate-800 relative flex items-center justify-center"
             title="নোটিফিকেশন"
           >
             <Bell className="w-4 h-4" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-[#00A89C] rounded-full ring-2 ring-slate-900 animate-pulse" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-rose-500 text-white font-extrabold text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center border border-slate-900 animate-pulse">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
           </Link>
           <button
             onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
@@ -247,10 +287,21 @@ export default function AdminLayoutClient({
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
+            <button
+              type="button"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="px-3.5 py-2 rounded-xl text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 transition-all flex items-center space-x-2 text-xs font-bold active:scale-95 cursor-pointer shadow-xs"
+              title="ডাটা রিফ্রেশ করুন (Refresh Admin Data)"
+            >
+              <RotateCw className={`w-4 h-4 text-[#00A89C] ${isRefreshing ? "animate-spin" : ""}`} />
+              <span>রিফ্রেশ</span>
+            </button>
+
             <Link
               href="/admin/notifications"
-              className={`p-2.5 rounded-xl transition-all relative ${
+              className={`p-2.5 rounded-xl transition-all relative flex items-center justify-center ${
                 pathname === "/admin/notifications"
                   ? "bg-[#00A89C] text-white shadow-md shadow-[#00A89C]/30"
                   : "text-slate-400 hover:text-white bg-slate-800/60 hover:bg-slate-800"
@@ -258,7 +309,11 @@ export default function AdminLayoutClient({
               title="নোটিফিকেশন সেন্টার"
             >
               <Bell className="w-4 h-4" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#00A89C] rounded-full ring-2 ring-slate-900 animate-pulse" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-rose-500 text-white font-extrabold text-[10px] min-w-5 h-5 px-1 rounded-full flex items-center justify-center border-2 border-slate-900 animate-pulse">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
             </Link>
 
             <div className="h-6 w-px bg-slate-800" />

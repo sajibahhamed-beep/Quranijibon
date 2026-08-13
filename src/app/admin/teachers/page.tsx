@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Users,
   Plus,
@@ -31,6 +31,22 @@ export default function AdminTeachersPage() {
   const [email, setEmail] = useState("");
   const [specialization, setSpecialization] = useState("তাজবীদ ও কিরাত স্পেশালিস্ট");
 
+  const fetchTeachers = async () => {
+    try {
+      const res = await fetch("/api/teachers");
+      const data = await res.json();
+      if (data.success && Array.isArray(data.teachers)) {
+        setTeachers(data.teachers);
+      }
+    } catch (err) {
+      console.error("Failed to load teachers:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTeachers();
+  }, []);
+
   const openAddModal = () => {
     setName("");
     setGender("পুরুষ");
@@ -40,34 +56,50 @@ export default function AdminTeachersPage() {
     setIsAddModalOpen(true);
   };
 
-  const handleSaveTeacher = (e: React.FormEvent) => {
+  const handleSaveTeacher = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !phone) return;
 
     if (editingTeacher) {
+      const updated = { ...editingTeacher, name, gender, phone, email, specialization };
       setTeachers((prev) =>
-        prev.map((t) =>
-          t.id === editingTeacher.id
-            ? { ...t, name, gender, phone, email, specialization }
-            : t
-        )
+        prev.map((t) => (t.id === editingTeacher.id ? updated : t))
       );
       setEditingTeacher(null);
+      await fetch(`/api/teachers/${editingTeacher.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ teacher: updated }),
+      });
     } else {
-      const newTeacher: TeacherRecord = {
-        id: `TCH-0${teachers.length + 1}`,
-        name,
-        gender,
-        phone,
-        email: email || `${phone.replace(/\D/g, "")}@quranijibon.com`,
-        specialization,
-        activeStudents: 0,
-        status: "সক্রিয়",
-        joinedDate: new Date().toISOString().split("T")[0],
-      };
-      setTeachers([...teachers, newTeacher]);
+      const res = await fetch("/api/teachers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          gender,
+          phone,
+          email,
+          qualification: specialization,
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.teacher) {
+        setTeachers((prev) => [data.teacher, ...prev]);
+      }
       setIsAddModalOpen(false);
     }
+  };
+
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    setTeachers((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, status: newStatus as any } : t))
+    );
+    await fetch(`/api/teachers/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+    });
   };
 
   const filteredTeachers = teachers.filter((t) => {
@@ -150,9 +182,22 @@ export default function AdminTeachersPage() {
                     <span className="bg-slate-800 text-slate-300 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-700">
                       {teacher.gender} শাখা
                     </span>
-                    <span className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
-                      ● {teacher.status}
-                    </span>
+                    <select
+                      value={teacher.status}
+                      onChange={(e) => handleStatusChange(teacher.id, e.target.value)}
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded border outline-none cursor-pointer ${
+                        teacher.status === "সক্রিয়"
+                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                          : teacher.status === "নতুন আবেদন"
+                          ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                          : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                      }`}
+                    >
+                      <option value="নতুন আবেদন">নতুন আবেদন</option>
+                      <option value="সক্রিয়">সক্রিয়</option>
+                      <option value="অপেক্ষমাণ">অপেক্ষমাণ</option>
+                      <option value="ছুটিতে">ছুটিতে</option>
+                    </select>
                   </div>
                 </div>
               </div>

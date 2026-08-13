@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import {
   SiteSettings,
   SocialLinkItem,
-  FooterLinkItem,
 } from "@/data/siteSettingsStorage";
 import { fetchSiteSettings, updateAllSiteSettings } from "./actions";
 import {
@@ -12,12 +11,9 @@ import {
   Save,
   Plus,
   Trash2,
-  ExternalLink,
   MessageCircle,
   Mail,
-  MapPin,
   Share2,
-  Link as LinkIcon,
   CheckCircle2,
   Eye,
   ToggleLeft,
@@ -35,14 +31,6 @@ export default function AdminSettingsPage() {
   const [newSocialPlatform, setNewSocialPlatform] = useState("facebook");
   const [newSocialLabel, setNewSocialLabel] = useState("Facebook");
   const [newSocialUrl, setNewSocialUrl] = useState("https://facebook.com");
-
-  // New Footer Menu Link Input
-  const [newMenuLabel, setNewMenuLabel] = useState("");
-  const [newMenuUrl, setNewMenuUrl] = useState("");
-
-  // New Footer Policy Link Input
-  const [newPolicyLabel, setNewPolicyLabel] = useState("");
-  const [newPolicyUrl, setNewPolicyUrl] = useState("");
 
   useEffect(() => {
     loadSettings();
@@ -111,54 +99,6 @@ export default function AdminSettingsPage() {
     });
   };
 
-  // Footer Menu Link Handlers
-  const handleAddMenuLink = () => {
-    if (!settings || !newMenuLabel || !newMenuUrl) return;
-    const newLink: FooterLinkItem = {
-      id: Date.now().toString(),
-      label: newMenuLabel,
-      url: newMenuUrl,
-    };
-    setSettings({
-      ...settings,
-      footerMenuLinks: [...settings.footerMenuLinks, newLink],
-    });
-    setNewMenuLabel("");
-    setNewMenuUrl("");
-  };
-
-  const handleDeleteMenuLink = (id: string) => {
-    if (!settings) return;
-    setSettings({
-      ...settings,
-      footerMenuLinks: settings.footerMenuLinks.filter((item) => item.id !== id),
-    });
-  };
-
-  // Footer Policy Link Handlers
-  const handleAddPolicyLink = () => {
-    if (!settings || !newPolicyLabel || !newPolicyUrl) return;
-    const newLink: FooterLinkItem = {
-      id: Date.now().toString(),
-      label: newPolicyLabel,
-      url: newPolicyUrl,
-    };
-    setSettings({
-      ...settings,
-      footerPolicyLinks: [...settings.footerPolicyLinks, newLink],
-    });
-    setNewPolicyLabel("");
-    setNewPolicyUrl("");
-  };
-
-  const handleDeletePolicyLink = (id: string) => {
-    if (!settings) return;
-    setSettings({
-      ...settings,
-      footerPolicyLinks: settings.footerPolicyLinks.filter((item) => item.id !== id),
-    });
-  };
-
   if (loading || !settings) {
     return (
       <div className="text-center py-20 text-slate-400 font-semibold text-sm">
@@ -177,7 +117,7 @@ export default function AdminSettingsPage() {
             <span>ফুটার ও যোগাযোগ সেটিংস</span>
           </h1>
           <p className="text-slate-400 text-xs sm:text-sm mt-1">
-            ফ্লোটিং হোয়াটসঅ্যাপ হেল্পলাইন, যোগাযোগ নম্বর, সোশ্যাল মিডিয়া লিঙ্ক ও ফুটার লিংকসমূহ যেকোনো সময় পরিবর্তন বা মুছে ফেলুন।
+            ফ্লোটিং হোয়াটসঅ্যাপ হেল্পলাইন, যোগাযোগ নম্বর ও সোশ্যাল মিডিয়া লিঙ্কসমূহ যেকোনো সময় পরিবর্তন করুন।
           </p>
         </div>
 
@@ -468,121 +408,6 @@ export default function AdminSettingsPage() {
                 <span>যোগ করুন</span>
               </button>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 4. Footer Quick Menu & Policy Links Manager */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Column 1: প্রধান মেনু লিঙ্কসমূহ */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
-          <div className="flex items-center space-x-2.5 border-b border-slate-800 pb-3">
-            <LinkIcon className="w-5 h-5 text-teal-400" />
-            <h3 className="text-base font-bold text-white">ফুটার প্রধান মেনু লিঙ্ক</h3>
-          </div>
-
-          <div className="space-y-2">
-            {settings.footerMenuLinks.map((link) => (
-              <div
-                key={link.id}
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs"
-              >
-                <div className="flex-1">
-                  <p className="font-bold text-white">{link.label}</p>
-                  <p className="text-slate-400 font-mono text-[11px]">{link.url}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleDeleteMenuLink(link.id)}
-                  className="p-1.5 text-slate-400 hover:text-rose-400 transition-colors"
-                  title="মুছে ফেলুন"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {/* Add Menu Link */}
-          <div className="pt-3 border-t border-slate-800 space-y-2">
-            <input
-              type="text"
-              value={newMenuLabel}
-              onChange={(e) => setNewMenuLabel(e.target.value)}
-              placeholder="লিঙ্ক শিরোনাম (উদা: আমাদের টিম)"
-              className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#00A89C]"
-            />
-            <input
-              type="text"
-              value={newMenuUrl}
-              onChange={(e) => setNewMenuUrl(e.target.value)}
-              placeholder="URL (উদা: /about)"
-              className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#00A89C]"
-            />
-            <button
-              type="button"
-              onClick={handleAddMenuLink}
-              className="w-full py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold flex items-center justify-center space-x-1"
-            >
-              <Plus className="w-4 h-4" />
-              <span>মেনু লিঙ্ক যোগ করুন</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Column 2: অন্যান্য পলিসি ও আইনি লিঙ্কসমূহ */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
-          <div className="flex items-center space-x-2.5 border-b border-slate-800 pb-3">
-            <LinkIcon className="w-5 h-5 text-amber-400" />
-            <h3 className="text-base font-bold text-white">ফুটার পলিসি ও আইনি লিঙ্ক</h3>
-          </div>
-
-          <div className="space-y-2">
-            {settings.footerPolicyLinks.map((link) => (
-              <div
-                key={link.id}
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs"
-              >
-                <div className="flex-1">
-                  <p className="font-bold text-white">{link.label}</p>
-                  <p className="text-slate-400 font-mono text-[11px]">{link.url}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleDeletePolicyLink(link.id)}
-                  className="p-1.5 text-slate-400 hover:text-rose-400 transition-colors"
-                  title="মুছে ফেলুন"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {/* Add Policy Link */}
-          <div className="pt-3 border-t border-slate-800 space-y-2">
-            <input
-              type="text"
-              value={newPolicyLabel}
-              onChange={(e) => setNewPolicyLabel(e.target.value)}
-              placeholder="পলিসি শিরোনাম (উদা: ডিসক্লেইমার)"
-              className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#00A89C]"
-            />
-            <input
-              type="text"
-              value={newPolicyUrl}
-              onChange={(e) => setNewPolicyUrl(e.target.value)}
-              placeholder="URL (উদা: /disclaimer)"
-              className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#00A89C]"
-            />
-            <button
-              type="button"
-              onClick={handleAddPolicyLink}
-              className="w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold flex items-center justify-center space-x-1"
-            >
-              <Plus className="w-4 h-4" />
-              <span>পলিসি লিঙ্ক যোগ করুন</span>
-            </button>
           </div>
         </div>
       </div>

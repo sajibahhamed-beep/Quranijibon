@@ -6,6 +6,7 @@ import AppFeaturesSection from "@/components/AppFeaturesSection";
 import PricingSection from "@/components/PricingSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import SponsorStudentSection from "@/components/SponsorStudentSection";
+import MentorSection from "@/components/MentorSection";
 import RecentBlogSection from "@/components/RecentBlogSection";
 import FaqSection from "@/components/FaqSection";
 import FloatingContact from "@/components/FloatingContact";
@@ -96,6 +97,7 @@ export default async function Home() {
       <TestimonialsSection />
       <SponsorStudentSection />
       <RecentBlogSection posts={blogsData.posts} />
+      <MentorSection />
       <FaqSection initialFaqs={faqDisplayList} />
       <Footer />
     </main>
