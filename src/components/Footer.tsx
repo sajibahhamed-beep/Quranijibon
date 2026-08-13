@@ -15,9 +15,11 @@ import {
   Linkedin,
   MessageCircle,
   Share2,
+  UserCheck,
 } from "lucide-react";
 import { recordUserInteraction } from "@/data/notifyClient";
 import { getSiteSettings } from "@/data/siteSettingsStorage";
+import TeacherApplyModal from "./TeacherApplyModal";
 
 const SOCIAL_ICONS: Record<string, any> = {
   facebook: Facebook,
@@ -31,6 +33,7 @@ const SOCIAL_ICONS: Record<string, any> = {
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [isTeacherModalOpen, setIsTeacherModalOpen] = useState(false);
 
   const settings = getSiteSettings();
 
@@ -119,6 +122,16 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setIsTeacherModalOpen(true)}
+                  className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors text-left cursor-pointer text-sm font-medium"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-teal-300 flex-shrink-0" />
+                  <span>শিক্ষক হিসেবে যুক্ত হন</span>
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -204,6 +217,8 @@ export default function Footer() {
       <div className="pt-8 text-center text-xs text-teal-200/80 font-medium">
         <p>{settings.copyrightText || "Copyright © JibonQuran 2026. All Right Reserved."}</p>
       </div>
+      {/* Teacher Application Modal */}
+      <TeacherApplyModal isOpen={isTeacherModalOpen} onClose={() => setIsTeacherModalOpen(false)} />
     </footer>
   );
 }

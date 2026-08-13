@@ -34,10 +34,11 @@ export async function getStudents(): Promise<StudentRecord[]> {
 
   try {
     const fileContent = await fs.readFile(DATA_FILE_PATH, "utf-8");
+    if (!fileContent || !fileContent.trim()) return INITIAL_STUDENTS;
     const data = JSON.parse(fileContent) as StudentRecord[];
     return Array.isArray(data) ? data : INITIAL_STUDENTS;
   } catch (error) {
-    console.error("Error reading students.json, fallback to initial", error);
+    console.warn("Error reading students.json, fallback to INITIAL_STUDENTS:", error);
     return INITIAL_STUDENTS;
   }
 }

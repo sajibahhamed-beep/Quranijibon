@@ -39,10 +39,11 @@ export async function getNotifications(): Promise<AdminNotification[]> {
 
   try {
     const fileContent = await fs.readFile(DATA_FILE_PATH, "utf-8");
+    if (!fileContent || !fileContent.trim()) return [];
     const data = JSON.parse(fileContent) as AdminNotification[];
     return Array.isArray(data) ? data : [];
   } catch (error) {
-    console.error("Error reading notifications.json", error);
+    console.warn("Error reading notifications.json:", error);
     return [];
   }
 }

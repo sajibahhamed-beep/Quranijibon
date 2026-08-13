@@ -20,7 +20,7 @@ export interface TeacherRecord {
   email: string;
   specialization: string;
   activeStudents: number;
-  status: "সক্রিয়" | "ছুটিতে";
+  status: "নতুন আবেদন" | "সক্রিয়" | "অপেক্ষমাণ" | "ছুটিতে";
   joinedDate: string;
 }
 

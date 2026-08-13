@@ -1,5 +1,59 @@
 [
   {
+    "id": "notif-1786617509595",
+    "title": "নতুন সাদাকা ও হাদিয়া: ৳56453345",
+    "message": "drghsh (fgsfdgsfdg) ইসলামী ব্যাংক (Bank Transfer) এর মাধ্যমে ৳56453345 টাকা অনুদান প্রদান করেছেন। ট্রানজেকশন আইডি: adfdad",
+    "category": "donation",
+    "link": "/admin/donations",
+    "timestamp": "এইমাত্র",
+    "read": true
+  },
+  {
+    "id": "notif-1786617448853",
+    "title": "নতুন শিক্ষক আবেদন: adfdfdf",
+    "message": "adfdfdf (পুরুষ, ফোন: 452145631) শিক্ষক হিসেবে যুক্ত হতে আবেদন করেছেন। যোগ্যতা: adfd",
+    "category": "teacher",
+    "link": "/admin/teachers",
+    "timestamp": "এইমাত্র",
+    "read": true
+  },
+  {
+    "id": "notif-1786616819915",
+    "title": "ভিজিটর 'শেখা শুরু করুন' বাটনে ক্লিক করেছেন",
+    "message": "হোমপেজের হিরো ব্যানার থেকে ভিজিটর কুরআন শেখা শুরু করার আগ্রহ প্রকাশ করেছেন।",
+    "category": "admission",
+    "link": "/#pricing",
+    "timestamp": "এইমাত্র",
+    "read": true
+  },
+  {
+    "id": "notif-1786616723521",
+    "title": "ভিজিটর 'শেখা শুরু করুন' বাটনে ক্লিক করেছেন",
+    "message": "হোমপেজের হিরো ব্যানার থেকে ভিজিটর কুরআন শেখা শুরু করার আগ্রহ প্রকাশ করেছেন।",
+    "category": "admission",
+    "link": "/#pricing",
+    "timestamp": "এইমাত্র",
+    "read": true
+  },
+  {
+    "id": "notif-1786616687942",
+    "title": "নতুন শিক্ষক / মেন্টর আবেদন",
+    "message": "aSDAFD (মহিলা, ফোন: ASDFDF) শিক্ষক হিসেবে আবেদন করেছেন। যোগ্যতা: ADFDF, কাজ: স্বল্প সম্মানী, অভিজ্ঞতা: ১-২ বছর।",
+    "category": "teacher",
+    "link": "/admin/teachers",
+    "timestamp": "এইমাত্র",
+    "read": true
+  },
+  {
+    "id": "notif-1786615369229",
+    "title": "ভিজিটর 'শেখা শুরু করুন' বাটনে ক্লিক করেছেন",
+    "message": "হোমপেজের হিরো ব্যানার থেকে ভিজিটর কুরআন শেখা শুরু করার আগ্রহ প্রকাশ করেছেন।",
+    "category": "admission",
+    "link": "/#pricing",
+    "timestamp": "এইমাত্র",
+    "read": true
+  },
+  {
     "id": "notif-1786162507168",
     "title": "ভিজিটর 'শেখা শুরু করুন' বাটনে ক্লিক করেছেন",
     "message": "হোমপেজের হিরো ব্যানার থেকে ভিজিটর কুরআন শেখা শুরু করার আগ্রহ প্রকাশ করেছেন।",
@@ -15,7 +69,7 @@
     "category": "admission",
     "link": "/#pricing",
     "timestamp": "এইমাত্র",
-    "read": false
+    "read": true
   },
   {
     "id": "notif-1",
@@ -23,7 +77,7 @@
     "message": "আরিফুল ইসলাম 'বিনামূল্যে' প্যাকেজের অধীনে তাজবীদ ক্লাসের জন্য নতুন আবেদন জমা দিয়েছেন।",
     "category": "admission",
     "timestamp": "১০ মিনিট আগে",
-    "read": false,
+    "read": true,
     "link": "/admin/students"
   },
   {
@@ -32,7 +86,7 @@
     "message": "আলহাজ্ব শফিকুল ইসলাম bKash এর মাধ্যমে ৳৫,০০০ টাকা শিক্ষার্থী স্পন্সর অনুদান প্রদান করেছেন।",
     "category": "donation",
     "timestamp": "১ ঘণ্টা আগে",
-    "read": false,
+    "read": true,
     "link": "/admin/donations"
   },
   {
@@ -41,7 +95,7 @@
     "message": "নুসরাত জাহান শিক্ষিকার অধীনে নতুন ৪ জন নারী শিক্ষার্থী সক্রিয় ব্যাচে অন্তর্ভুক্ত করা হয়েছে।",
     "category": "teacher",
     "timestamp": "৩ ঘণ্টা আগে",
-    "read": false,
+    "read": true,
     "link": "/admin/teachers"
   },
   {
