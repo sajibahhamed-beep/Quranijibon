@@ -37,12 +37,19 @@ const DEFAULT_FAQS = [
   },
 ];
 
-export default function FaqSection() {
-  const [faqs, setFaqs] = useState<{ question: string; answer: string }[]>(DEFAULT_FAQS);
+export default function FaqSection({
+  initialFaqs,
+}: {
+  initialFaqs?: { question: string; answer: string }[];
+}) {
+  const [faqs, setFaqs] = useState<{ question: string; answer: string }[]>(
+    initialFaqs && initialFaqs.length > 0 ? initialFaqs : DEFAULT_FAQS
+  );
   const [openIdx, setOpenIdx] = useState<number | null>(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialFaqs || initialFaqs.length === 0);
 
   useEffect(() => {
+    if (initialFaqs && initialFaqs.length > 0) return;
     async function loadFaqs() {
       try {
         const res = await fetch("/api/faqs?activeOnly=true");
@@ -62,7 +69,7 @@ export default function FaqSection() {
       }
     }
     loadFaqs();
-  }, []);
+  }, [initialFaqs]);
 
   return (
     <section id="faq" className="py-24 bg-[#fafbfc] relative overflow-hidden">

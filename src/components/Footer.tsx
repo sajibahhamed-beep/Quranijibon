@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Send,
   Mail,
@@ -55,14 +56,17 @@ export default function Footer() {
       id="footer"
       className="relative bg-cover bg-center bg-no-repeat text-white overflow-hidden py-16 border-t border-teal-800/40 w-full bg-gradient-to-r from-[#007C7A] to-[#203935]"
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/assets/footer background2.png"
-        alt="footer background"
-        width={900}
-        height={600}
-        className="absolute w-full bottom-0 h-[70%] object-cover pointer-events-none opacity-40"
-      />
+      <div className="absolute inset-x-0 bottom-0 h-[70%] pointer-events-none opacity-40 overflow-hidden">
+        <Image
+          src="/assets/footer-background-2.webp"
+          alt=""
+          aria-hidden="true"
+          fill
+          loading="lazy"
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
 
       {/* Inner Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

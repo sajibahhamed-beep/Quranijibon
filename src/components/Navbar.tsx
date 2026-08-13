@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
@@ -31,12 +32,12 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Brand Logo */}
           <Link href="/" className="flex items-center space-x-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/assets/website logo.png"
-              alt="Quranijibon Logo"
-              width={200}
-              height={50}
+            <Image
+              src="/assets/website-logo.png"
+              alt="কুরআন জীবন লোগো"
+              width={180}
+              height={45}
+              priority
               className="h-11 w-auto object-contain"
             />
           </Link>

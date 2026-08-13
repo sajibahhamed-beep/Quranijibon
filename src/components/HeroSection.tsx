@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { ArrowRightCircle } from "lucide-react";
 import { recordUserInteraction } from "@/data/notifyClient";
@@ -59,12 +61,12 @@ export default function HeroSection() {
 
             {/* Action Buttons */}
             <div className="pt-2 flex flex-wrap items-center gap-4">
-              <a
+              <Link
                 href="/about"
                 className="px-6 py-3.5 rounded-lg border-2 border-[#00A89C] text-[#00A89C] font-bold text-base hover:bg-[#00A89C]/10 transition-colors"
               >
                 আমাদের সম্পর্কে জানুন
-              </a>
+              </Link>
               <a
                 href="#pricing"
                 onClick={() => {
@@ -86,20 +88,20 @@ export default function HeroSection() {
           {/* Right Column: Dynamic Branch Illustration Image */}
           <div className="lg:col-span-5 flex justify-center">
             <div className="relative w-full max-w-lg transition-all duration-300">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={
                   activeBranch === "mohila"
-                    ? "/assets/Mohila section illustration.png"
-                    : "/assets/Purus section illustration.png"
+                    ? "/assets/mohila-section-illustration.webp"
+                    : "/assets/purus-section-illustration.webp"
                 }
                 alt={
                   activeBranch === "mohila"
-                    ? "মহিলা শাখা অনলাইন কুরআন শিক্ষা"
-                    : "পুরুষ শাখা অনলাইন কুরআন শিক্ষা"
+                    ? "মহিলা শাখা অনলাইন কুরআন শিক্ষা চিত্র"
+                    : "পুরুষ শাখা অনলাইন কুরআন শিক্ষা চিত্র"
                 }
                 width={600}
                 height={500}
+                priority
                 className="w-full h-auto object-contain drop-shadow-md"
               />
             </div>

@@ -3,11 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Calendar, Clock } from "lucide-react";
-import { BLOG_POSTS } from "@/data/blogs";
+import { BLOG_POSTS, BlogPost } from "@/data/blogs";
 
-export default function RecentBlogSection() {
-  // Show EXACTLY 3 blog cards on the Homepage
-  const recentThreeBlogs = BLOG_POSTS.slice(0, 3);
+export default function RecentBlogSection({ posts }: { posts?: BlogPost[] }) {
+  const displayPosts = posts && posts.length > 0 ? posts : BLOG_POSTS;
+  const recentThreeBlogs = displayPosts.slice(0, 3);
 
   return (
     <section id="blogs" className="py-24 bg-slate-50 border-t border-slate-200">

@@ -1,4 +1,5 @@
 import defaultSettingsData from "./siteSettings.json";
+import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
 
 export interface SocialLinkItem {
   id: string;
@@ -30,4 +31,22 @@ export interface SiteSettings {
 
 export function getSiteSettings(): SiteSettings {
   return defaultSettingsData as unknown as SiteSettings;
+}
+
+export async function getSiteSettingsAsync(): Promise<SiteSettings> {
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getSupabaseClient();
+      if (supabase) {
+        const { data, error } = await supabase.from("site_settings").select("settings").eq("id", 1).single();
+        if (!error && data && data.settings) {
+          return data.settings as SiteSettings;
+        }
+      }
+    } catch (e) {
+      console.warn("Supabase site settings fetch error:", e);
+    }
+  }
+
+  return getSiteSettings();
 }

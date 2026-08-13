@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import { getSupabaseClient, getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase";
 
 export interface FaqItem {
   id: string;
@@ -64,6 +65,27 @@ const DEFAULT_FAQS: FaqItem[] = [
 ];
 
 export async function getFaqsData(): Promise<FaqItem[]> {
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getSupabaseClient();
+      if (supabase) {
+        const { data: dbFaqs, error } = await supabase.from("faqs").select("*").order("sort_order", { ascending: true });
+        if (!error && dbFaqs && dbFaqs.length > 0) {
+          return dbFaqs.map((f) => ({
+            id: f.id,
+            question: f.question,
+            answer: f.answer,
+            category: "সাধারণ",
+            order: f.sort_order || 0,
+            isActive: f.is_active !== false,
+          }));
+        }
+      }
+    } catch (e) {
+      console.warn("Supabase FAQs fetch error, falling back to local file:", e);
+    }
+  }
+
   try {
     const fileContent = await fs.readFile(DATA_FILE_PATH, "utf-8");
     const data = JSON.parse(fileContent) as FaqItem[];
@@ -94,6 +116,23 @@ export async function createFaqItem(faqData: Partial<FaqItem>): Promise<FaqItem>
     isActive: faqData.isActive !== undefined ? faqData.isActive : true,
   };
 
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        await supabase.from("faqs").insert([{
+          id: newFaq.id,
+          question: newFaq.question,
+          answer: newFaq.answer,
+          is_active: newFaq.isActive,
+          sort_order: newFaq.order,
+        }]);
+      }
+    } catch (e) {
+      console.warn("Supabase create FAQ error:", e);
+    }
+  }
+
   faqs.push(newFaq);
   await saveFaqsData(faqs);
   return newFaq;
@@ -109,12 +148,39 @@ export async function updateFaqItem(id: string, updatedFields: Partial<FaqItem>)
     ...updatedFields,
   };
 
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        await supabase.from("faqs").update({
+          question: updatedFaq.question,
+          answer: updatedFaq.answer,
+          is_active: updatedFaq.isActive,
+          sort_order: updatedFaq.order,
+        }).eq("id", id);
+      }
+    } catch (e) {
+      console.warn("Supabase update FAQ error:", e);
+    }
+  }
+
   faqs[index] = updatedFaq;
   await saveFaqsData(faqs);
   return updatedFaq;
 }
 
 export async function deleteFaqItem(id: string): Promise<boolean> {
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        await supabase.from("faqs").delete().eq("id", id);
+      }
+    } catch (e) {
+      console.warn("Supabase delete FAQ error:", e);
+    }
+  }
+
   const faqs = await getFaqsData();
   const filtered = faqs.filter((f) => f.id !== id);
   if (filtered.length === faqs.length) return false;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   Clock,
   Shield,
@@ -95,10 +96,12 @@ export default function AppFeaturesSection() {
           {/* Left Column - Image covers full column height */}
           <div className="lg:col-span-6 relative flex flex-col">
             <div className="relative w-full h-full min-h-[380px] lg:min-h-full rounded-3xl overflow-hidden border border-slate-200 shadow-xl bg-white">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/assets/why_learn_video_37_1931.png"
-                alt="কুরআন জীবন অনলাইন ক্লাসরুম ফিচারসমূহ"
+              <Image
+                src="/assets/why-learn-video-preview.webp"
+                alt="কুরআন জীবন অনলাইন ক্লাসরুম ফিচারসমূহ চিত্র"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                loading="lazy"
                 className="object-cover w-full h-full"
               />
             </div>

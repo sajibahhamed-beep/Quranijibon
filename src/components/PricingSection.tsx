@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Check, Star, Clock, Calendar, X, Sparkles, Send, CheckCircle2 } from "lucide-react";
 import { registerStudentAction } from "@/data/studentsClient";
 import { StudentRecord } from "@/data/adminStore";
@@ -77,9 +78,9 @@ export default function PricingSection() {
           </h3>
           <p className="text-slate-600 text-sm mt-1">
             এখানে{" "}
-            <a href="/donate" className="text-[#00A89C] font-bold underline hover:text-[#00897B]">
-              সাদাকা ও হাদিয়া পাতায় ক্লিক করুন..
-            </a>
+            <Link href="/donate" className="text-[#00A89C] font-bold underline hover:text-[#00897B]">
+              সাদাকা ও হাদিয়া পাতায় বিস্তারিত দেখুন
+            </Link>
           </p>
         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Play, X } from "lucide-react";
 
 export default function WhyLearnSection() {
@@ -44,12 +45,13 @@ export default function WhyLearnSection() {
         {/* Main Video Frame (Matching 1199.7 x 524.87 Figma specs) */}
         <div className="relative max-w-6xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-slate-200/80 bg-slate-900 group">
           <div className="relative aspect-[1200/525] w-full overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/assets/why_learn_video_37_1931.png"
-              alt="কেন আমাদের কাছে শিখবেন - কুরআন জীবন"
+            <Image
+              src="/assets/why-learn-video-preview.webp"
+              alt="কেন আমাদের কাছে কুরআন শিখবেন - ভিডিও প্রিভিউ"
               width={1200}
               height={525}
+              loading="lazy"
+              sizes="(max-width: 1200px) 100vw, 1200px"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
 

@@ -41,7 +41,7 @@ export default function SponsorStudentSection() {
                 href="/donate"
                 className="inline-block bg-white text-slate-800 hover:bg-slate-50 font-extrabold text-xs sm:text-sm px-7 py-2.5 rounded-full shadow-md transition-all hover:scale-105 active:scale-95"
               >
-                অনুগদান করুন
+                অনুদান প্রদান করুন
               </Link>
             </div>
           </div>
