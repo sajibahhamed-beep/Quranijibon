@@ -3,12 +3,13 @@ import nodemailer from "nodemailer";
 // Both emails will each receive their own individual copy
 const RECIPIENT_EMAILS = [
   "sajibahhamed@gmail.com",
-  "sajibahhamed0@gmail.com",
+  "sajib.taf@gmail.com",
 ];
 
 function createTransporter() {
-  const user = process.env.SMTP_EMAIL;
-  const pass = process.env.SMTP_PASSWORD;
+  const user = process.env.SMTP_EMAIL?.trim();
+  const rawPass = process.env.SMTP_PASSWORD?.trim();
+  const pass = rawPass ? rawPass.replace(/\s+/g, "") : "";
 
   if (!user || !pass) {
     console.warn("SMTP_EMAIL or SMTP_PASSWORD not set — email skipped.");
