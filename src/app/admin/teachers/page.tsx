@@ -12,17 +12,26 @@ import {
   X,
   Edit,
   UserCheck,
+  Calendar,
+  Briefcase,
+  MessageSquare,
+  Clock,
+  Sparkles,
+  Trash2,
 } from "lucide-react";
-import { INITIAL_TEACHERS, TeacherRecord } from "@/data/adminStore";
+import { INITIAL_TEACHERS } from "@/data/adminStore";
+import { ExtendedTeacherRecord } from "@/data/teachersStorage";
 
 export default function AdminTeachersPage() {
-  const [teachers, setTeachers] = useState<TeacherRecord[]>(INITIAL_TEACHERS);
+  const [teachers, setTeachers] = useState<ExtendedTeacherRecord[]>(INITIAL_TEACHERS);
   const [searchQuery, setSearchQuery] = useState("");
   const [genderFilter, setGenderFilter] = useState<string>("সব");
+  const [statusFilter, setStatusFilter] = useState<string>("সব");
 
   // Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingTeacher, setEditingTeacher] = useState<TeacherRecord | null>(null);
+  const [editingTeacher, setEditingTeacher] = useState<ExtendedTeacherRecord | null>(null);
+  const [viewingTeacher, setViewingTeacher] = useState<ExtendedTeacherRecord | null>(null);
 
   // Form Fields
   const [name, setName] = useState("");
@@ -30,6 +39,10 @@ export default function AdminTeachersPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [specialization, setSpecialization] = useState("তাজবীদ ও কিরাত স্পেশালিস্ট");
+  const [experience, setExperience] = useState("১-২ বছর");
+  const [workType, setWorkType] = useState<"স্বেচ্ছাসেবী" | "স্বল্প সম্মানী">("স্বল্প সম্মানী");
+  const [notes, setNotes] = useState("");
+  const [activeStudents, setActiveStudents] = useState(0);
 
   const fetchTeachers = async () => {
     try {
@@ -53,6 +66,10 @@ export default function AdminTeachersPage() {
     setPhone("");
     setEmail("");
     setSpecialization("তাজবীদ ও কিরাত স্পেশালিস্ট");
+    setExperience("১-২ বছর");
+    setWorkType("স্বল্প সম্মানী");
+    setNotes("");
+    setActiveStudents(0);
     setIsAddModalOpen(true);
   };
 
@@ -61,7 +78,18 @@ export default function AdminTeachersPage() {
     if (!name || !phone) return;
 
     if (editingTeacher) {
-      const updated = { ...editingTeacher, name, gender, phone, email, specialization };
+      const updated: ExtendedTeacherRecord = {
+        ...editingTeacher,
+        name,
+        gender,
+        phone,
+        email,
+        specialization,
+        experience,
+        workType,
+        notes,
+        activeStudents,
+      };
       setTeachers((prev) =>
         prev.map((t) => (t.id === editingTeacher.id ? updated : t))
       );
@@ -81,6 +109,9 @@ export default function AdminTeachersPage() {
           phone,
           email,
           qualification: specialization,
+          experience,
+          workType,
+          message: notes,
         }),
       });
       const data = await res.json();
@@ -102,14 +133,33 @@ export default function AdminTeachersPage() {
     });
   };
 
+  const handleDeleteTeacher = async (id: string, teacherName: string) => {
+    if (!confirm(`আপনি কি নিশ্চিতভাবে শিক্ষক "${teacherName}" এর আবেদন ও তথ্য ডাটাবেজ থেকে মুছে ফেলতে চান?`)) {
+      return;
+    }
+    setTeachers((prev) => prev.filter((t) => t.id !== id));
+    try {
+      await fetch(`/api/teachers/${id}`, {
+        method: "DELETE",
+      });
+    } catch (e) {
+      console.error("Failed to delete teacher:", e);
+    }
+  };
+
   const filteredTeachers = teachers.filter((t) => {
     const matchesSearch =
       t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       t.phone.includes(searchQuery) ||
-      t.specialization.toLowerCase().includes(searchQuery.toLowerCase());
+      t.specialization.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (t.notes && t.notes.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesGender = genderFilter === "সব" || t.gender === genderFilter;
-    return matchesSearch && matchesGender;
+    const matchesStatus = statusFilter === "সব" || t.status === statusFilter;
+    return matchesSearch && matchesGender && matchesStatus;
   });
+
+  const newApplicantsCount = teachers.filter((t) => t.status === "নতুন আবেদন").length;
+  const activeCount = teachers.filter((t) => t.status === "সক্রিয়").length;
 
   return (
     <div className="space-y-6">
@@ -121,17 +171,52 @@ export default function AdminTeachersPage() {
             শিক্ষক ও শিক্ষিকা তালিকা (Teachers Directory)
           </h1>
           <p className="text-slate-400 text-xs sm:text-sm">
-            তাজবীদ ও হিফজ শিক্ষকদের প্রোফাইল ও শিক্ষার্থী লোড পরিচালনা
+            ওয়েবসাইট ফর্ম থেকে আসা শিক্ষক আবেদনসমূহ ও বর্তমান শিক্ষকদের সম্পূর্ণ তালিকা
           </p>
         </div>
 
         <button
           onClick={openAddModal}
-          className="bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-xl transition-all shadow-lg shadow-[#00A89C]/20 flex items-center justify-center space-x-2"
+          className="bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-xl transition-all shadow-lg shadow-[#00A89C]/20 flex items-center justify-center space-x-2 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>নতুন শিক্ষক যোগ করুন</span>
         </button>
+      </div>
+
+      {/* KPI Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+          <span className="text-slate-400 text-xs font-semibold">মোট শিক্ষক তালিকা</span>
+          <div className="text-2xl font-black text-white mt-1">{teachers.length} জন</div>
+        </div>
+
+        <div className="bg-slate-900 border border-rose-500/30 p-4 rounded-2xl bg-rose-500/5">
+          <div className="flex items-center justify-between">
+            <span className="text-rose-400 text-xs font-bold">নতুন আবেদন</span>
+            <span className="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full">
+              রিভিউ করুন
+            </span>
+          </div>
+          <div className="text-2xl font-black text-rose-300 mt-1">{newApplicantsCount} জন</div>
+        </div>
+
+        <div className="bg-slate-900 border border-emerald-500/30 p-4 rounded-2xl bg-emerald-500/5">
+          <span className="text-emerald-400 text-xs font-bold">সক্রিয় শিক্ষক</span>
+          <div className="text-2xl font-black text-emerald-300 mt-1">{activeCount} জন</div>
+        </div>
+
+        <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+          <span className="text-slate-400 text-xs font-semibold">পুরুষ / মহিলা শাখা</span>
+          <div className="text-sm font-bold text-slate-300 mt-2 flex gap-2">
+            <span className="bg-blue-500/10 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded">
+              পুরুষ: {teachers.filter((t) => t.gender === "পুরুষ").length}
+            </span>
+            <span className="bg-pink-500/10 text-pink-400 border border-pink-500/30 px-2 py-0.5 rounded">
+              মহিলা: {teachers.filter((t) => t.gender === "মহিলা").length}
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Filter and Search */}
@@ -142,114 +227,283 @@ export default function AdminTeachersPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="শিক্ষকের নাম বা বিষয় সার্চ করুন..."
+            placeholder="শিক্ষকের নাম, ফোন বা যোগ্যতা সার্চ..."
             className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-[#00A89C]"
           />
         </div>
 
-        <div className="flex items-center gap-2">
-          {["সব", "পুরুষ", "মহিলা"].map((g) => (
-            <button
-              key={g}
-              onClick={() => setGenderFilter(g)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                genderFilter === g
-                  ? "bg-[#00A89C] text-white"
-                  : "bg-slate-950 text-slate-400 border border-slate-800 hover:text-white"
-              }`}
-            >
-              {g === "সব" ? "সকল শিক্ষক" : `${g} শাখা`}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-[#00A89C]"
+          >
+            <option value="সব">সকল স্ট্যাটাস</option>
+            <option value="নতুন আবেদন">নতুন আবেদন</option>
+            <option value="সক্রিয়">সক্রিয়</option>
+            <option value="অপেক্ষমাণ">অপেক্ষমাণ</option>
+            <option value="ছুটিতে">ছুটিতে</option>
+          </select>
+
+          {/* Gender Filter */}
+          <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+            {["সব", "পুরুষ", "মহিলা"].map((g) => (
+              <button
+                key={g}
+                onClick={() => setGenderFilter(g)}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  genderFilter === g
+                    ? "bg-[#00A89C] text-white"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                {g === "সব" ? "সকল শাখা" : `${g} শাখা`}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Teachers Grid */}
+      {/* Teachers Grid Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTeachers.map((teacher) => (
-          <div
-            key={teacher.id}
-            className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 hover:border-slate-700 transition-all shadow-xl relative group"
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#00A89C] to-emerald-600 flex items-center justify-center text-white font-black text-lg shadow-md">
-                  {teacher.name.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="text-base font-black text-white">{teacher.name}</h3>
-                  <div className="flex items-center space-x-2 mt-0.5">
-                    <span className="bg-slate-800 text-slate-300 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-700">
-                      {teacher.gender} শাখা
-                    </span>
-                    <select
-                      value={teacher.status}
-                      onChange={(e) => handleStatusChange(teacher.id, e.target.value)}
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded border outline-none cursor-pointer ${
-                        teacher.status === "সক্রিয়"
-                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                          : teacher.status === "নতুন আবেদন"
-                          ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
-                          : "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                      }`}
-                    >
-                      <option value="নতুন আবেদন">নতুন আবেদন</option>
-                      <option value="সক্রিয়">সক্রিয়</option>
-                      <option value="অপেক্ষমাণ">অপেক্ষমাণ</option>
-                      <option value="ছুটিতে">ছুটিতে</option>
-                    </select>
+        {filteredTeachers.length === 0 ? (
+          <div className="col-span-full py-16 text-center text-slate-500 bg-slate-900 border border-slate-800 rounded-3xl">
+            কোনো শিক্ষক তথ্য পাওয়া যায়নি
+          </div>
+        ) : (
+          filteredTeachers.map((teacher) => (
+            <div
+              key={teacher.id}
+              className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 hover:border-slate-700 transition-all shadow-xl relative group flex flex-col justify-between"
+            >
+              <div className="space-y-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-md ${
+                      teacher.gender === "মহিলা"
+                        ? "bg-gradient-to-tr from-pink-600 to-rose-500"
+                        : "bg-gradient-to-tr from-[#00A89C] to-emerald-600"
+                    }`}>
+                      {teacher.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h3 className="text-base font-black text-white">{teacher.name}</h3>
+                      <div className="flex items-center space-x-1.5 mt-0.5 flex-wrap gap-1">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
+                          teacher.gender === "মহিলা"
+                            ? "bg-pink-500/10 text-pink-400 border-pink-500/30"
+                            : "bg-blue-500/10 text-blue-400 border-blue-500/30"
+                        }`}>
+                          {teacher.gender} শাখা
+                        </span>
+                        {teacher.workType && (
+                          <span className="bg-amber-500/10 text-amber-300 border border-amber-500/30 text-[10px] font-bold px-1.5 py-0.5 rounded">
+                            {teacher.workType}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
+
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setViewingTeacher(teacher)}
+                      className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors cursor-pointer"
+                      title="আবেদনের বিস্তারিত দেখুন"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditingTeacher(teacher);
+                        setName(teacher.name);
+                        setGender(teacher.gender);
+                        setPhone(teacher.phone);
+                        setEmail(teacher.email);
+                        setSpecialization(teacher.specialization);
+                        setExperience(teacher.experience || "১-২ বছর");
+                        setWorkType(teacher.workType || "স্বল্প সম্মানী");
+                        setNotes(teacher.notes || "");
+                        setActiveStudents(teacher.activeStudents || 0);
+                      }}
+                      className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors cursor-pointer"
+                      title="তথ্য এডিট করুন"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteTeacher(teacher.id, teacher.name)}
+                      className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                      title="মুছে ফেলুন (Delete)"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Status Dropdown */}
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-xs text-slate-400 font-semibold">আবেদনের স্ট্যাটাস:</span>
+                  <select
+                    value={teacher.status}
+                    onChange={(e) => handleStatusChange(teacher.id, e.target.value)}
+                    className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border outline-none cursor-pointer ${
+                      teacher.status === "সক্রিয়"
+                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                        : teacher.status === "নতুন আবেদন"
+                        ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                        : teacher.status === "অপেক্ষমাণ"
+                        ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                        : "bg-slate-800 text-slate-400 border-slate-700"
+                    }`}
+                  >
+                    <option value="নতুন আবেদন">নতুন আবেদন</option>
+                    <option value="সক্রিয়">সক্রিয়</option>
+                    <option value="অপেক্ষমাণ">অপেক্ষমাণ</option>
+                    <option value="ছুটিতে">ছুটিতে</option>
+                  </select>
+                </div>
+
+                {/* Detailed Info */}
+                <div className="space-y-2 text-xs border-t border-b border-slate-800 py-3 text-slate-300">
+                  <div className="flex items-start space-x-2">
+                    <Award className="w-4 h-4 text-[#00A89C] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">দ্বীনি যোগ্যতা / বিশেষত্ব:</span>
+                      <span className="font-semibold text-white">{teacher.specialization}</span>
+                    </div>
+                  </div>
+
+                  {teacher.experience && (
+                    <div className="flex items-center space-x-2 text-slate-400">
+                      <Clock className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                      <span>অভিজ্ঞতা: <strong className="text-slate-300">{teacher.experience}</strong></span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center space-x-2 text-slate-400">
+                    <Phone className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                    <span className="font-mono">{teacher.phone}</span>
+                  </div>
+
+                  {teacher.email && (
+                    <div className="flex items-center space-x-2 text-slate-400">
+                      <Mail className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                      <span>{teacher.email}</span>
+                    </div>
+                  )}
+
+                  {teacher.joinedDate && (
+                    <div className="flex items-center space-x-2 text-slate-400 text-[11px]">
+                      <Calendar className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
+                      <span>আবেদনের তারিখ: {teacher.joinedDate}</span>
+                    </div>
+                  )}
+
+                  {teacher.notes && (
+                    <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-[11px] text-slate-300">
+                      <span className="text-slate-400 block text-[10px] font-bold">শিক্ষকের বার্তা / পরিচিতি:</span>
+                      <p className="line-clamp-2 mt-0.5 italic">&ldquo;{teacher.notes}&rdquo;</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
+              <div className="flex items-center justify-between text-xs font-bold pt-2">
+                <span className="text-slate-400 flex items-center gap-1">
+                  <BookOpen className="w-4 h-4 text-[#00A89C]" />
+                  সক্রিয় শিক্ষার্থী:
+                </span>
+                <span className="bg-[#00A89C]/10 text-[#00A89C] px-3 py-1 rounded-full border border-[#00A89C]/30 text-sm font-black">
+                  {teacher.activeStudents || 0} জন
+                </span>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* View Teacher Application Details Modal */}
+      {viewingTeacher && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div>
+                <span className="bg-[#00A89C]/20 text-[#00A89C] border border-[#00A89C]/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full inline-block mb-1">
+                  আবেদনের পূর্ণ বিবরণ
+                </span>
+                <h2 className="text-xl font-black text-white">{viewingTeacher.name}</h2>
+              </div>
               <button
-                onClick={() => {
-                  setEditingTeacher(teacher);
-                  setName(teacher.name);
-                  setGender(teacher.gender);
-                  setPhone(teacher.phone);
-                  setEmail(teacher.email);
-                  setSpecialization(teacher.specialization);
-                }}
-                className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
-                title="Edit"
+                onClick={() => setViewingTeacher(null)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white bg-slate-800"
               >
-                <Edit className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-2 text-xs border-t border-b border-slate-800 py-3 text-slate-300">
-              <div className="flex items-center space-x-2">
-                <Award className="w-4 h-4 text-[#00A89C]" />
-                <span className="font-semibold">{teacher.specialization}</span>
+            <div className="space-y-4 text-sm text-slate-300">
+              <div className="grid grid-cols-2 gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                <div>
+                  <span className="text-xs text-slate-500 block">শাখা ও লিঙ্গ:</span>
+                  <span className="font-bold text-white">{viewingTeacher.gender} শিক্ষক</span>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500 block">কাজের ধরন:</span>
+                  <span className="font-bold text-teal-400">{viewingTeacher.workType || "স্বল্প সম্মানী"}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500 block">ফোন নম্বর:</span>
+                  <span className="font-bold text-white font-mono">{viewingTeacher.phone}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500 block">ইমেইল:</span>
+                  <span className="font-bold text-white">{viewingTeacher.email || "দেওয়া হয়নি"}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500 block">অভিজ্ঞতা:</span>
+                  <span className="font-bold text-white">{viewingTeacher.experience || "১-২ বছর"}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500 block">আবেদনের তারিখ:</span>
+                  <span className="font-bold text-white">{viewingTeacher.joinedDate}</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-2 text-slate-400">
-                <Phone className="w-4 h-4 text-slate-500" />
-                <span>{teacher.phone}</span>
+
+              <div>
+                <span className="text-xs text-slate-400 block font-bold mb-1">দ্বীনি ও শিক্ষাগত যোগ্যতা:</span>
+                <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-white font-semibold">
+                  {viewingTeacher.specialization}
+                </div>
               </div>
-              <div className="flex items-center space-x-2 text-slate-400">
-                <Mail className="w-4 h-4 text-slate-500" />
-                <span>{teacher.email}</span>
-              </div>
+
+              {viewingTeacher.notes && (
+                <div>
+                  <span className="text-xs text-slate-400 block font-bold mb-1">শিক্ষকের বার্তা / পরিচিতি:</span>
+                  <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-slate-200 whitespace-pre-wrap leading-relaxed">
+                    {viewingTeacher.notes}
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center justify-between text-xs font-bold pt-1">
-              <span className="text-slate-400 flex items-center gap-1">
-                <BookOpen className="w-4 h-4 text-[#00A89C]" />
-                সক্রিয় শিক্ষার্থী:
-              </span>
-              <span className="bg-[#00A89C]/10 text-[#00A89C] px-3 py-1 rounded-full border border-[#00A89C]/30 text-sm font-black">
-                {teacher.activeStudents} জন
-              </span>
+            <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+              <button
+                onClick={() => setViewingTeacher(null)}
+                className="px-5 py-2.5 rounded-xl bg-[#00A89C] text-white font-bold hover:bg-[#00897B]"
+              >
+                ঠিক আছে
+              </button>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
       {/* Add / Edit Teacher Modal */}
       {(isAddModalOpen || editingTeacher) && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6">
+          <div className="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
               <h2 className="text-lg font-black text-white">
                 {editingTeacher ? "শিক্ষকের তথ্য এডিট করুন" : "নতুন শিক্ষক যুক্ত করুন"}
@@ -267,7 +521,7 @@ export default function AdminTeachersPage() {
 
             <form onSubmit={handleSaveTeacher} className="space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-300 mb-1">শিক্ষক / শিক্ষিকার নাম</label>
+                <label className="block font-bold text-slate-300 mb-1">শিক্ষক / শিক্ষিকার নাম <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   value={name}
@@ -292,7 +546,7 @@ export default function AdminTeachersPage() {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">ফোন নম্বর</label>
+                  <label className="block font-bold text-slate-300 mb-1">ফোন নম্বর <span className="text-red-500">*</span></label>
                   <input
                     type="text"
                     value={phone}
@@ -304,26 +558,77 @@ export default function AdminTeachersPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-slate-300 mb-1">ইমেইল</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="teacher@quranijibon.com"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-300 mb-1">ইমেইল (ঐচ্ছিক)</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="teacher@quranijibon.com"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-300 mb-1">অভিজ্ঞতা</label>
+                  <select
+                    value={experience}
+                    onChange={(e) => setExperience(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  >
+                    <option value="১ বছরের কম">১ বছরের কম</option>
+                    <option value="১-২ বছর">১-২ বছর</option>
+                    <option value="৩-৫ বছর">৩-৫ বছর</option>
+                    <option value="৫+ বছর">৫+ বছর</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-300 mb-1">কাজের ধরন</label>
+                  <select
+                    value={workType}
+                    onChange={(e) => setWorkType(e.target.value as "স্বেচ্ছাসেবী" | "স্বল্প সম্মানী")}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  >
+                    <option value="স্বল্প সম্মানী">স্বল্প সম্মানী</option>
+                    <option value="স্বেচ্ছাসেবী">স্বেচ্ছাসেবী (Fi Sabilillah)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-300 mb-1">সক্রিয় শিক্ষার্থী সংখ্যা</label>
+                  <input
+                    type="number"
+                    value={activeStudents}
+                    onChange={(e) => setActiveStudents(parseInt(e.target.value) || 0)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="block font-bold text-slate-300 mb-1">বিশেষজ্ঞতা (Specialization)</label>
+                <label className="block font-bold text-slate-300 mb-1">দ্বীনি ও শিক্ষাগত যোগ্যতা <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   value={specialization}
                   onChange={(e) => setSpecialization(e.target.value)}
-                  placeholder="যেমন: তাজবীদ ও মাখরাজ Specialist"
+                  placeholder="যেমন: দাওরায়ে হাদীস, হাফেজ ও তাজবীদ সনদপ্রাপ্ত"
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
                   required
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-300 mb-1">শিক্ষকের বার্তা / পরিচিতি</label>
+                <textarea
+                  rows={3}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="শিক্ষক সম্পর্কে বিশেষ নোট বা বার্তা..."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
                 />
               </div>
 

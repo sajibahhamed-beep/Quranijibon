@@ -21,6 +21,7 @@ export async function getStudents(): Promise<StudentRecord[]> {
             name: s.name,
             phone: s.phone,
             email: s.email || "",
+            gender: s.gender || (s.student_type?.includes("মহিলা") || s.student_type?.includes("মেয়ে") ? "মহিলা" : "পুরুষ"),
             package: s.course || "সাধারন কোর্স",
             schedule: s.preferred_time || "সুবিধাজনক সময়",
             teacherPreference: s.student_type || "যে কোনটি",
@@ -58,7 +59,7 @@ export async function saveStudents(data: StudentRecord[]): Promise<void> {
 }
 
 export async function addStudent(
-  data: Omit<StudentRecord, "id" | "date"> & { date?: string; id?: string }
+  data: Omit<StudentRecord, "id" | "date"> & { date?: string; id?: string; gender?: string }
 ): Promise<StudentRecord> {
   const safePhone = String(data.phone || "").trim();
   const safeEmail = data.email && String(data.email).trim()
@@ -70,9 +71,10 @@ export async function addStudent(
     name: String(data.name || "").trim(),
     phone: safePhone,
     email: safeEmail,
+    gender: data.gender || "পুরুষ",
     package: data.package || "বিনামূল্যে",
     schedule: data.schedule || "সুবিধাজনক সময়ে",
-    teacherPreference: data.teacherPreference || "যে কোনটি",
+    teacherPreference: data.teacherPreference || (data.gender === "মহিলা" || data.gender === "মেয়ে শিশু" ? "মহিলা শিক্ষিকা" : "পুরুষ শিক্ষক"),
     assignedTeacher: data.assignedTeacher || "নির্ধারিত নয়",
     status: data.status || "নতুন আবেদন",
     date: data.date || new Date().toISOString().split("T")[0],
@@ -105,7 +107,7 @@ export async function addStudent(
             phone: newStudent.phone,
             email: newStudent.email,
             course: newStudent.package,
-            student_type: newStudent.teacherPreference,
+            student_type: `${newStudent.gender || ""}${newStudent.teacherPreference ? ` (${newStudent.teacherPreference})` : ""}`,
             preferred_time: newStudent.schedule,
             notes: newStudent.notes || "",
             status: newStudent.status,

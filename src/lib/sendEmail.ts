@@ -12,13 +12,21 @@ function createTransporter() {
   const pass = rawPass ? rawPass.replace(/\s+/g, "") : "";
 
   if (!user || !pass) {
-    console.warn("SMTP_EMAIL or SMTP_PASSWORD not set — email skipped.");
+    console.warn("SMTP_EMAIL or SMTP_PASSWORD not set in environment — email skipped.");
     return null;
   }
 
   return nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // SSL on port 465 (required for serverless/cloud environments like Vercel, AWS, Netlify)
     auth: { user, pass },
+    tls: {
+      rejectUnauthorized: false,
+    },
+    connectionTimeout: 10000, // 10s timeout
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
   });
 }
 
@@ -29,14 +37,15 @@ export async function sendNotificationEmail({
   subject: string;
   htmlBody: string;
 }) {
+  const user = process.env.SMTP_EMAIL?.trim();
   const transporter = createTransporter();
-  if (!transporter) return;
+  if (!transporter || !user) return;
 
   // Send a separate individual email to each recipient
   const results = await Promise.allSettled(
     RECIPIENT_EMAILS.map((recipient) =>
       transporter.sendMail({
-        from: `"Message from Quranijibon" <${process.env.SMTP_EMAIL}>`,
+        from: `"Quranijibon Academy" <${user}>`,
         to: recipient,
         subject,
         html: htmlBody,
@@ -46,9 +55,9 @@ export async function sendNotificationEmail({
 
   results.forEach((result, i) => {
     if (result.status === "fulfilled") {
-      console.log(`Email sent to ${RECIPIENT_EMAILS[i]}: ${subject}`);
+      console.log(`✅ Production Email sent to ${RECIPIENT_EMAILS[i]}: ${subject}`);
     } else {
-      console.error(`Email failed for ${RECIPIENT_EMAILS[i]}:`, result.reason);
+      console.error(`❌ Production Email failed for ${RECIPIENT_EMAILS[i]}:`, result.reason);
     }
   });
 }
@@ -124,6 +133,73 @@ export async function sendTeacherApplicationEmail(teacher: {
         </table>
         <div style="margin-top: 24px; padding: 14px 16px; background: #f5f3ff; border-left: 4px solid #7c3aed; border-radius: 4px;">
           <p style="margin: 0; color: #4c1d95; font-size: 13px;">অ্যাডমিন প্যানেলে লগইন করে এই শিক্ষকের আবেদনটি পর্যালোচনা করুন।</p>
+        </div>
+      </div>
+      <div style="padding: 16px 28px; background: #f1f5f9; text-align: center; font-size: 12px; color: #94a3b8;">
+        Message from <strong>Quranijibon</strong> &bull; quranijibon.com
+      </div>
+    </div>
+  `;
+  await sendNotificationEmail({ subject, htmlBody });
+}
+
+export async function sendContactMessageEmail(contact: {
+  name: string;
+  phone: string;
+  email?: string;
+  message: string;
+}) {
+  const subject = `💬 যোগাযোগ ফর্ম থেকে নতুন বার্তা — ${contact.name}`;
+  const htmlBody = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;">
+      <div style="background: linear-gradient(135deg, #0ea5e9, #00A89C); padding: 24px 28px;">
+        <h1 style="color: white; margin: 0; font-size: 20px;">💬 যোগাযোগ ফর্ম থেকে বার্তা</h1>
+        <p style="color: rgba(255,255,255,0.85); margin: 6px 0 0; font-size: 14px;">কুরআন জীবন হেল্প ও সাপোর্ট</p>
+      </div>
+      <div style="padding: 28px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <tr><td style="padding: 10px 0; color: #64748b; width: 40%;">নাম</td><td style="padding: 10px 0; font-weight: bold; color: #0f172a;">${contact.name}</td></tr>
+          <tr style="background:#f1f5f9;"><td style="padding: 10px 8px; color: #64748b;">ফোন / হোয়াটসঅ্যাপ</td><td style="padding: 10px 8px; font-weight: bold; color: #0f172a;">${contact.phone}</td></tr>
+          ${contact.email ? `<tr><td style="padding: 10px 0; color: #64748b;">ইমেইল</td><td style="padding: 10px 0; color: #0f172a;">${contact.email}</td></tr>` : ""}
+          <tr style="background:#f1f5f9;"><td style="padding: 10px 8px; color: #64748b;">বার্তা</td><td style="padding: 10px 8px; color: #0f172a; white-space: pre-wrap;">${contact.message}</td></tr>
+        </table>
+      </div>
+      <div style="padding: 16px 28px; background: #f1f5f9; text-align: center; font-size: 12px; color: #94a3b8;">
+        Message from <strong>Quranijibon</strong> &bull; quranijibon.com
+      </div>
+    </div>
+  `;
+  await sendNotificationEmail({ subject, htmlBody });
+}
+
+export async function sendDonationAlertEmail(donation: {
+  id: string;
+  donorName: string;
+  phone: string;
+  amount: number;
+  paymentMethod: string;
+  trxId?: string;
+  type?: string;
+}) {
+  const subject = `💚 নতুন অনুদান ও হাদিয়া প্রাপ্তি (৳${donation.amount}) — ${donation.donorName}`;
+  const htmlBody = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;">
+      <div style="background: linear-gradient(135deg, #059669, #00A89C); padding: 24px 28px;">
+        <h1 style="color: white; margin: 0; font-size: 20px;">💚 নতুন অনুদান / হাদিয়া সাবমিশন</h1>
+        <p style="color: rgba(255,255,255,0.85); margin: 6px 0 0; font-size: 14px;">কুরআন জীবন সাদাকা তাহবিল</p>
+      </div>
+      <div style="padding: 28px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <tr><td style="padding: 10px 0; color: #64748b; width: 40%;">অনুদান আইডি</td><td style="padding: 10px 0; font-weight: bold; color: #0f172a;">${donation.id}</td></tr>
+          <tr style="background:#f1f5f9;"><td style="padding: 10px 8px; color: #64748b;">অনুদানকারীর নাম</td><td style="padding: 10px 8px; font-weight: bold; color: #0f172a;">${donation.donorName}</td></tr>
+          <tr><td style="padding: 10px 0; color: #64748b;">মোবাইল নম্বর</td><td style="padding: 10px 0; font-weight: bold; color: #0f172a;">${donation.phone}</td></tr>
+          <tr style="background:#f1f5f9;"><td style="padding: 10px 8px; color: #64748b;">অনুদানের পরিমাণ</td><td style="padding: 10px 8px; font-weight: bold; color: #059669; font-size: 16px;">৳${donation.amount}</td></tr>
+          <tr><td style="padding: 10px 0; color: #64748b;">পেমেন্ট মেথড</td><td style="padding: 10px 0; color: #0f172a;">${donation.paymentMethod}</td></tr>
+          <tr style="background:#f1f5f9;"><td style="padding: 10px 8px; color: #64748b;">ট্রানজেকশন আইডি (TrxID)</td><td style="padding: 10px 8px; font-weight: bold; color: #0f172a;">${donation.trxId || "প্রদান করা হয়নি"}</td></tr>
+          <tr><td style="padding: 10px 0; color: #64748b;">টাইপ</td><td style="padding: 10px 0; color: #0f172a;">${donation.type || "সাদাকা"}</td></tr>
+        </table>
+        <div style="margin-top: 24px; padding: 14px 16px; background: #ecfdf5; border-left: 4px solid #059669; border-radius: 4px;">
+          <p style="margin: 0; color: #065f46; font-size: 13px;">অ্যাডমিন প্যানেলের "অনুদান ও স্পন্সরশিপ" পাতায় লগইন করে পেমেন্ট ভেরিফাই করুন।</p>
         </div>
       </div>
       <div style="padding: 16px 28px; background: #f1f5f9; text-align: center; font-size: 12px; color: #94a3b8;">

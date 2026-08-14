@@ -3,9 +3,10 @@ export interface StudentRecord {
   name: string;
   phone: string;
   email: string;
-  package: "বিনামূল্যে" | "সাশ্রয়ী (৳৩২০)" | "কাস্টম প্রিমিয়াম";
+  gender?: "পুরুষ" | "মহিলা" | "ছেলে শিশু" | "মেয়ে শিশু" | string;
+  package: "বিনামূল্যে" | "সাশ্রয়ী (৳৩২০)" | "কাস্টম প্রিমিয়াম" | string;
   schedule: string;
-  teacherPreference: "মহিলা শিক্ষিকা" | "পুরুষ শিক্ষক" | "যে কোনটি";
+  teacherPreference: "মহিলা শিক্ষিকা" | "পুরুষ শিক্ষক" | "যে কোনটি" | string;
   assignedTeacher?: string;
   status: "নতুন আবেদন" | "সক্রিয়" | "অপেক্ষমাণ" | "সম্পন্ন";
   date: string;
@@ -29,10 +30,12 @@ export interface DonationRecord {
   donorName: string;
   phone: string;
   amount: number;
-  type: "সাদাকা" | "শিক্ষার্থী স্পন্সর" | "সাধারণ অনুদান";
+  type: "সাদাকা" | "শিক্ষার্থী স্পন্সর" | "স্টুডেন্ট পেমেন্ট" | string;
   date: string;
   sponsoredStudent?: string;
-  paymentMethod: "bKash" | "Nagad" | "Bank Transfer";
+  paymentMethod: string;
+  trxId?: string;
+  status?: "অনুমোদিত" | "অপেক্ষমাণ" | "বাতিল" | string;
 }
 
 export const INITIAL_STUDENTS: StudentRecord[] = [

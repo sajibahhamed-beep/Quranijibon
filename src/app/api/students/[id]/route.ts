@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { updateStudentStatus, updateStudent, getStudents } from "@/data/studentsStorage";
+import {
+  updateStudentStatus,
+  updateStudent,
+  deleteStudent,
+  getStudents,
+} from "@/data/studentsStorage";
 
 export async function PATCH(
   request: Request,
@@ -26,6 +31,22 @@ export async function PATCH(
   } catch (error: any) {
     return NextResponse.json(
       { success: false, message: error.message || "Failed to update student" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const success = await deleteStudent(id);
+    return NextResponse.json({ success, message: "Student deleted successfully" });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, message: error.message || "Failed to delete student" },
       { status: 500 }
     );
   }

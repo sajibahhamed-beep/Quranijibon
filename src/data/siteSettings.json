@@ -5,94 +5,125 @@
   "phone2": "+880 1775-551325",
   "email": "sajibahhamed@gmail.com",
   "addressLine1": "Skinner Hollow Road",
-  "addressLine2": "Days Creek, OR 97429",
   "copyrightText": "Copyright © JibonQuran 2026. All Right Reserved.",
-  "socialLinks": [
+  "bankDetails": {
+    "bankName": "ইসলামী ব্যাংক বাংলাদেশ লিমিটেড",
+    "accountName": "কুরআন জীবন একাডেমি",
+    "accountNumber": "২০৫০৭৭৭৮৮৮৯৯৯০০০",
+    "branch": "ধানমণ্ডি শাখা, ঢাকা"
+  },
+  "mobileBanking": {
+    "bkashNumber": "01775551325",
+    "nagadNumber": "01775551325",
+    "instructions": "বিকাশ সেন্ড মানি / নগদ সেন্ড মানি করুন (পার্সোনাল)"
+  },
+  "mobilePaymentAccounts": [
     {
       "id": "1",
-      "platform": "facebook",
-      "label": "Facebook",
-      "url": "https://facebook.com",
-      "active": false
+      "providerName": "বিকাশ (bKash)",
+      "logoType": "bkash",
+      "number": "01775551325",
+      "accountType": "পার্সোনাল (Send Money)",
+      "instructions": "বিকাশ সেন্ড মানি করুন (পার্সোনাল)",
+      "active": true
     },
     {
       "id": "2",
-      "platform": "youtube",
-      "label": "YouTube",
-      "url": "https://youtube.com",
+      "providerName": "নগদ (Nagad)",
+      "logoType": "nagad",
+      "number": "01775551325",
+      "accountType": "পার্সোনাল (Send Money)",
+      "instructions": "নগদ সেন্ড মানি করুন (পার্সোনাল)",
       "active": true
+    }
+  ],
+  "socialLinks": [
+    {
+      "id": "1",
+      "url": "https://facebook.com",
+      "label": "Facebook",
+      "active": false,
+      "platform": "facebook"
+    },
+    {
+      "id": "2",
+      "url": "https://youtube.com",
+      "label": "YouTube",
+      "active": true,
+      "platform": "youtube"
     },
     {
       "id": "3",
-      "platform": "instagram",
-      "label": "Instagram",
       "url": "https://instagram.com",
-      "active": true
+      "label": "Instagram",
+      "active": true,
+      "platform": "instagram"
     },
     {
       "id": "4",
-      "platform": "twitter",
-      "label": "Twitter / X",
       "url": "https://x.com",
-      "active": true
+      "label": "Twitter / X",
+      "active": true,
+      "platform": "twitter"
     },
     {
       "id": "5",
-      "platform": "linkedin",
-      "label": "LinkedIn",
       "url": "https://linkedin.com",
-      "active": true
+      "label": "LinkedIn",
+      "active": true,
+      "platform": "linkedin"
     },
     {
       "id": "6",
-      "platform": "telegram",
-      "label": "Telegram",
       "url": "https://telegram.org",
-      "active": true
+      "label": "Telegram",
+      "active": true,
+      "platform": "telegram"
     }
   ],
   "footerMenuLinks": [
     {
       "id": "1",
-      "label": "আমাদের সম্পর্কে",
-      "url": "/about"
+      "url": "/about",
+      "label": "আমাদের সম্পর্কে"
     },
     {
       "id": "2",
-      "label": "প্যাকেজসমূহ",
-      "url": "/#pricing"
+      "url": "/#pricing",
+      "label": "প্যাকেজসমূহ"
     },
     {
       "id": "3",
-      "label": "ডোনেট করুন",
-      "url": "/donate"
+      "url": "/donate",
+      "label": "ডোনেট করুন"
     },
     {
       "id": "4",
-      "label": "লেখাসমূহ",
-      "url": "/blogs"
+      "url": "/blogs",
+      "label": "লেখাসমূহ"
     }
   ],
   "footerPolicyLinks": [
     {
       "id": "1",
-      "label": "রিফান্ড পলিসি",
-      "url": "/refund-policy"
+      "url": "/refund-policy",
+      "label": "রিফান্ড পলিসি"
     },
     {
       "id": "2",
-      "label": "কুকিজ পলিসি",
-      "url": "/cookie-policy"
+      "url": "/cookie-policy",
+      "label": "কুকিজ পলিসি"
     },
     {
       "id": "3",
-      "label": "টার্মস অ্যান্ড কন্ডিসনস",
-      "url": "/terms"
+      "url": "/terms",
+      "label": "টার্মস অ্যান্ড কন্ডিসনস"
     },
     {
       "id": "4",
-      "label": "গোপনীয় নীতি",
-      "url": "/privacy-policy"
+      "url": "/privacy-policy",
+      "label": "গোপনীয় নীতি"
     }
-  ]
+  ],
+  "addressLine2": "Days Creek, OR 97429"
 }

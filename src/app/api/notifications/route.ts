@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getNotifications, addNotification } from "@/data/notificationsStorage";
+import { sendContactMessageEmail } from "@/lib/sendEmail";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -32,6 +33,19 @@ export async function POST(request: Request) {
       category: body.category || "admission",
       link: body.link || "/admin/students",
     });
+
+    // If it's a contact or user message, dispatch email alert
+    if (body.category === "message") {
+      try {
+        await sendContactMessageEmail({
+          name: body.title || "ব্যবহারকারী",
+          phone: "উপরে উল্লেখিত",
+          message: body.message,
+        });
+      } catch (err) {
+        console.error("Contact message email error:", err);
+      }
+    }
 
     return NextResponse.json({ success: true, notification }, { status: 201 });
   } catch (error: any) {

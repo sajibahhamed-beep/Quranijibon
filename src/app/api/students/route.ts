@@ -42,9 +42,10 @@ export async function POST(request: Request) {
       name: String(body.name).trim(),
       phone: String(body.phone).trim(),
       email: body.email ? String(body.email).trim() : "",
+      gender: body.gender || "পুরুষ",
       package: body.package || "বিনামূল্যে",
       schedule: body.schedule || "সুবিধাজনক সময়ে",
-      teacherPreference: body.teacherPreference || "যে কোনটি",
+      teacherPreference: body.teacherPreference || (body.gender === "মহিলা" || body.gender === "মেয়ে শিশু" ? "মহিলা শিক্ষিকা" : "পুরুষ শিক্ষক"),
       status: "নতুন আবেদন",
       notes: body.notes || "",
     });
@@ -52,7 +53,7 @@ export async function POST(request: Request) {
     try {
       await addNotification({
         title: `নতুন ভর্তি আবেদন: ${newStudent.name}`,
-        message: `${newStudent.name} (${newStudent.phone}) '${newStudent.package}' কোর্সে নতুন আবেদন করেছেন। শিক্ষক পছন্দ: ${newStudent.teacherPreference}, সময়সূচী: ${newStudent.schedule}`,
+        message: `${newStudent.name} (${newStudent.gender || "শিক্ষার্থী"}, ফোন: ${newStudent.phone}) '${newStudent.package}' কোর্সে নতুন আবেদন করেছেন। সময়সূচী: ${newStudent.schedule}`,
         category: "admission",
         link: "/admin/students",
       });
@@ -60,9 +61,9 @@ export async function POST(request: Request) {
       console.error("Error creating notification for student registration:", e);
     }
 
-    // Send email notification to admins (non-blocking, fail-safe)
+    // Send email notification to admins (fail-safe and awaited so serverless runtimes don't cut off connection)
     try {
-      sendStudentApplicationEmail({
+      await sendStudentApplicationEmail({
         name: newStudent.name,
         phone: newStudent.phone,
         email: newStudent.email,
@@ -70,9 +71,9 @@ export async function POST(request: Request) {
         schedule: newStudent.schedule,
         teacherPreference: newStudent.teacherPreference,
         notes: newStudent.notes,
-      }).catch((err) => console.error("Student email sending error:", err));
+      });
     } catch (emailErr) {
-      console.error("Student email trigger error:", emailErr);
+      console.error("Student email dispatch error:", emailErr);
     }
 
     return NextResponse.json(

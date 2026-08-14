@@ -14,10 +14,12 @@ import {
   Instagram,
   Linkedin,
   MessageCircle,
+  Twitter,
+  Globe,
   Share2,
+  Video,
   UserCheck,
 } from "lucide-react";
-import { recordUserInteraction } from "@/data/notifyClient";
 import { getSiteSettings } from "@/data/siteSettingsStorage";
 import TeacherApplyModal from "./TeacherApplyModal";
 
@@ -28,30 +30,18 @@ const SOCIAL_ICONS: Record<string, any> = {
   linkedin: Linkedin,
   telegram: Send,
   whatsapp: MessageCircle,
+  twitter: Twitter,
+  x: Twitter,
+  globe: Globe,
+  website: Globe,
+  mail: Mail,
+  phone: Phone,
+  video: Video,
 };
 
 export default function Footer() {
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
   const [isTeacherModalOpen, setIsTeacherModalOpen] = useState(false);
-
   const settings = getSiteSettings();
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      const subscriberEmail = email;
-      setSubscribed(true);
-      setEmail("");
-      await recordUserInteraction({
-        title: "নতুন কোর্স আপডেট সাবস্ক্রিপশন",
-        message: `${subscriberEmail} নিয়মিত ফ্রি কোর্সের আপডেটের জন্য সাবস্ক্রাইব করেছেন।`,
-        category: "admission",
-      });
-      setTimeout(() => setSubscribed(false), 4000);
-    }
-  };
-
   const activeSocialLinks = (settings.socialLinks || []).filter((s) => s.active);
 
   return (
@@ -73,36 +63,6 @@ export default function Footer() {
 
       {/* Inner Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Subscription Banner Box */}
-        <div className="bg-[#034D46] border border-teal-600/40 rounded-2xl p-6 sm:p-8 lg:p-10 flex flex-col lg:flex-row items-center justify-between gap-6 shadow-xl mb-16">
-          <h3 className="text-xl sm:text-2xl font-black text-white text-center lg:text-left leading-snug">
-            নিয়মিত ফ্রি কোর্সের আপডেট পেতে সাবস্ক্রাইব করুন।
-          </h3>
-
-          <form
-            onSubmit={handleSubscribe}
-            className="flex flex-col sm:flex-row items-center w-full lg:w-auto gap-3.5"
-          >
-            <div className="w-full sm:w-80">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@mail.com"
-                required
-                className="w-full px-4 py-3 rounded-xl bg-white text-slate-800 placeholder:text-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-300 shadow-inner"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full sm:w-auto px-7 py-3 rounded-xl bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-sm flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95 flex-shrink-0 cursor-pointer"
-            >
-              <span>{subscribed ? "Subscribed!" : "Submit"}</span>
-              <Send className="w-4 h-4 ml-1" />
-            </button>
-          </form>
-        </div>
-
         {/* 4-Column Navigation & Contact Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-16 border-b border-teal-700/60">
           {/* Col 1: প্রধান মেনু */}

@@ -62,9 +62,9 @@ export async function POST(request: Request) {
       console.error("Error adding notification for teacher application:", e);
     }
 
-    // Send email notification to admins (non-blocking, fail-safe)
+    // Send email notification to admins (fail-safe and awaited so serverless runtimes don't cut off connection)
     try {
-      sendTeacherApplicationEmail({
+      await sendTeacherApplicationEmail({
         name: newTeacher.name,
         gender: newTeacher.gender,
         phone: newTeacher.phone,
@@ -73,9 +73,9 @@ export async function POST(request: Request) {
         experience: newTeacher.experience,
         workType: newTeacher.workType,
         notes: newTeacher.notes,
-      }).catch((err) => console.error("Teacher email sending error:", err));
+      });
     } catch (emailErr) {
-      console.error("Teacher email trigger error:", emailErr);
+      console.error("Teacher email dispatch error:", emailErr);
     }
 
     return NextResponse.json(

@@ -16,6 +16,7 @@ import {
   Edit,
   Sparkles,
   AlertCircle,
+  Trash2,
 } from "lucide-react";
 import { INITIAL_STUDENTS, INITIAL_TEACHERS, StudentRecord } from "@/data/adminStore";
 import {
@@ -23,6 +24,7 @@ import {
   registerStudentAction,
   changeStudentStatusAction,
   saveStudentAction,
+  deleteStudentAction,
 } from "@/data/studentsClient";
 
 export default function AdminStudentsPage() {
@@ -39,6 +41,7 @@ export default function AdminStudentsPage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [gender, setGender] = useState("পুরুষ");
   const [pkg, setPkg] = useState<StudentRecord["package"]>("সাশ্রয়ী (৳৩২০)");
   const [schedule, setSchedule] = useState("সপ্তাহে ৩ দিন (রাত ৮:০০)");
   const [teacherPref, setTeacherPref] = useState<StudentRecord["teacherPreference"]>("পুরুষ শিক্ষক");
@@ -56,6 +59,7 @@ export default function AdminStudentsPage() {
     setName("");
     setPhone("");
     setEmail("");
+    setGender("পুরুষ");
     setPkg("সাশ্রয়ী (৳৩২০)");
     setSchedule("সপ্তাহে ৩ দিন (রাত ৮:০০)");
     setTeacherPref("পুরুষ শিক্ষক");
@@ -73,6 +77,7 @@ export default function AdminStudentsPage() {
         name,
         phone,
         email,
+        gender,
         package: pkg,
         schedule,
         teacherPreference: teacherPref,
@@ -88,6 +93,7 @@ export default function AdminStudentsPage() {
         name,
         phone,
         email,
+        gender,
         package: pkg,
         schedule,
         teacherPreference: teacherPref,
@@ -105,6 +111,14 @@ export default function AdminStudentsPage() {
       prev.map((s) => (s.id === id ? { ...s, status: newStatus } : s))
     );
     await changeStudentStatusAction(id, newStatus);
+  };
+
+  const handleDeleteStudent = async (id: string, studentName: string) => {
+    if (!confirm(`আপনি কি নিশ্চিতভাবে "${studentName}" এর ভর্তি তথ্য ডাটাবেজ থেকে মুছে ফেলতে চান?`)) {
+      return;
+    }
+    setStudents((prev) => prev.filter((s) => s.id !== id));
+    await deleteStudentAction(id);
   };
 
   const newApplicationsCount = students.filter((s) => s.status === "নতুন আবেদন").length;
@@ -240,10 +254,15 @@ export default function AdminStudentsPage() {
                 filteredStudents.map((student) => (
                   <tr key={student.id} className="hover:bg-slate-800/40 transition-colors">
                     <td className="p-4 font-semibold">
-                      <div className="flex items-center gap-1.5 mb-1">
+                      <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                         <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono block w-max">
                           {student.id}
                         </span>
+                        {student.gender && (
+                          <span className="text-[10px] bg-[#00A89C]/15 text-[#00A89C] border border-[#00A89C]/30 px-1.5 py-0.5 rounded font-bold">
+                            {student.gender}
+                          </span>
+                        )}
                         {student.status === "নতুন আবেদন" && (
                           <span className="text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/40 px-1.5 py-0.2 rounded font-bold">
                             নতুন আবেদন
@@ -302,22 +321,32 @@ export default function AdminStudentsPage() {
                       </select>
                     </td>
                     <td className="p-4 text-right">
-                      <button
-                        onClick={() => {
-                          setEditingStudent(student);
-                          setName(student.name);
-                          setPhone(student.phone);
-                          setEmail(student.email);
-                          setPkg(student.package);
-                          setSchedule(student.schedule);
-                          setTeacherPref(student.teacherPreference);
-                          setAssignedTeacher(student.assignedTeacher || "");
-                        }}
-                        className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
-                        title="Edit Details"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center justify-end space-x-1.5">
+                        <button
+                          onClick={() => {
+                            setEditingStudent(student);
+                            setName(student.name);
+                            setPhone(student.phone);
+                            setEmail(student.email);
+                            setGender(student.gender || "পুরুষ");
+                            setPkg(student.package);
+                            setSchedule(student.schedule);
+                            setTeacherPref(student.teacherPreference);
+                            setAssignedTeacher(student.assignedTeacher || "");
+                          }}
+                          className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors cursor-pointer"
+                          title="সম্পাদনা করুন"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteStudent(student.id, student.name)}
+                          className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                          title="মুছে ফেলুন (Delete)"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -334,7 +363,7 @@ export default function AdminStudentsPage() {
             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
               <div>
                 <span className="bg-[#00A89C]/20 text-[#00A89C] border border-[#00A89C]/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full inline-block mb-1">
-                  নতুন আবেদন
+                  {editingStudent ? "আপডেট" : "নতুন আবেদন"}
                 </span>
                 <h2 className="text-lg font-black text-white">
                   {editingStudent ? "শিক্ষার্থীর তথ্য আপডেট করুন" : "নতুন শিক্ষার্থী এনরোল করুন"}
@@ -378,15 +407,31 @@ export default function AdminStudentsPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-slate-300 mb-1">ইমেইল (ঐচ্ছিক)</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="student@example.com"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-300 mb-1">শিক্ষার্থীর লিঙ্গ / ধরন</label>
+                  <select
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  >
+                    <option value="পুরুষ">পুরুষ</option>
+                    <option value="মহিলা">মহিলা</option>
+                    <option value="ছেলে শিশু">ছেলে শিশু</option>
+                    <option value="মেয়ে শিশু">মেয়ে শিশু</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-300 mb-1">ইমেইল (ঐচ্ছিক)</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="student@example.com"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

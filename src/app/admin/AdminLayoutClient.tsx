@@ -35,11 +35,11 @@ export default function AdminLayoutClient({
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const handleRefresh = async () => {
+  const handleRefresh = () => {
     setIsRefreshing(true);
-    await fetchUnreadCount();
-    router.refresh();
-    setTimeout(() => setIsRefreshing(false), 800);
+    if (typeof window !== "undefined") {
+      window.location.reload();
+    }
   };
 
   // Exclude login page from layout wrapping logic
@@ -127,9 +127,9 @@ export default function AdminLayoutClient({
       active: pathname === "/admin/pages",
     },
     {
-      label: "ফুটার ও যোগাযোগ সেটিংস",
+      label: "সাইট, ব্যাংক ও যোগাযোগ সেটিংস",
       href: "/admin/settings",
-      icon: PhoneCall,
+      icon: Settings,
       active: pathname === "/admin/settings",
     },
     {

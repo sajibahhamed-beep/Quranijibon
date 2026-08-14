@@ -19,6 +19,7 @@ export async function registerStudentAction(params: {
   name: string;
   phone: string;
   email?: string;
+  gender?: string;
   package?: StudentRecord["package"];
   schedule?: string;
   teacherPreference?: StudentRecord["teacherPreference"];
@@ -70,6 +71,18 @@ export async function saveStudentAction(student: StudentRecord): Promise<boolean
     return res.ok;
   } catch (error) {
     console.error("Error in saveStudentAction:", error);
+    return false;
+  }
+}
+
+export async function deleteStudentAction(id: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/students/${id}`, {
+      method: "DELETE",
+    });
+    return res.ok;
+  } catch (error) {
+    console.error("Error in deleteStudentAction:", error);
     return false;
   }
 }

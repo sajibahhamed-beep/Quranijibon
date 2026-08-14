@@ -14,7 +14,9 @@ export default function PricingSection() {
   // Modal Form State
   const [studentName, setStudentName] = useState("");
   const [studentPhone, setStudentPhone] = useState("");
-  const [preferredTime, setPreferredTime] = useState("রাত ৮টা - ১০টা");
+  const [studentGender, setStudentGender] = useState<string>("পুরুষ");
+  const [customSchedule, setCustomSchedule] = useState("");
+  const [studentEmail, setStudentEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -28,7 +30,7 @@ export default function PricingSection() {
 
   const handleEnrollSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!studentName || !studentPhone) return;
+    if (!studentName.trim() || !studentPhone.trim() || !studentGender || !customSchedule.trim()) return;
 
     setIsSubmitting(true);
     let pkgCategory: StudentRecord["package"] = "কাস্টম প্রিমিয়াম";
@@ -38,19 +40,27 @@ export default function PricingSection() {
       pkgCategory = "বিনামূল্যে";
     }
 
+    const teacherPref = studentGender.includes("মহিলা") || studentGender.includes("মেয়ে")
+      ? "মহিলা শিক্ষিকা"
+      : "পুরুষ শিক্ষক";
+
     await registerStudentAction({
-      name: studentName,
-      phone: studentPhone,
+      name: studentName.trim(),
+      phone: studentPhone.trim(),
+      email: studentEmail.trim() || undefined,
+      gender: studentGender,
       package: pkgCategory,
-      schedule: `সপ্তাহে ${selectedDays}, ${selectedDuration} (${preferredTime})`,
-      teacherPreference: "যে কোনটি",
-      notes: `প্যাকেজ: ${selectedPackage}`,
+      schedule: customSchedule.trim(),
+      teacherPreference: teacherPref,
+      notes: `প্যাকেজ: ${selectedPackage} | শিক্ষার্থী: ${studentGender}`,
     });
 
     setIsSubmitting(false);
     setIsSubmitted(true);
     setStudentName("");
     setStudentPhone("");
+    setStudentEmail("");
+    setCustomSchedule("");
 
     setTimeout(() => {
       setSelectedPackage(null);
@@ -321,7 +331,7 @@ export default function PricingSection() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                    শিক্ষার্থী বা অভিভাবকের নাম
+                    শিক্ষার্থী বা অভিভাবকের নাম <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -335,7 +345,7 @@ export default function PricingSection() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                    মোবাইল / হোয়াটসঅ্যাপ নম্বর
+                    মোবাইল / হোয়াটসঅ্যাপ নম্বর <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="tel"
@@ -348,25 +358,59 @@ export default function PricingSection() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                    পছন্দের ক্লাসের সময়
+                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
+                    শিক্ষার্থীর লিঙ্গ / ধরন <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    value={preferredTime}
-                    onChange={(e) => setPreferredTime(e.target.value)}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {["পুরুষ", "মহিলা", "ছেলে শিশু", "মেয়ে শিশু"].map((gender) => (
+                      <button
+                        type="button"
+                        key={gender}
+                        onClick={() => setStudentGender(gender)}
+                        className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                          studentGender === gender
+                            ? "bg-[#00A89C] text-white border-[#00A89C] shadow-sm"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:border-teal-300"
+                        }`}
+                      >
+                        {gender}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                    পছন্দের সময়সূচী ও দিন <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={customSchedule}
+                    onChange={(e) => setCustomSchedule(e.target.value)}
+                    required
+                    placeholder="যেমন: রাত ৯টা - ১০টা, শনি-সোম-বুধ"
                     className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
-                  >
-                    <option value="সকাল ৭টা - ৯টা">সকাল (৭টা - ৯টা)</option>
-                    <option value="দুপুর ১২টা - ২টা">দুপুর (১২টা - ২টা)</option>
-                    <option value="বিকাল ৫টা - ৭টা">বিকাল (৫টা - ৭টা)</option>
-                    <option value="রাত ৮টা - ১০টা">রাত (৮টা - ১০টা)</option>
-                  </select>
+                  />
+                  <p className="text-[11px] text-slate-500 mt-1">আপনার সুবিধাজনক যেকোনো দিন ও সময় লিখে দিন</p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                    ইমেইল ঠিকানা <span className="text-slate-400 font-normal">(ঐচ্ছিক)</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={studentEmail}
+                    onChange={(e) => setStudentEmail(e.target.value)}
+                    placeholder="student@example.com"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+                  />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-4 rounded-xl bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-sm flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95 cursor-pointer"
+                  className="w-full py-4 rounded-xl bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-sm flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95 cursor-pointer mt-2"
                 >
                   <span>{isSubmitting ? "আবেদন জমা হচ্ছে..." : "ভর্তি আবেদন সম্পন্ন করুন"}</span>
                   <Send className="w-4 h-4 ml-1" />

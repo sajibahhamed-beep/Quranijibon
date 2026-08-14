@@ -157,7 +157,9 @@ export default function ContactClient() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase mb-1">আপনার নাম</label>
+                      <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                        আপনার নাম <span className="text-red-500">*</span>
+                      </label>
                       <input
                         type="text"
                         value={name}
@@ -168,7 +170,9 @@ export default function ContactClient() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase mb-1">ফোন নম্বর</label>
+                      <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                        ফোন নম্বর <span className="text-red-500">*</span>
+                      </label>
                       <input
                         type="tel"
                         value={phone}
