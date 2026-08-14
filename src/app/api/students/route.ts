@@ -65,6 +65,7 @@ export async function POST(request: Request) {
     try {
       await sendStudentApplicationEmail({
         name: newStudent.name,
+        gender: newStudent.gender,
         phone: newStudent.phone,
         email: newStudent.email,
         package: newStudent.package,

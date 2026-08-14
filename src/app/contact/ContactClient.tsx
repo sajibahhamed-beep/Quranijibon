@@ -24,12 +24,20 @@ export default function ContactClient() {
     if (!name || !phone || !message) return;
 
     setLoading(true);
-    await recordUserInteraction({
-      title: "যোগাযোগ ফর্ম থেকে নতুন বার্তা",
-      message: `${name} (${phone}, ${email || "ইমেইল নেই"}) লিখেছেন: "${message}"`,
-      category: "message",
-      link: "/contact",
-    });
+    try {
+      await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          phone: phone.trim(),
+          email: email.trim(),
+          message: message.trim(),
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to post message:", err);
+    }
 
     setLoading(false);
     setSubmitted(true);

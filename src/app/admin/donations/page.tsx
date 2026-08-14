@@ -14,6 +14,8 @@ import {
   TrendingUp,
   Receipt,
   Trash2,
+  Heart,
+  Gift,
 } from "lucide-react";
 import { DonationRecord } from "@/data/adminStore";
 
@@ -30,8 +32,7 @@ export default function AdminDonationsPage() {
   const [donorName, setDonorName] = useState("");
   const [phone, setPhone] = useState("");
   const [amount, setAmount] = useState("");
-  const [type, setType] = useState<string>("শিক্ষার্থী স্পন্সর");
-  const [sponsoredStudent, setSponsoredStudent] = useState("");
+  const [type, setType] = useState<string>("অনুদান প্রদান");
   const [paymentMethod, setPaymentMethod] = useState<string>("bKash");
   const [trxId, setTrxId] = useState("");
 
@@ -69,7 +70,6 @@ export default function AdminDonationsPage() {
           phone: phone || "+880 1700-000000",
           amount: parseFloat(amount) || 0,
           type,
-          sponsoredStudent: type === "শিক্ষার্থী স্পন্সর" ? sponsoredStudent : undefined,
           paymentMethod,
           trxId,
         }),
@@ -114,6 +114,31 @@ export default function AdminDonationsPage() {
     }
   };
 
+  const isDonationType = (t?: string) => {
+    if (!t) return false;
+    return (
+      t === "অনুদান" ||
+      t === "অনুদান প্রদান" ||
+      t === "সাদাকা" ||
+      t === "শিক্ষার্থী স্পন্সর" ||
+      t === "সাধারণ অনুদান"
+    );
+  };
+
+  const isHadiaType = (t?: string) => {
+    if (!t) return false;
+    return (
+      t === "শিক্ষার্থী হাদিয়া" ||
+      t === "হাদিয়া" ||
+      t.includes("হাদিয়া") ||
+      t === "Student Payments" ||
+      t.includes("পেমেন্ট")
+    );
+  };
+
+  const donationCount = donations.filter((d) => isDonationType(d.type)).length;
+  const hadiaCount = donations.filter((d) => isHadiaType(d.type)).length;
+
   const filteredDonations = donations.filter((d) => {
     const matchesSearch =
       d.donorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -122,30 +147,26 @@ export default function AdminDonationsPage() {
       (d.trxId && d.trxId.toLowerCase().includes(searchQuery.toLowerCase()));
 
     let matchesType = true;
-    if (typeFilter === "Student Payments") {
-      matchesType =
-        d.type === "Student Payments" ||
-        d.type === "স্টুডেন্ট পেমেন্ট" ||
-        d.type === "স্টুডেন্ট ফি" ||
-        d.type?.includes("পেমেন্ট");
-    } else if (typeFilter !== "সব") {
-      matchesType = d.type === typeFilter;
+    if (typeFilter === "অনুদান") {
+      matchesType = isDonationType(d.type);
+    } else if (typeFilter === "শিক্ষার্থী হাদিয়া") {
+      matchesType = isHadiaType(d.type);
     }
 
     return matchesSearch && matchesType;
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
             <HeartHandshake className="w-6 h-6 text-[#00A89C]" />
-            অনুদান ও স্পন্সরশিপ (Sadaqah & Sponsorships)
+            অনুদান ও শিক্ষার্থী হাদিয়া (Donations & Student Hadia)
           </h1>
           <p className="text-slate-400 text-xs sm:text-sm">
-            ওয়েবসাইটের অনুদান, হাদিয়া এবং শিক্ষার্থী কোর্স পেমেন্ট ট্র্যাকিং
+            ওয়েবসাইটের &apos;লেনদেন তথ্য নিশ্চিত করুন&apos; ফর্ম থেকে প্রাপ্ত অনুদান ও শিক্ষার্থী হাদিয়ার সম্পূর্ণ তালিকা
           </p>
         </div>
 
@@ -154,8 +175,7 @@ export default function AdminDonationsPage() {
             setDonorName("");
             setPhone("");
             setAmount("");
-            setType("শিক্ষার্থী স্পন্সর");
-            setSponsoredStudent("");
+            setType("অনুদান প্রদান");
             setPaymentMethod("bKash");
             setTrxId("");
             setIsAddModalOpen(true);
@@ -163,7 +183,7 @@ export default function AdminDonationsPage() {
           className="bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-xl transition-all shadow-lg shadow-[#00A89C]/20 flex items-center justify-center space-x-2 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>নতুন অনুদান এন্ট্রি দিন</span>
+          <span>নতুন এন্ট্রি দিন</span>
         </button>
       </div>
 
@@ -171,7 +191,7 @@ export default function AdminDonationsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-lg flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold text-slate-400 block mb-1">মোট সংগৃহীত সাদাকা ও ফান্ড</span>
+            <span className="text-xs font-bold text-slate-400 block mb-1">মোট সংগৃহীত অনুদান ও হাদিয়া</span>
             <span className="text-2xl font-black text-amber-400">
               ৳{totalAmount.toLocaleString("bn-BD")}
             </span>
@@ -183,25 +203,25 @@ export default function AdminDonationsPage() {
 
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-lg flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold text-slate-400 block mb-1">স্পন্সরকৃত মোট শিক্ষার্থী</span>
+            <span className="text-xs font-bold text-slate-400 block mb-1">মোট অনুদান প্রদান</span>
             <span className="text-2xl font-black text-emerald-400">
-              {donations.filter((d) => d.type === "শিক্ষার্থী স্পন্সর").length} জন
+              {donationCount} টি
             </span>
           </div>
           <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-2xl">
-            <UserCheck className="w-6 h-6" />
+            <Heart className="w-6 h-6" />
           </div>
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-lg flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold text-slate-400 block mb-1">মোট অনুদান / পেমেন্ট সংখ্যা</span>
-            <span className="text-2xl font-black text-white">
-              {donations.length} টি
+            <span className="text-xs font-bold text-slate-400 block mb-1">শিক্ষার্থী হাদিয়া প্রাপ্তি</span>
+            <span className="text-2xl font-black text-sky-400">
+              {hadiaCount} টি
             </span>
           </div>
           <div className="p-3 bg-sky-500/10 text-sky-400 rounded-2xl">
-            <TrendingUp className="w-6 h-6" />
+            <Gift className="w-6 h-6" />
           </div>
         </div>
       </div>
@@ -214,23 +234,24 @@ export default function AdminDonationsPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="অনুদানকারী, ফোন বা TrxID সার্চ..."
+            placeholder="প্রেরকের নাম, ফোন বা TrxID সার্চ..."
             className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-[#00A89C]"
           />
         </div>
 
+        {/* Requested: Only Two Filters: অনুদান and শিক্ষার্থী হাদিয়া (plus সব) */}
         <div className="flex flex-wrap items-center gap-2">
-          {["সব", "শিক্ষার্থী স্পন্সর", "সাদাকা", "Student Payments"].map((t) => (
+          {["সব", "অনুদান", "শিক্ষার্থী হাদিয়া"].map((t) => (
             <button
               key={t}
               onClick={() => setTypeFilter(t)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 typeFilter === t
-                  ? "bg-[#00A89C] text-white"
+                  ? "bg-[#00A89C] text-white shadow-md shadow-[#00A89C]/20"
                   : "bg-slate-950 text-slate-400 border border-slate-800 hover:text-white"
               }`}
             >
-              {t === "Student Payments" ? "Student Payments (শিক্ষার্থী পেমেন্ট)" : t}
+              {t}
             </button>
           ))}
         </div>
@@ -243,8 +264,8 @@ export default function AdminDonationsPage() {
             <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider font-bold border-b border-slate-800">
               <tr>
                 <th className="p-4">ট্রানজেকশন আইডি</th>
-                <th className="p-4">অনুদানকারী / শিক্ষার্থী</th>
-                <th className="p-4">টাইপ</th>
+                <th className="p-4">অনুদানকারী / প্রেরক</th>
+                <th className="p-4">লেনদেনের ধরন</th>
                 <th className="p-4">পরিমাণ (৳)</th>
                 <th className="p-4">পেমেন্ট মেথড ও TrxID</th>
                 <th className="p-4">স্ট্যাটাস</th>
@@ -256,13 +277,13 @@ export default function AdminDonationsPage() {
               {loading ? (
                 <tr>
                   <td colSpan={8} className="p-8 text-center text-slate-400">
-                    অনুদান ডাটাবেজ লোড হচ্ছে...
+                    অনুদান ও হাদিয়া ডাটাবেজ লোড হচ্ছে...
                   </td>
                 </tr>
               ) : filteredDonations.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="p-8 text-center text-slate-500">
-                    কোনো অনুদান বা পেমেন্ট পাওয়া যায়নি
+                    কোনো লেনদেন রেকর্ড পাওয়া যায়নি
                   </td>
                 </tr>
               ) : (
@@ -275,22 +296,18 @@ export default function AdminDonationsPage() {
                     </td>
                     <td className="p-4">
                       <div className="font-bold text-white text-sm">{item.donorName}</div>
-                      <div className="text-[11px] text-slate-400 font-mono">{item.phone}</div>
-                      {item.sponsoredStudent && (
-                        <div className="text-[10px] text-teal-400 mt-0.5">
-                          স্পন্সরকৃত: {item.sponsoredStudent}
-                        </div>
-                      )}
+                      <div className="text-[11px] text-slate-400 font-mono flex items-center space-x-1 mt-0.5">
+                        <Phone className="w-3 h-3 text-slate-500" />
+                        <span>{item.phone}</span>
+                      </div>
                     </td>
                     <td className="p-4">
-                      <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold inline-block border ${
-                        item.type?.includes("পেমেন্ট") || item.type === "Student Payments"
-                          ? "bg-blue-500/10 text-blue-400 border-blue-500/30"
-                          : item.type === "সাদাকা"
-                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                          : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                      <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold inline-block border ${
+                        isHadiaType(item.type)
+                          ? "bg-sky-500/15 text-sky-400 border-sky-500/30"
+                          : "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
                       }`}>
-                        {item.type}
+                        {item.type || "অনুদান প্রদান"}
                       </span>
                     </td>
                     <td className="p-4 font-black text-emerald-400 text-sm">
@@ -311,7 +328,7 @@ export default function AdminDonationsPage() {
                       <select
                         value={item.status || "অপেক্ষমাণ"}
                         onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded border outline-none cursor-pointer ${
+                        className={`text-[10px] font-bold px-2 py-1 rounded-lg border outline-none cursor-pointer ${
                           item.status === "অনুমোদিত"
                             ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
                             : item.status === "বাতিল"
@@ -349,10 +366,10 @@ export default function AdminDonationsPage() {
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6">
             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h2 className="text-lg font-black text-white">নতুন অনুদান রেকর্ড করুন</h2>
+              <h2 className="text-lg font-black text-white">নতুন লেনদেন রেকর্ড করুন</h2>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white bg-slate-800"
+                className="p-1 rounded-lg text-slate-400 hover:text-white bg-slate-800 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -360,7 +377,7 @@ export default function AdminDonationsPage() {
 
             <form onSubmit={handleSaveDonation} className="space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-300 mb-1">অনুদানকারীর নাম</label>
+                <label className="block font-bold text-slate-300 mb-1">প্রেরকের নাম</label>
                 <input
                   type="text"
                   value={donorName}
@@ -399,26 +416,26 @@ export default function AdminDonationsPage() {
                   <label className="block font-bold text-slate-300 mb-1">পেমেন্ট মেথড</label>
                   <select
                     value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value as DonationRecord["paymentMethod"])}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
                   >
-                    <option value="bKash">bKash</option>
-                    <option value="Nagad">Nagad</option>
+                    <option value="bKash">বিকাশ (bKash)</option>
+                    <option value="Nagad">নগদ (Nagad)</option>
+                    <option value="Rocket">রকেট (Rocket)</option>
                     <option value="Bank Transfer">Bank Transfer</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="block font-bold text-slate-300 mb-1">অনুদানের ধরন</label>
+                <label className="block font-bold text-slate-300 mb-1">লেনদেনের ধরন</label>
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
                 >
-                  <option value="শিক্ষার্থী স্পন্সর">শিক্ষার্থী স্পন্সর</option>
-                  <option value="সাদাকা">সাদাকা</option>
-                  <option value="Student Payments">Student Payments (শিক্ষার্থী ফি / পেমেন্ট)</option>
+                  <option value="অনুদান প্রদান">অনুদান প্রদান</option>
+                  <option value="শিক্ষার্থী হাদিয়া">শিক্ষার্থী হাদিয়া</option>
                 </select>
               </div>
 
@@ -433,30 +450,17 @@ export default function AdminDonationsPage() {
                 />
               </div>
 
-              {type === "শিক্ষার্থী স্পন্সর" && (
-                <div>
-                  <label className="block font-bold text-slate-300 mb-1">স্পন্সরকৃত শিক্ষার্থীর নাম</label>
-                  <input
-                    type="text"
-                    value={sponsoredStudent}
-                    onChange={(e) => setSponsoredStudent(e.target.value)}
-                    placeholder="যেমন: আরিফুল ইসলাম"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
-                  />
-                </div>
-              )}
-
               <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700"
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700 cursor-pointer"
                 >
                   বাতিল
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-[#00A89C] text-white font-bold hover:bg-[#00897B] shadow-md"
+                  className="px-5 py-2.5 rounded-xl bg-[#00A89C] text-white font-bold hover:bg-[#00897B] shadow-md cursor-pointer"
                 >
                   রেকর্ড করুন
                 </button>

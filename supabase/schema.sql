@@ -31,17 +31,18 @@ CREATE TABLE IF NOT EXISTS public.faqs (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. Students Table (Registrations / Trial Applications)
+-- 3. Students Table (Registrations / Admissions)
 CREATE TABLE IF NOT EXISTS public.students (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
+    gender TEXT DEFAULT 'পুরুষ',
     phone TEXT NOT NULL,
     email TEXT,
     course TEXT,
     student_type TEXT,
     preferred_time TEXT,
     notes TEXT,
-    status TEXT DEFAULT 'pending',
+    status TEXT DEFAULT 'নতুন আবেদন',
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -56,12 +57,37 @@ CREATE TABLE IF NOT EXISTS public.teachers (
     experience TEXT,
     work_type TEXT,
     active_students INT DEFAULT 0,
-    status TEXT DEFAULT 'pending',
+    status TEXT DEFAULT 'নতুন আবেদন',
     notes TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 5. Dynamic Pages Table (CMS Pages)
+-- 5. Donations & Student Hadia Table
+CREATE TABLE IF NOT EXISTS public.donations (
+    id TEXT PRIMARY KEY,
+    donor_name TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    amount NUMERIC NOT NULL,
+    type TEXT DEFAULT 'অনুদান প্রদান',
+    sponsored_student TEXT,
+    payment_method TEXT DEFAULT 'bKash',
+    trx_id TEXT,
+    status TEXT DEFAULT 'অপেক্ষমাণ',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 6. Contact Messages & Inquiries Table
+CREATE TABLE IF NOT EXISTS public.contact_messages (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    email TEXT,
+    message TEXT NOT NULL,
+    status TEXT DEFAULT 'নতুন',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 7. Dynamic Pages Table (CMS Pages)
 CREATE TABLE IF NOT EXISTS public.pages (
     id TEXT PRIMARY KEY,
     slug TEXT UNIQUE NOT NULL,
@@ -72,7 +98,7 @@ CREATE TABLE IF NOT EXISTS public.pages (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 6. Notifications Table
+-- 8. Notifications Table
 CREATE TABLE IF NOT EXISTS public.notifications (
     id TEXT PRIMARY KEY,
     title TEXT NOT NULL,
@@ -83,7 +109,7 @@ CREATE TABLE IF NOT EXISTS public.notifications (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 7. Site Settings Table
+-- 9. Site Settings Table
 CREATE TABLE IF NOT EXISTS public.site_settings (
     id INT PRIMARY KEY DEFAULT 1,
     settings JSONB NOT NULL,
@@ -96,6 +122,8 @@ CREATE INDEX IF NOT EXISTS idx_blogs_featured ON public.blogs(featured);
 CREATE INDEX IF NOT EXISTS idx_faqs_active_order ON public.faqs(is_active, sort_order);
 CREATE INDEX IF NOT EXISTS idx_students_status ON public.students(status);
 CREATE INDEX IF NOT EXISTS idx_teachers_status ON public.teachers(status);
+CREATE INDEX IF NOT EXISTS idx_donations_status ON public.donations(status);
+CREATE INDEX IF NOT EXISTS idx_messages_status ON public.contact_messages(status);
 CREATE INDEX IF NOT EXISTS idx_pages_slug ON public.pages(slug);
 
 -- Enable Row Level Security (RLS)
@@ -103,36 +131,19 @@ ALTER TABLE public.blogs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.faqs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.students ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.teachers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.donations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.pages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
-
--- Drop existing policies if any to prevent conflicts
-DROP POLICY IF EXISTS "Public Read Blogs" ON public.blogs;
-DROP POLICY IF EXISTS "Public Read FAQs" ON public.faqs;
-DROP POLICY IF EXISTS "Public Read Pages" ON public.pages;
-DROP POLICY IF EXISTS "Public Read Settings" ON public.site_settings;
-DROP POLICY IF EXISTS "Public Read Teachers" ON public.teachers;
-DROP POLICY IF EXISTS "Public Read Students" ON public.students;
-DROP POLICY IF EXISTS "Public Read Notifications" ON public.notifications;
-
-DROP POLICY IF EXISTS "Public Insert Students" ON public.students;
-DROP POLICY IF EXISTS "Public Insert Notifications" ON public.notifications;
-DROP POLICY IF EXISTS "Public Insert Teachers" ON public.teachers;
-
-DROP POLICY IF EXISTS "Admin Full Blogs" ON public.blogs;
-DROP POLICY IF EXISTS "Admin Full FAQs" ON public.faqs;
-DROP POLICY IF EXISTS "Admin Full Students" ON public.students;
-DROP POLICY IF EXISTS "Admin Full Teachers" ON public.teachers;
-DROP POLICY IF EXISTS "Admin Full Pages" ON public.pages;
-DROP POLICY IF EXISTS "Admin Full Notifications" ON public.notifications;
-DROP POLICY IF EXISTS "Admin Full Settings" ON public.site_settings;
 
 -- Allow full CRUD for anon and authenticated users across all tables
 CREATE POLICY "Allow Full Access Blogs" ON public.blogs FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow Full Access FAQs" ON public.faqs FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow Full Access Students" ON public.students FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow Full Access Teachers" ON public.teachers FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow Full Access Donations" ON public.donations FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow Full Access Messages" ON public.contact_messages FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow Full Access Pages" ON public.pages FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow Full Access Notifications" ON public.notifications FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow Full Access Settings" ON public.site_settings FOR ALL USING (true) WITH CHECK (true);

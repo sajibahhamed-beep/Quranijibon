@@ -67,6 +67,7 @@ export async function sendNotificationEmail({
 
 export async function sendStudentApplicationEmail(student: {
   name: string;
+  gender?: string;
   phone: string;
   email?: string;
   package?: string;
@@ -74,22 +75,23 @@ export async function sendStudentApplicationEmail(student: {
   teacherPreference?: string;
   notes?: string;
 }) {
-  const subject = `📚 নতুন শিক্ষার্থী আবেদন — ${student.name}`;
+  const subject = `📚 নতুন শিক্ষার্থী ভর্তি আবেদন — ${student.name} (${student.package || "কোর্স"})`;
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;">
       <div style="background: linear-gradient(135deg, #00A89C, #059669); padding: 24px 28px;">
-        <h1 style="color: white; margin: 0; font-size: 20px;">📚 নতুন শিক্ষার্থী আবেদন</h1>
+        <h1 style="color: white; margin: 0; font-size: 20px;">📚 নতুন শিক্ষার্থী ভর্তি আবেদন</h1>
         <p style="color: rgba(255,255,255,0.85); margin: 6px 0 0; font-size: 14px;">কুরআন জীবন অনলাইন একাডেমি</p>
       </div>
       <div style="padding: 28px;">
         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-          <tr><td style="padding: 10px 0; color: #64748b; width: 40%;">নাম</td><td style="padding: 10px 0; font-weight: bold; color: #0f172a;">${student.name}</td></tr>
-          <tr style="background:#f1f5f9;"><td style="padding: 10px 8px; color: #64748b;">ফোন / হোয়াটসঅ্যাপ</td><td style="padding: 10px 8px; font-weight: bold; color: #0f172a;">${student.phone}</td></tr>
-          ${student.email ? `<tr><td style="padding: 10px 0; color: #64748b;">ইমেইল</td><td style="padding: 10px 0; color: #0f172a;">${student.email}</td></tr>` : ""}
-          <tr style="background:#f1f5f9;"><td style="padding: 10px 8px; color: #64748b;">প্যাকেজ / কোর্স</td><td style="padding: 10px 8px; color: #0f172a;">${student.package || "—"}</td></tr>
-          <tr><td style="padding: 10px 0; color: #64748b;">পছন্দের সময়সূচী</td><td style="padding: 10px 0; color: #0f172a;">${student.schedule || "—"}</td></tr>
-          <tr style="background:#f1f5f9;"><td style="padding: 10px 8px; color: #64748b;">শিক্ষক পছন্দ</td><td style="padding: 10px 8px; color: #0f172a;">${student.teacherPreference || "—"}</td></tr>
-          ${student.notes ? `<tr><td style="padding: 10px 0; color: #64748b;">বিশেষ নোট</td><td style="padding: 10px 0; color: #0f172a;">${student.notes}</td></tr>` : ""}
+          <tr><td style="padding: 10px 0; color: #64748b; width: 40%;">শিক্ষার্থীর নাম</td><td style="padding: 10px 0; font-weight: bold; color: #0f172a;">${student.name}</td></tr>
+          <tr style="background:#f1f5f9;"><td style="padding: 10px 8px; color: #64748b;">শিক্ষার্থীর জেন্ডার / ধরন</td><td style="padding: 10px 8px; font-weight: bold; color: #00A89C;">${student.gender || "—"}</td></tr>
+          <tr><td style="padding: 10px 0; color: #64748b;">ফোন / হোয়াটসঅ্যাপ</td><td style="padding: 10px 0; font-weight: bold; color: #0f172a;">${student.phone}</td></tr>
+          ${student.email ? `<tr style="background:#f1f5f9;"><td style="padding: 10px 8px; color: #64748b;">ইমেইল</td><td style="padding: 10px 8px; color: #0f172a;">${student.email}</td></tr>` : ""}
+          <tr><td style="padding: 10px 0; color: #64748b;">প্যাকেজ / কোর্স</td><td style="padding: 10px 0; font-weight: bold; color: #0f172a;">${student.package || "—"}</td></tr>
+          <tr style="background:#f1f5f9;"><td style="padding: 10px 8px; color: #64748b;">পছন্দের সময়সূচী</td><td style="padding: 10px 8px; color: #0f172a;">${student.schedule || "—"}</td></tr>
+          <tr><td style="padding: 10px 0; color: #64748b;">শিক্ষক পছন্দ</td><td style="padding: 10px 0; color: #0f172a;">${student.teacherPreference || "—"}</td></tr>
+          ${student.notes ? `<tr style="background:#f1f5f9;"><td style="padding: 10px 8px; color: #64748b;">বিশেষ নোট</td><td style="padding: 10px 8px; color: #0f172a;">${student.notes}</td></tr>` : ""}
         </table>
         <div style="margin-top: 24px; padding: 14px 16px; background: #ecfdf5; border-left: 4px solid #00A89C; border-radius: 4px;">
           <p style="margin: 0; color: #064e3b; font-size: 13px;">অ্যাডমিন প্যানেলে লগইন করে এই আবেদনটি পর্যালোচনা করুন।</p>

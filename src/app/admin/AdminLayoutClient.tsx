@@ -21,6 +21,7 @@ import {
   Settings,
   PhoneCall,
   RotateCw,
+  Mail,
 } from "lucide-react";
 
 export default function AdminLayoutClient({
@@ -109,10 +110,16 @@ export default function AdminLayoutClient({
       active: pathname === "/admin/teachers",
     },
     {
-      label: "অনুদান ও স্পন্সরশিপ",
+      label: "অনুদান ও শিক্ষার্থী হাদিয়া",
       href: "/admin/donations",
       icon: HeartHandshake,
       active: pathname === "/admin/donations",
+    },
+    {
+      label: "বার্তা ও ইনকোয়ারি",
+      href: "/admin/messages",
+      icon: Mail,
+      active: pathname === "/admin/messages",
     },
     {
       label: "FAQ ও প্রশ্নাবলী",
