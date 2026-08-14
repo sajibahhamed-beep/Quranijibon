@@ -161,11 +161,11 @@ export default function AdminDonationsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <HeartHandshake className="w-6 h-6 text-[#00A89C]" />
             অনুদান ও শিক্ষার্থী হাদিয়া (Donations & Student Hadia)
           </h1>
-          <p className="text-slate-400 text-xs sm:text-sm">
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
             ওয়েবসাইটের &apos;লেনদেন তথ্য নিশ্চিত করুন&apos; ফর্ম থেকে প্রাপ্ত অনুদান ও শিক্ষার্থী হাদিয়ার সম্পূর্ণ তালিকা
           </p>
         </div>
@@ -180,7 +180,7 @@ export default function AdminDonationsPage() {
             setTrxId("");
             setIsAddModalOpen(true);
           }}
-          className="bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-xl transition-all shadow-lg shadow-[#00A89C]/20 flex items-center justify-center space-x-2 cursor-pointer"
+          className="bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-xl transition-all shadow-md flex items-center justify-center space-x-2 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>নতুন এন্ট্রি দিন</span>
@@ -189,53 +189,53 @@ export default function AdminDonationsPage() {
 
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-lg flex items-center justify-between">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold text-slate-400 block mb-1">মোট সংগৃহীত অনুদান ও হাদিয়া</span>
-            <span className="text-2xl font-black text-amber-400">
+            <span className="text-xs font-bold text-slate-500 block mb-1">মোট সংগৃহীত অনুদান ও হাদিয়া</span>
+            <span className="text-2xl font-black text-amber-600">
               ৳{totalAmount.toLocaleString("bn-BD")}
             </span>
           </div>
-          <div className="p-3 bg-amber-500/10 text-amber-400 rounded-2xl">
+          <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl">
             <DollarSign className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-lg flex items-center justify-between">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold text-slate-400 block mb-1">মোট অনুদান প্রদান</span>
-            <span className="text-2xl font-black text-emerald-400">
+            <span className="text-xs font-bold text-slate-500 block mb-1">মোট অনুদান প্রদান</span>
+            <span className="text-2xl font-black text-emerald-600">
               {donationCount} টি
             </span>
           </div>
-          <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-2xl">
+          <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
             <Heart className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-lg flex items-center justify-between">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold text-slate-400 block mb-1">শিক্ষার্থী হাদিয়া প্রাপ্তি</span>
-            <span className="text-2xl font-black text-sky-400">
+            <span className="text-xs font-bold text-slate-500 block mb-1">শিক্ষার্থী হাদিয়া প্রাপ্তি</span>
+            <span className="text-2xl font-black text-sky-600">
               {hadiaCount} টি
             </span>
           </div>
-          <div className="p-3 bg-sky-500/10 text-sky-400 rounded-2xl">
+          <div className="p-3 bg-sky-50 text-sky-600 rounded-2xl">
             <Gift className="w-6 h-6" />
           </div>
         </div>
       </div>
 
       {/* Filter and Search */}
-      <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="প্রেরকের নাম, ফোন বা TrxID সার্চ..."
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-[#00A89C]"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white transition-all font-medium"
           />
         </div>
 
@@ -247,8 +247,8 @@ export default function AdminDonationsPage() {
               onClick={() => setTypeFilter(t)}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 typeFilter === t
-                  ? "bg-[#00A89C] text-white shadow-md shadow-[#00A89C]/20"
-                  : "bg-slate-950 text-slate-400 border border-slate-800 hover:text-white"
+                  ? "bg-[#00A89C] text-white shadow-xs"
+                  : "bg-slate-50 text-slate-600 border border-slate-200 hover:text-slate-900"
               }`}
             >
               {t}
@@ -258,10 +258,10 @@ export default function AdminDonationsPage() {
       </div>
 
       {/* Donations Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider font-bold border-b border-slate-800">
+            <thead className="bg-slate-50 text-slate-700 uppercase tracking-wider font-bold border-b border-slate-200">
               <tr>
                 <th className="p-4">ট্রানজেকশন আইডি</th>
                 <th className="p-4">অনুদানকারী / প্রেরক</th>
@@ -273,7 +273,7 @@ export default function AdminDonationsPage() {
                 <th className="p-4 text-right">অ্যাকশন</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80 text-slate-300">
+            <tbody className="divide-y divide-slate-100 text-slate-800">
               {loading ? (
                 <tr>
                   <td colSpan={8} className="p-8 text-center text-slate-400">
@@ -288,38 +288,38 @@ export default function AdminDonationsPage() {
                 </tr>
               ) : (
                 filteredDonations.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="p-4 font-mono text-[11px] text-slate-400">
-                      <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono block w-max">
+                  <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="p-4 font-mono text-xs text-slate-700">
+                      <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono block w-max border border-slate-200 font-bold">
                         {item.id}
                       </span>
                     </td>
                     <td className="p-4">
-                      <div className="font-bold text-white text-sm">{item.donorName}</div>
-                      <div className="text-[11px] text-slate-400 font-mono flex items-center space-x-1 mt-0.5">
-                        <Phone className="w-3 h-3 text-slate-500" />
+                      <div className="font-bold text-slate-900 text-sm">{item.donorName}</div>
+                      <div className="text-xs text-slate-500 font-mono flex items-center space-x-1 mt-0.5">
+                        <Phone className="w-3.5 h-3.5 text-[#00A89C]" />
                         <span>{item.phone}</span>
                       </div>
                     </td>
                     <td className="p-4">
-                      <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold inline-block border ${
+                      <span className={`px-2.5 py-1 rounded-lg text-xs font-bold inline-block border ${
                         isHadiaType(item.type)
-                          ? "bg-sky-500/15 text-sky-400 border-sky-500/30"
-                          : "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                          ? "bg-sky-50 text-sky-700 border-sky-200"
+                          : "bg-emerald-50 text-emerald-700 border-emerald-200"
                       }`}>
                         {item.type || "অনুদান প্রদান"}
                       </span>
                     </td>
-                    <td className="p-4 font-black text-emerald-400 text-sm">
+                    <td className="p-4 font-black text-emerald-700 text-sm">
                       ৳{Number(item.amount).toLocaleString("bn-BD")}
                     </td>
                     <td className="p-4 space-y-1">
-                      <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[11px] font-semibold border border-slate-700 inline-block">
+                      <span className="bg-slate-100 text-slate-800 px-2.5 py-0.5 rounded text-xs font-semibold border border-slate-200 inline-block">
                         {item.paymentMethod}
                       </span>
                       {item.trxId && (
-                        <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
-                          <Receipt className="w-3 h-3 text-slate-500" />
+                        <div className="text-xs text-slate-500 font-mono flex items-center gap-1">
+                          <Receipt className="w-3.5 h-3.5 text-slate-400" />
                           <span>{item.trxId}</span>
                         </div>
                       )}
@@ -328,12 +328,12 @@ export default function AdminDonationsPage() {
                       <select
                         value={item.status || "অপেক্ষমাণ"}
                         onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                        className={`text-[10px] font-bold px-2 py-1 rounded-lg border outline-none cursor-pointer ${
+                        className={`text-xs font-bold px-2.5 py-1 rounded-lg border outline-none cursor-pointer ${
                           item.status === "অনুমোদিত"
-                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                             : item.status === "বাতিল"
-                            ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
-                            : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                            ? "bg-rose-50 text-rose-700 border-rose-200"
+                            : "bg-amber-50 text-amber-700 border-amber-200"
                         }`}
                       >
                         <option value="অপেক্ষমাণ">অপেক্ষমাণ</option>
@@ -341,13 +341,13 @@ export default function AdminDonationsPage() {
                         <option value="বাতিল">বাতিল</option>
                       </select>
                     </td>
-                    <td className="p-4 text-slate-400 font-mono">
+                    <td className="p-4 text-slate-600 font-mono text-xs">
                       {item.date}
                     </td>
                     <td className="p-4 text-right">
                       <button
                         onClick={() => handleDeleteDonation(item.id, item.donorName)}
-                        className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                        className="p-2 rounded-xl bg-slate-50 text-rose-500 hover:text-rose-700 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-colors cursor-pointer"
                         title="মুছে ফেলুন (Delete)"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -363,13 +363,13 @@ export default function AdminDonationsPage() {
 
       {/* Record Donation Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h2 className="text-lg font-black text-white">নতুন লেনদেন রেকর্ড করুন</h2>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <h2 className="text-lg font-black text-slate-900">নতুন লেনদেন রেকর্ড করুন</h2>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white bg-slate-800 cursor-pointer"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -377,47 +377,47 @@ export default function AdminDonationsPage() {
 
             <form onSubmit={handleSaveDonation} className="space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-300 mb-1">প্রেরকের নাম</label>
+                <label className="block font-bold text-slate-700 mb-1">প্রেরকের নাম</label>
                 <input
                   type="text"
                   value={donorName}
                   onChange={(e) => setDonorName(e.target.value)}
                   placeholder="যেমন: আলহাজ্ব শফিকুল ইসলাম"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-300 mb-1">ফোন নম্বর</label>
+                <label className="block font-bold text-slate-700 mb-1">ফোন নম্বর</label>
                 <input
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+880 1700-000000"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white font-mono"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">পরিমাণ (টাকা)</label>
+                  <label className="block font-bold text-slate-700 mb-1">পরিমাণ (টাকা)</label>
                   <input
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="5000"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">পেমেন্ট মেথড</label>
+                  <label className="block font-bold text-slate-700 mb-1">পেমেন্ট মেথড</label>
                   <select
                     value={paymentMethod}
                     onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white font-bold cursor-pointer"
                   >
                     <option value="bKash">বিকাশ (bKash)</option>
                     <option value="Nagad">নগদ (Nagad)</option>
@@ -428,11 +428,11 @@ export default function AdminDonationsPage() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-300 mb-1">লেনদেনের ধরন</label>
+                <label className="block font-bold text-slate-700 mb-1">লেনদেনের ধরন</label>
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white font-bold cursor-pointer"
                 >
                   <option value="অনুদান প্রদান">অনুদান প্রদান</option>
                   <option value="শিক্ষার্থী হাদিয়া">শিক্ষার্থী হাদিয়া</option>
@@ -440,21 +440,21 @@ export default function AdminDonationsPage() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-300 mb-1">ট্রানজেকশন আইডি (TrxID - ঐচ্ছিক)</label>
+                <label className="block font-bold text-slate-700 mb-1">ট্রানজেকশন আইডি (TrxID - ঐচ্ছিক)</label>
                 <input
                   type="text"
                   value={trxId}
                   onChange={(e) => setTrxId(e.target.value)}
                   placeholder="যেমন: 9K8X7Y2Z"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white font-mono"
                 />
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700 cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 cursor-pointer"
                 >
                   বাতিল
                 </button>

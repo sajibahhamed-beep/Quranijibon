@@ -181,14 +181,14 @@ export default function AdminFaqsPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Toast Banner */}
       {statusMessage && (
         <div
-          className={`p-4 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between border ${
+          className={`p-4 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-between border shadow-xs ${
             statusMessage.type === "success"
-              ? "bg-emerald-950/80 border-emerald-500/40 text-emerald-300"
-              : "bg-rose-950/80 border-rose-500/40 text-rose-300"
+              ? "bg-emerald-50 border-emerald-300 text-emerald-800"
+              : "bg-rose-50 border-rose-300 text-rose-800"
           }`}
         >
           <span>{statusMessage.text}</span>
@@ -201,18 +201,18 @@ export default function AdminFaqsPage() {
       {/* Header & Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <HelpCircle className="w-6 h-6 text-[#00A89C]" />
             FAQ ও জিজ্ঞাসাবলী ব্যবস্থাপনা (FAQ Management)
           </h1>
-          <p className="text-slate-400 text-xs sm:text-sm">
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
             ওয়েবসাইটের সাধারণ জিজ্ঞাসাবলির প্রশ্ন ও উত্তর ডাইনামিকভাবে পরিচালনা করুন
           </p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-xl transition-all shadow-lg shadow-[#00A89C]/20 flex items-center justify-center space-x-2 active:scale-95"
+          className="bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-xl transition-all shadow-md flex items-center justify-center space-x-2 active:scale-95 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>নতুন FAQ যোগ করুন</span>
@@ -220,15 +220,15 @@ export default function AdminFaqsPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="প্রশ্ন বা উত্তর দিয়ে সার্চ করুন..."
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-[#00A89C]"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white transition-all font-medium"
           />
         </div>
 
@@ -237,10 +237,10 @@ export default function AdminFaqsPage() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 selectedCategory === cat
-                  ? "bg-[#00A89C] text-white"
-                  : "bg-slate-950 text-slate-400 border border-slate-800 hover:text-white"
+                  ? "bg-[#00A89C] text-white shadow-xs"
+                  : "bg-slate-50 text-slate-600 border border-slate-200 hover:text-slate-900"
               }`}
             >
               {cat}
@@ -250,10 +250,10 @@ export default function AdminFaqsPage() {
       </div>
 
       {/* FAQ Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider font-bold border-b border-slate-800">
+            <thead className="bg-slate-50 text-slate-700 uppercase tracking-wider font-bold border-b border-slate-200">
               <tr>
                 <th className="p-4 w-16 text-center">ক্রম</th>
                 <th className="p-4">প্রশ্ন ও উত্তর</th>
@@ -262,10 +262,10 @@ export default function AdminFaqsPage() {
                 <th className="p-4 text-right">একশন</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80 text-slate-300">
+            <tbody className="divide-y divide-slate-100 text-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-slate-400">
+                  <td colSpan={5} className="p-8 text-center text-slate-500">
                     <div className="flex items-center justify-center space-x-2">
                       <Loader2 className="w-5 h-5 animate-spin text-[#00A89C]" />
                       <span>FAQ ডাটা লোড হচ্ছে...</span>
@@ -280,40 +280,40 @@ export default function AdminFaqsPage() {
                 </tr>
               ) : (
                 filteredFaqs.map((faq) => (
-                  <tr key={faq.id} className="hover:bg-slate-800/40 transition-colors">
+                  <tr key={faq.id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="p-4 text-center font-extrabold text-[#00A89C]">
                       #{faq.order}
                     </td>
                     <td className="p-4 max-w-lg">
-                      <div className="font-bold text-white text-sm line-clamp-1 mb-1">
+                      <div className="font-bold text-slate-900 text-sm line-clamp-1 mb-1">
                         {faq.question}
                       </div>
-                      <p className="text-slate-400 text-xs line-clamp-2 font-normal leading-relaxed">
+                      <p className="text-slate-500 text-xs line-clamp-2 font-normal leading-relaxed">
                         {faq.answer}
                       </p>
                     </td>
                     <td className="p-4">
-                      <span className="bg-slate-800 text-teal-300 border border-teal-500/30 px-2.5 py-1 rounded-md text-[11px] font-bold inline-block">
+                      <span className="bg-teal-50 text-[#007C7A] border border-teal-200 px-2.5 py-1 rounded-md text-xs font-bold inline-block">
                         {faq.category}
                       </span>
                     </td>
                     <td className="p-4 text-center">
                       <button
                         onClick={() => handleToggleActive(faq)}
-                        className={`px-3 py-1 rounded-full text-[11px] font-bold inline-flex items-center space-x-1 border transition-all ${
+                        className={`px-3 py-1 rounded-full text-xs font-bold inline-flex items-center space-x-1 border transition-all cursor-pointer ${
                           faq.isActive
-                            ? "bg-emerald-950/80 text-emerald-400 border-emerald-500/40"
-                            : "bg-slate-800 text-slate-400 border-slate-700"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : "bg-slate-100 text-slate-500 border-slate-200"
                         }`}
                       >
                         {faq.isActive ? (
                           <>
-                            <Eye className="w-3 h-3" />
+                            <Eye className="w-3.5 h-3.5" />
                             <span>সক্রিয়</span>
                           </>
                         ) : (
                           <>
-                            <EyeOff className="w-3 h-3" />
+                            <EyeOff className="w-3.5 h-3.5" />
                             <span>হিডেন</span>
                           </>
                         )}
@@ -323,14 +323,14 @@ export default function AdminFaqsPage() {
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => openEditModal(faq)}
-                          className="p-2 rounded-lg bg-slate-800 text-sky-400 hover:bg-sky-500/10 transition-colors"
+                          className="p-2 rounded-xl bg-slate-50 text-sky-600 hover:text-sky-800 hover:bg-sky-50 border border-slate-200 transition-colors cursor-pointer"
                           title="Edit FAQ"
                         >
                           <Edit3 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(faq.id, faq.question)}
-                          className="p-2 rounded-lg bg-slate-800 text-rose-400 hover:bg-rose-500/10 transition-colors"
+                          className="p-2 rounded-xl bg-slate-50 text-rose-500 hover:text-rose-700 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-colors cursor-pointer"
                           title="Delete FAQ"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -347,16 +347,16 @@ export default function AdminFaqsPage() {
 
       {/* Create / Edit FAQ Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-xl rounded-3xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h2 className="text-lg font-black text-white flex items-center gap-2">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 w-full max-w-xl rounded-3xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
                 <HelpCircle className="w-5 h-5 text-[#00A89C]" />
                 {editingFaq ? "FAQ সম্পাদনা করুন" : "নতুন FAQ তৈরি করুন"}
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white bg-slate-800"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -364,36 +364,36 @@ export default function AdminFaqsPage() {
 
             <form onSubmit={handleSave} className="space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-300 mb-1">প্রশ্ন (Question) *</label>
+                <label className="block font-bold text-slate-700 mb-1">প্রশ্ন (Question) *</label>
                 <input
                   type="text"
                   value={formQuestion}
                   onChange={(e) => setFormQuestion(e.target.value)}
                   placeholder="উদা: কুরআন জীবন প্লাটফর্মে ক্লাস করার নিয়ম কি?"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-300 mb-1">উত্তর (Answer) *</label>
+                <label className="block font-bold text-slate-700 mb-1">উত্তর (Answer) *</label>
                 <textarea
                   rows={4}
                   value={formAnswer}
                   onChange={(e) => setFormAnswer(e.target.value)}
                   placeholder="প্রশ্নের বিস্তারিত ও স্পষ্ট উত্তর লিখুন..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">ক্যাটাগরি</label>
+                  <label className="block font-bold text-slate-700 mb-1">ক্যাটাগরি</label>
                   <select
                     value={formCategory}
                     onChange={(e) => setFormCategory(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] font-bold cursor-pointer"
                   >
                     <option value="ক্লাস সংক্রান্ত">ক্লাস সংক্রান্ত</option>
                     <option value="শিক্ষক সংক্রান্ত">শিক্ষক সংক্রান্ত</option>
@@ -405,19 +405,19 @@ export default function AdminFaqsPage() {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">ডিসপ্লে অর্ডার (ক্রম নম্বর)</label>
+                  <label className="block font-bold text-slate-700 mb-1">ডিসপ্লে অর্ডার (ক্রম নম্বর)</label>
                   <input
                     type="number"
                     min={1}
                     value={formOrder}
                     onChange={(e) => setFormOrder(parseInt(e.target.value) || 1)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white font-mono"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-slate-950 rounded-xl border border-slate-800">
-                <span className="font-bold text-slate-200">ওয়েবসাইটে ডিসপ্লে হবে (সক্রিয়)</span>
+              <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="font-bold text-slate-800">ওয়েবসাইটে ডিসপ্লে হবে (সক্রিয়)</span>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
@@ -425,15 +425,15 @@ export default function AdminFaqsPage() {
                     onChange={(e) => setFormIsActive(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00A89C]"></div>
+                  <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00A89C]"></div>
                 </label>
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700"
+                  className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 cursor-pointer"
                   disabled={saving}
                 >
                   বাতিল
@@ -441,7 +441,7 @@ export default function AdminFaqsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-6 py-2.5 rounded-xl bg-[#00A89C] text-white font-bold hover:bg-[#00897B] shadow-md flex items-center space-x-2"
+                  className="px-6 py-2.5 rounded-xl bg-[#00A89C] text-white font-bold hover:bg-[#00897B] shadow-md flex items-center space-x-2 cursor-pointer"
                 >
                   {saving ? (
                     <>

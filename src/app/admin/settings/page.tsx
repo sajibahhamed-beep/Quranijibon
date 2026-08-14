@@ -142,22 +142,26 @@ export default function AdminSettingsPage() {
       active: true,
     };
 
-    const updatedAccounts = [...(settings.mobilePaymentAccounts || []), newAccount];
     setSettings({
       ...settings,
-      mobilePaymentAccounts: updatedAccounts,
+      mobilePaymentAccounts: [...(settings.mobilePaymentAccounts || []), newAccount],
     });
 
-    setNewAccountNumber("");
+    // Reset Form
+    setNewProviderName("বিকাশ (bKash)");
     setNewCustomLogoUrl("");
-    setNewInstructions("সেন্ড মানি করুন (পার্সোনাল)");
+    setNewAccountNumber("");
+    setNewAccountType("পার্সোনাল (Send Money)");
+    setNewInstructions("বিকাশ সেন্ড মানি করুন (পার্সোনাল)");
   };
 
   const handleDeleteMobileAccount = (id: string) => {
     if (!settings) return;
     setSettings({
       ...settings,
-      mobilePaymentAccounts: (settings.mobilePaymentAccounts || []).filter((a) => a.id !== id),
+      mobilePaymentAccounts: (settings.mobilePaymentAccounts || []).filter(
+        (account) => account.id !== id
+      ),
     });
   };
 
@@ -165,25 +169,28 @@ export default function AdminSettingsPage() {
     if (!settings) return;
     setSettings({
       ...settings,
-      mobilePaymentAccounts: (settings.mobilePaymentAccounts || []).map((a) =>
-        a.id === id ? { ...a, active: !a.active } : a
+      mobilePaymentAccounts: (settings.mobilePaymentAccounts || []).map((account) =>
+        account.id === id ? { ...account, active: !account.active } : account
       ),
     });
   };
 
-  const handleUpdateMobileAccount = (id: string, updates: Partial<MobilePaymentAccount>) => {
+  const handleUpdateMobileAccount = (
+    id: string,
+    updates: Partial<MobilePaymentAccount>
+  ) => {
     if (!settings) return;
     setSettings({
       ...settings,
-      mobilePaymentAccounts: (settings.mobilePaymentAccounts || []).map((a) =>
-        a.id === id ? { ...a, ...updates } : a
+      mobilePaymentAccounts: (settings.mobilePaymentAccounts || []).map((account) =>
+        account.id === id ? { ...account, ...updates } : account
       ),
     });
   };
 
   // Social Links Handlers
   const handleAddSocialLink = () => {
-    if (!settings || !newSocialUrl) return;
+    if (!settings || !newSocialUrl.trim()) return;
     const newLink: SocialLinkItem = {
       id: Date.now().toString(),
       platform: newSocialPlatform,
@@ -191,10 +198,12 @@ export default function AdminSettingsPage() {
       url: newSocialUrl.trim(),
       active: true,
     };
+
     setSettings({
       ...settings,
       socialLinks: [...(settings.socialLinks || []), newLink],
     });
+
     setNewSocialUrl("");
   };
 
@@ -228,7 +237,7 @@ export default function AdminSettingsPage() {
 
   if (loading || !settings) {
     return (
-      <div className="text-center py-20 text-slate-400 font-semibold text-sm">
+      <div className="text-center py-20 text-slate-500 font-semibold text-xs sm:text-sm">
         সাইট ও যোগাযোগ সেটিংস লোড হচ্ছে...
       </div>
     );
@@ -237,7 +246,7 @@ export default function AdminSettingsPage() {
   const renderPaymentLogo = (account: MobilePaymentAccount) => {
     if (account.customLogoUrl) {
       return (
-        <div className="w-11 h-11 rounded-xl bg-white p-1 border border-slate-700 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-md">
+        <div className="w-11 h-11 rounded-xl bg-white p-1 border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-xs">
           <Image
             src={account.customLogoUrl}
             alt={account.providerName}
@@ -250,7 +259,7 @@ export default function AdminSettingsPage() {
     }
 
     return (
-      <div className="w-11 h-11 rounded-xl bg-[#00A89C] flex items-center justify-center text-white font-black text-xs flex-shrink-0 shadow-md uppercase">
+      <div className="w-11 h-11 rounded-xl bg-[#00A89C] flex items-center justify-center text-white font-black text-xs flex-shrink-0 shadow-xs uppercase">
         {account.providerName.substring(0, 3)}
       </div>
     );
@@ -259,13 +268,13 @@ export default function AdminSettingsPage() {
   return (
     <div className="space-y-8 pb-20 max-w-6xl mx-auto">
       {/* Top Header & Save Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center space-x-3">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 flex items-center space-x-3">
             <PhoneCall className="w-7 h-7 text-[#00A89C]" />
             <span>সাইট, ব্যাংক ও যোগাযোগ সেটিংস</span>
           </h1>
-          <p className="text-slate-400 text-xs sm:text-sm mt-1">
+          <p className="text-slate-500 text-xs sm:text-sm mt-1">
             ফ্লোটিং হোয়াটসঅ্যাপ, ব্যাংক ও বিকাশ/নগদ অ্যাকাউন্ট ডিটেইলস, হেল্পলাইন ও সোশ্যাল মিডিয়া পরিচালনা করুন।
           </p>
         </div>
@@ -273,7 +282,7 @@ export default function AdminSettingsPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center justify-center space-x-2 bg-[#00A89C] hover:bg-[#00897B] text-white px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-[#00A89C]/20 active:scale-95 cursor-pointer flex-shrink-0"
+          className="flex items-center justify-center space-x-2 bg-[#00A89C] hover:bg-[#00897B] text-white px-6 py-3 rounded-xl font-bold text-xs sm:text-sm transition-all shadow-md active:scale-95 cursor-pointer flex-shrink-0"
         >
           <Save className="w-4 h-4" />
           <span>{saving ? "সংরক্ষণ হচ্ছে..." : "সেটিংস সংরক্ষণ করুন"}</span>
@@ -281,27 +290,27 @@ export default function AdminSettingsPage() {
       </div>
 
       {toastMessage && (
-        <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-sm font-bold flex items-center space-x-2 animate-in fade-in">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs sm:text-sm font-bold flex items-center space-x-2 shadow-xs">
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* 1. Bank Account Details */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
-        <div className="flex items-center space-x-3 border-b border-slate-800 pb-4">
-          <div className="w-9 h-9 rounded-xl bg-teal-500/10 text-[#00A89C] flex items-center justify-center flex-shrink-0">
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="flex items-center space-x-3 border-b border-slate-100 pb-4">
+          <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#007C7A] flex items-center justify-center flex-shrink-0">
             <Building2 className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white">১. ব্যাংক অ্যাকাউন্ট ডিটেইলস (Bank Transfer)</h2>
-            <p className="text-xs text-slate-400">সাদাকা ও হাদিয়া পাতায় প্রদর্শিত মূল ব্যাংক অ্যাকাউন্ট</p>
+            <h2 className="text-lg font-black text-slate-900">১. ব্যাংক অ্যাকাউন্ট ডিটেইলস (Bank Transfer)</h2>
+            <p className="text-xs text-slate-500">সাদাকা ও হাদিয়া পাতায় প্রদর্শিত মূল ব্যাংক অ্যাকাউন্ট</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
               ব্যাংক নাম
             </label>
             <input
@@ -317,12 +326,12 @@ export default function AdminSettingsPage() {
                 })
               }
               placeholder="উদা: ইসলামী ব্যাংক বাংলাদেশ লিমিটেড"
-              className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
               অ্যাকাউন্ট নাম
             </label>
             <input
@@ -338,12 +347,12 @@ export default function AdminSettingsPage() {
                 })
               }
               placeholder="উদা: কুরআন জীবন একাডেমি"
-              className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
               অ্যাকাউন্ট নম্বর
             </label>
             <input
@@ -359,12 +368,12 @@ export default function AdminSettingsPage() {
                 })
               }
               placeholder="উদা: ২০৫০৭৭৭৮৮৮৯৯৯০০০"
-              className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
               শাখা (Branch)
             </label>
             <input
@@ -380,21 +389,21 @@ export default function AdminSettingsPage() {
                 })
               }
               placeholder="উদা: ধানমণ্ডি শাখা, ঢাকা"
-              className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
             />
           </div>
         </div>
       </div>
 
       {/* 2. Dynamic Mobile Banking & Payment Systems */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
-        <div className="flex items-center space-x-3 border-b border-slate-800 pb-4">
-          <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center flex-shrink-0">
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="flex items-center space-x-3 border-b border-slate-100 pb-4">
+          <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
             <Wallet className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white">২. ডাইনামিক মোবাইল ব্যাংকিং ও ওয়ালেট (Logo Upload System)</h2>
-            <p className="text-xs text-slate-400">যে কোনো পেমেন্ট সিস্টেমের নাম, নিজস্ব লোগো আপলোড ও নম্বর ডাইনামিকভাবে পরিচালনা করুন</p>
+            <h2 className="text-lg font-black text-slate-900">২. ডাইনামিক মোবাইল ব্যাংকিং ও ওয়ালেট (Logo Upload System)</h2>
+            <p className="text-xs text-slate-500">যে কোনো পেমেন্ট সিস্টেমের নাম, নিজস্ব লোগো আপলোড ও নম্বর ডাইনামিকভাবে পরিচালনা করুন</p>
           </div>
         </div>
 
@@ -403,7 +412,7 @@ export default function AdminSettingsPage() {
           {(settings.mobilePaymentAccounts || []).map((account) => (
             <div
               key={account.id}
-              className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60"
+              className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200"
             >
               <div className="flex items-center space-x-3 w-full lg:w-1/3">
                 <div className="relative group">
@@ -431,9 +440,9 @@ export default function AdminSettingsPage() {
                     onChange={(e) =>
                       handleUpdateMobileAccount(account.id, { providerName: e.target.value })
                     }
-                    className="bg-transparent font-bold text-white text-sm border-b border-transparent focus:border-[#00A89C] focus:outline-none px-1 py-0.5 w-full"
+                    className="bg-transparent font-bold text-slate-900 text-sm border-b border-transparent focus:border-[#00A89C] focus:outline-none px-1 py-0.5 w-full"
                   />
-                  <div className="text-[11px] text-slate-400 px-1">
+                  <div className="text-xs text-slate-500 px-1 font-medium">
                     {account.accountType || "পার্সোনাল"}
                   </div>
                 </div>
@@ -442,7 +451,7 @@ export default function AdminSettingsPage() {
               {/* Number & Type Inputs */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 flex-1 w-full">
                 <div>
-                  <label className="text-[10px] uppercase font-bold text-slate-400 block mb-1">নম্বর</label>
+                  <label className="text-xs uppercase font-bold text-slate-600 block mb-1">নম্বর</label>
                   <input
                     type="text"
                     value={account.number}
@@ -450,12 +459,12 @@ export default function AdminSettingsPage() {
                       handleUpdateMobileAccount(account.id, { number: e.target.value })
                     }
                     placeholder="01700-000000"
-                    className="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-mono text-white focus:outline-none focus:border-[#00A89C]"
+                    className="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[10px] uppercase font-bold text-slate-400 block mb-1">অ্যাকাউন্টের ধরন</label>
+                  <label className="text-xs uppercase font-bold text-slate-600 block mb-1">অ্যাকাউন্টের ধরন</label>
                   <input
                     type="text"
                     value={account.accountType}
@@ -463,12 +472,12 @@ export default function AdminSettingsPage() {
                       handleUpdateMobileAccount(account.id, { accountType: e.target.value })
                     }
                     placeholder="পার্সোনাল / মার্চেন্ট"
-                    className="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-[#00A89C]"
+                    className="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[10px] uppercase font-bold text-slate-400 block mb-1">নির্দেশনা বার্তা</label>
+                  <label className="text-xs uppercase font-bold text-slate-600 block mb-1">নির্দেশনা বার্তা</label>
                   <input
                     type="text"
                     value={account.instructions || ""}
@@ -476,7 +485,7 @@ export default function AdminSettingsPage() {
                       handleUpdateMobileAccount(account.id, { instructions: e.target.value })
                     }
                     placeholder="সেন্ড মানি করুন"
-                    className="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-[#00A89C]"
+                    className="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
                   />
                 </div>
               </div>
@@ -488,8 +497,8 @@ export default function AdminSettingsPage() {
                   onClick={() => handleToggleMobileAccount(account.id)}
                   className={`p-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer ${
                     account.active
-                      ? "text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20"
-                      : "text-slate-500 bg-slate-800 hover:bg-slate-700"
+                      ? "text-emerald-700 bg-emerald-50 border border-emerald-200"
+                      : "text-slate-600 bg-slate-100 border border-slate-200"
                   }`}
                   title={account.active ? "সক্রিয় (Active)" : "নিষ্ক্রিয় (Hidden)"}
                 >
@@ -504,7 +513,7 @@ export default function AdminSettingsPage() {
                 <button
                   type="button"
                   onClick={() => handleDeleteMobileAccount(account.id)}
-                  className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer"
+                  className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-xl transition-colors cursor-pointer bg-white"
                   title="মুছুন"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -515,15 +524,15 @@ export default function AdminSettingsPage() {
         </div>
 
         {/* Add New Mobile Payment System Card with File Upload */}
-        <div className="pt-4 border-t border-slate-800/80 space-y-4">
-          <h4 className="text-xs font-bold uppercase text-teal-400 flex items-center space-x-1.5">
+        <div className="pt-4 border-t border-slate-100 space-y-4">
+          <h4 className="text-xs font-black uppercase text-[#007C7A] flex items-center space-x-1.5">
             <Plus className="w-4 h-4" />
             <span>নতুন মোবাইল ব্যাংকিং / পেমেন্ট সিস্টেম যোগ করুন (লোগো আপলোড সহ)</span>
           </h4>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
             <div>
-              <label className="block text-[11px] font-bold text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 পেমেন্ট সিস্টেমের নাম
               </label>
               <input
@@ -531,17 +540,17 @@ export default function AdminSettingsPage() {
                 value={newProviderName}
                 onChange={(e) => setNewProviderName(e.target.value)}
                 placeholder="যেমন: বিকাশ / নগদ / রকেট / উপায়"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#00A89C]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
               />
             </div>
 
             {/* Direct Logo Upload Option */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 লোগো আপলোড করুন (Upload Logo)
               </label>
               <div className="flex items-center space-x-2">
-                <label className="flex-1 py-2 px-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-300 hover:text-white hover:border-[#00A89C] flex items-center justify-center space-x-1.5 cursor-pointer transition-all">
+                <label className="flex-1 py-2 px-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 hover:text-[#007C7A] hover:border-[#00A89C] flex items-center justify-center space-x-1.5 cursor-pointer transition-all">
                   {isUploadingLogo ? (
                     <Loader2 className="w-4 h-4 animate-spin text-[#00A89C]" />
                   ) : (
@@ -559,7 +568,7 @@ export default function AdminSettingsPage() {
                 </label>
 
                 {newCustomLogoUrl && (
-                  <div className="w-9 h-9 rounded-xl bg-white p-1 border border-slate-700 flex items-center justify-center flex-shrink-0 relative group">
+                  <div className="w-9 h-9 rounded-xl bg-white p-1 border border-slate-200 flex items-center justify-center flex-shrink-0 relative group shadow-xs">
                     <Image
                       src={newCustomLogoUrl}
                       alt="Logo preview"
@@ -570,7 +579,7 @@ export default function AdminSettingsPage() {
                     <button
                       type="button"
                       onClick={() => setNewCustomLogoUrl("")}
-                      className="absolute -top-1 -right-1 bg-rose-500 text-white rounded-full p-0.5 text-[8px] opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute -top-1 -right-1 bg-rose-500 text-white rounded-full p-0.5 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                       title="মুছুন"
                     >
                       ✕
@@ -581,7 +590,7 @@ export default function AdminSettingsPage() {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 ফোন / অ্যাকাউন্ট নম্বর
               </label>
               <input
@@ -589,12 +598,12 @@ export default function AdminSettingsPage() {
                 value={newAccountNumber}
                 onChange={(e) => setNewAccountNumber(e.target.value)}
                 placeholder="01700-000000"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-mono text-white focus:outline-none focus:ring-1 focus:ring-[#00A89C]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 অ্যাকাউন্টের ধরন
               </label>
               <select
@@ -607,7 +616,7 @@ export default function AdminSettingsPage() {
                       : "সেন্ড মানি করুন (পার্সোনাল)"
                   );
                 }}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#00A89C]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] font-bold cursor-pointer"
               >
                 <option value="পার্সোনাল (Send Money)">পার্সোনাল (Send Money)</option>
                 <option value="মার্চেন্ট (Payment)">মার্চেন্ট (Payment)</option>
@@ -616,7 +625,7 @@ export default function AdminSettingsPage() {
             </div>
 
             <div className="sm:col-span-2 md:col-span-3">
-              <label className="block text-[11px] font-bold text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 পেমেন্ট নির্দেশিকা টেক্সট
               </label>
               <input
@@ -624,7 +633,7 @@ export default function AdminSettingsPage() {
                 value={newInstructions}
                 onChange={(e) => setNewInstructions(e.target.value)}
                 placeholder="যেমন: বিকাশ সেন্ড মানি করুন (পার্সোনাল)"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#00A89C]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
               />
             </div>
 
@@ -643,18 +652,18 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* 3. Floating WhatsApp Button Settings */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
-        <div className="flex items-center space-x-3 border-b border-slate-800 pb-4">
-          <MessageCircle className="w-6 h-6 text-emerald-400" />
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="flex items-center space-x-3 border-b border-slate-100 pb-4">
+          <MessageCircle className="w-6 h-6 text-emerald-600" />
           <div>
-            <h2 className="text-lg font-bold text-white">৩. ফ্লোটিং হোয়াটসঅ্যাপ বাটন সেটিংস</h2>
-            <p className="text-xs text-slate-400">ওয়েবসাইটের নিচে ডানে দৃশ্যমান ফ্লোটিং WhatsApp চ্যাট বাটন</p>
+            <h2 className="text-lg font-black text-slate-900">৩. ফ্লোটিং হোয়াটসঅ্যাপ বাটন সেটিংস</h2>
+            <p className="text-xs text-slate-500">ওয়েবসাইটের নিচে ডানে দৃশ্যমান ফ্লোটিং WhatsApp চ্যাট বাটন</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
               হোয়াটসঅ্যাপ ফোন নম্বর (Country Code সহ)
             </label>
             <input
@@ -664,15 +673,15 @@ export default function AdminSettingsPage() {
                 setSettings({ ...settings, whatsappNumber: e.target.value })
               }
               placeholder="8801775551325"
-              className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
             />
-            <span className="text-[11px] text-slate-500 mt-1 block">
+            <span className="text-xs text-slate-500 mt-1 block">
               উদা: 8801775551325 (কোনো + বা স্পেস ছাড়া)
             </span>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
               বাটনের টেক্সট (Display Text)
             </label>
             <input
@@ -682,19 +691,19 @@ export default function AdminSettingsPage() {
                 setSettings({ ...settings, whatsappDisplayText: e.target.value })
               }
               placeholder="সরাসরি কথা বলুন...."
-              className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
             />
           </div>
         </div>
 
         {/* Live Preview Box */}
-        <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-          <span className="text-xs font-bold text-slate-400 flex items-center space-x-1.5">
-            <Eye className="w-4 h-4 text-slate-500" />
+        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+          <span className="text-xs font-bold text-slate-700 flex items-center space-x-1.5">
+            <Eye className="w-4 h-4 text-[#00A89C]" />
             <span>লাইভ বাটন প্রিভিউ:</span>
           </span>
 
-          <div className="flex items-center rounded-tl-full rounded-bl-full space-x-3 px-5 py-2.5 bg-[#00A89C] text-white font-extrabold text-xs shadow-lg">
+          <div className="flex items-center rounded-tl-full rounded-bl-full space-x-3 px-5 py-2.5 bg-[#00A89C] text-white font-extrabold text-xs shadow-md">
             <div className="relative flex items-center justify-center">
               <Image
                 src="/assets/whatsapp-logo.png"
@@ -710,56 +719,56 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* 4. Contact Helpline, Email & Office Address */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
-        <div className="flex items-center space-x-3 border-b border-slate-800 pb-4">
-          <Mail className="w-6 h-6 text-teal-400" />
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="flex items-center space-x-3 border-b border-slate-100 pb-4">
+          <Mail className="w-6 h-6 text-[#00A89C]" />
           <div>
-            <h2 className="text-lg font-bold text-white">৪. হেল্পলাইন, ইমেইল ও অফিসের ঠিকানা</h2>
-            <p className="text-xs text-slate-400">ফুটার এবং যোগাযোগ পেজে প্রদর্শিত সরাসরি তথ্য</p>
+            <h2 className="text-lg font-black text-slate-900">৪. হেল্পলাইন, ইমেইল ও অফিসের ঠিকানা</h2>
+            <p className="text-xs text-slate-500">ফুটার এবং যোগাযোগ পেজে প্রদর্শিত সরাসরি তথ্য</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
               হেল্পলাইন নম্বর ১
             </label>
             <input
               type="text"
               value={settings.phone1}
               onChange={(e) => setSettings({ ...settings, phone1: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
               হেল্পলাইন নম্বর ২
             </label>
             <input
               type="text"
               value={settings.phone2}
               onChange={(e) => setSettings({ ...settings, phone2: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
               সাপোর্ট ইমেইল
             </label>
             <input
               type="email"
               value={settings.email}
               onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
               ঠিকানা লাইন ১
             </label>
             <input
@@ -768,12 +777,12 @@ export default function AdminSettingsPage() {
               onChange={(e) =>
                 setSettings({ ...settings, addressLine1: e.target.value })
               }
-              className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
               ঠিকানা লাইন ২
             </label>
             <input
@@ -782,13 +791,13 @@ export default function AdminSettingsPage() {
               onChange={(e) =>
                 setSettings({ ...settings, addressLine2: e.target.value })
               }
-              className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5">
+          <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
             কপিরাইট টেক্সট (Copyright)
           </label>
           <input
@@ -797,18 +806,18 @@ export default function AdminSettingsPage() {
             onChange={(e) =>
               setSettings({ ...settings, copyrightText: e.target.value })
             }
-            className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
+            className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
           />
         </div>
       </div>
 
       {/* 5. Dynamic Social Media Links Manager */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
-        <div className="flex items-center space-x-3 border-b border-slate-800 pb-4">
-          <Share2 className="w-6 h-6 text-sky-400" />
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="flex items-center space-x-3 border-b border-slate-100 pb-4">
+          <Share2 className="w-6 h-6 text-sky-600" />
           <div>
-            <h2 className="text-lg font-bold text-white">৫. সোশ্যাল মিডিয়া লিঙ্ক ও আইকন ব্যবস্থাপনা</h2>
-            <p className="text-xs text-slate-400">ফুটারের সোশ্যাল মিডিয়া আইকন, নাম ও লিংক ডাইনামিকালি যোগ, পরিবর্তন বা অন/অফ করুন</p>
+            <h2 className="text-lg font-black text-slate-900">৫. সোশ্যাল মিডিয়া লিঙ্ক ও আইকন ব্যবস্থাপনা</h2>
+            <p className="text-xs text-slate-500">ফুটারের সোশ্যাল মিডিয়া আইকন, নাম ও লিংক ডাইনামিকালি যোগ, পরিবর্তন বা অন/অফ করুন</p>
           </div>
         </div>
 
@@ -819,11 +828,11 @@ export default function AdminSettingsPage() {
             return (
               <div
                 key={social.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200"
               >
                 {/* Icon & Label */}
                 <div className="flex items-center space-x-3 w-full sm:w-1/3">
-                  <div className="w-9 h-9 rounded-xl bg-[#00A89C]/20 text-[#00A89C] flex items-center justify-center flex-shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#007C7A] flex items-center justify-center flex-shrink-0 border border-teal-200">
                     <IconComp className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
@@ -833,9 +842,9 @@ export default function AdminSettingsPage() {
                       onChange={(e) =>
                         handleUpdateSocialLink(social.id, { label: e.target.value })
                       }
-                      className="bg-transparent font-bold text-white text-sm border-b border-transparent focus:border-[#00A89C] focus:outline-none px-1 py-0.5 w-full"
+                      className="bg-transparent font-bold text-slate-900 text-sm border-b border-transparent focus:border-[#00A89C] focus:outline-none px-1 py-0.5 w-full"
                     />
-                    <div className="text-[10px] text-slate-400 px-1 uppercase">
+                    <div className="text-xs text-slate-500 px-1 uppercase font-semibold">
                       আইকন: {social.platform}
                     </div>
                   </div>
@@ -850,7 +859,7 @@ export default function AdminSettingsPage() {
                       handleUpdateSocialLink(social.id, { url: e.target.value })
                     }
                     placeholder="https://..."
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-[#00A89C]"
+                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
                   />
                 </div>
 
@@ -861,8 +870,8 @@ export default function AdminSettingsPage() {
                     onClick={() => handleToggleSocialLink(social.id)}
                     className={`p-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer ${
                       social.active
-                        ? "text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20"
-                        : "text-slate-500 bg-slate-800 hover:bg-slate-700"
+                        ? "text-emerald-700 bg-emerald-50 border border-emerald-200"
+                        : "text-slate-600 bg-slate-100 border border-slate-200"
                     }`}
                     title={social.active ? "সক্রিয় (Active)" : "নিষ্ক্রিয় (Hidden)"}
                   >
@@ -877,7 +886,7 @@ export default function AdminSettingsPage() {
                   <button
                     type="button"
                     onClick={() => handleDeleteSocialLink(social.id)}
-                    className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer"
+                    className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-xl transition-colors cursor-pointer bg-white"
                     title="লিঙ্কটি মুছুন"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -889,15 +898,15 @@ export default function AdminSettingsPage() {
         </div>
 
         {/* Add New Social Link */}
-        <div className="pt-4 border-t border-slate-800/80 space-y-3">
-          <h4 className="text-xs font-bold uppercase text-teal-400 flex items-center space-x-1.5">
+        <div className="pt-4 border-t border-slate-100 space-y-3">
+          <h4 className="text-xs font-black uppercase text-[#007C7A] flex items-center space-x-1.5">
             <Plus className="w-4 h-4" />
             <span>নতুন সোশ্যাল মিডিয়া বা ওয়েবসাইট লিঙ্ক যোগ করুন</span>
           </h4>
 
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
             <div className="sm:col-span-3">
-              <label className="block text-[11px] font-bold text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 আইকন নির্বাচন
               </label>
               <select
@@ -908,7 +917,7 @@ export default function AdminSettingsPage() {
                     e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1)
                   );
                 }}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#00A89C]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] font-bold cursor-pointer"
               >
                 <option value="facebook">Facebook (আইকন)</option>
                 <option value="youtube">YouTube (আইকন)</option>
@@ -925,7 +934,7 @@ export default function AdminSettingsPage() {
             </div>
 
             <div className="sm:col-span-3">
-              <label className="block text-[11px] font-bold text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 নাম / লেবেল (Label)
               </label>
               <input
@@ -933,12 +942,12 @@ export default function AdminSettingsPage() {
                 value={newSocialLabel}
                 onChange={(e) => setNewSocialLabel(e.target.value)}
                 placeholder="যেমন: Facebook Page"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#00A89C]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
               />
             </div>
 
             <div className="sm:col-span-4">
-              <label className="block text-[11px] font-bold text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 লিঙ্ক URL (https://...)
               </label>
               <input
@@ -946,7 +955,7 @@ export default function AdminSettingsPage() {
                 value={newSocialUrl}
                 onChange={(e) => setNewSocialUrl(e.target.value)}
                 placeholder="https://..."
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#00A89C]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C]"
               />
             </div>
 

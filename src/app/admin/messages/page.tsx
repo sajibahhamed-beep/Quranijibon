@@ -100,11 +100,11 @@ export default function AdminMessagesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <Mail className="w-6 h-6 text-[#00A89C]" />
             বার্তা ও ইনকোয়ারি (Messages & Inquiries)
           </h1>
-          <p className="text-slate-400 text-xs sm:text-sm">
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
             ওয়েবসাইটের &apos;যোগাযোগ&apos; পেজ থেকে পাঠানো সকল বার্তা, প্রশ্ন ও যোগাযোগের তালিকা
           </p>
         </div>
@@ -112,47 +112,47 @@ export default function AdminMessagesPage() {
 
       {/* KPI Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-lg flex items-center justify-between">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold text-slate-400 block mb-1">মোট প্রাপ্ত বার্তা</span>
-            <span className="text-2xl font-black text-white">{messages.length} টি</span>
+            <span className="text-xs font-bold text-slate-500 block mb-1">মোট প্রাপ্ত বার্তা</span>
+            <span className="text-2xl font-black text-slate-900">{messages.length} টি</span>
           </div>
-          <div className="p-3 bg-teal-500/10 text-[#00A89C] rounded-2xl">
+          <div className="p-3 bg-teal-50 text-[#00A89C] rounded-2xl">
             <MessageSquare className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-slate-900 border border-rose-500/30 rounded-3xl p-5 shadow-lg flex items-center justify-between bg-rose-500/5">
+        <div className="bg-white border border-rose-200 rounded-3xl p-6 shadow-xs flex items-center justify-between bg-rose-50/20">
           <div>
-            <span className="text-xs font-bold text-rose-400 block mb-1">নতুন অপঠিত বার্তা</span>
-            <span className="text-2xl font-black text-rose-400">{newCount} টি</span>
+            <span className="text-xs font-bold text-rose-700 block mb-1">নতুন অপঠিত বার্তা</span>
+            <span className="text-2xl font-black text-rose-600">{newCount} টি</span>
           </div>
-          <div className="p-3 bg-rose-500/15 text-rose-400 rounded-2xl">
+          <div className="p-3 bg-rose-100 text-rose-600 rounded-2xl">
             <AlertCircle className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-lg flex items-center justify-between">
+        <div className="bg-white border border-emerald-200 rounded-3xl p-6 shadow-xs flex items-center justify-between bg-emerald-50/20">
           <div>
-            <span className="text-xs font-bold text-slate-400 block mb-1">উত্তর প্রদান করা হয়েছে</span>
-            <span className="text-2xl font-black text-emerald-400">{repliedCount} টি</span>
+            <span className="text-xs font-bold text-emerald-700 block mb-1">উত্তর প্রদান করা হয়েছে</span>
+            <span className="text-2xl font-black text-emerald-600">{repliedCount} টি</span>
           </div>
-          <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-2xl">
+          <div className="p-3 bg-emerald-100 text-emerald-600 rounded-2xl">
             <CheckCircle2 className="w-6 h-6" />
           </div>
         </div>
       </div>
 
       {/* Filter and Search */}
-      <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="প্রেরকের নাম, ফোন, ইমেইল বা বার্তা খুঁজুন..."
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-[#00A89C]"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white transition-all font-medium"
           />
         </div>
 
@@ -161,10 +161,10 @@ export default function AdminMessagesPage() {
             <button
               key={t}
               onClick={() => setStatusFilter(t)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 statusFilter === t
-                  ? "bg-[#00A89C] text-white"
-                  : "bg-slate-950 text-slate-400 border border-slate-800 hover:text-white"
+                  ? "bg-[#00A89C] text-white shadow-xs"
+                  : "bg-slate-50 text-slate-600 border border-slate-200 hover:text-slate-900"
               }`}
             >
               {t}
@@ -174,10 +174,10 @@ export default function AdminMessagesPage() {
       </div>
 
       {/* Messages Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider font-bold border-b border-slate-800">
+            <thead className="bg-slate-50 text-slate-700 uppercase tracking-wider font-bold border-b border-slate-200">
               <tr>
                 <th className="p-4">বার্তা আইডি</th>
                 <th className="p-4">প্রেরকের নাম ও ফোন</th>
@@ -187,7 +187,7 @@ export default function AdminMessagesPage() {
                 <th className="p-4 text-right">অ্যাকশন</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80 text-slate-300">
+            <tbody className="divide-y divide-slate-100 text-slate-800">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="p-8 text-center text-slate-400">
@@ -202,26 +202,26 @@ export default function AdminMessagesPage() {
                 </tr>
               ) : (
                 filteredMessages.map((msg) => (
-                  <tr key={msg.id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="p-4 font-mono text-[11px] text-slate-400">
-                      <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono block w-max">
+                  <tr key={msg.id} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="p-4 font-mono text-xs text-slate-700">
+                      <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono block w-max border border-slate-200 font-bold">
                         {msg.id}
                       </span>
                     </td>
 
                     <td className="p-4">
-                      <div className="font-bold text-white text-sm">{msg.name}</div>
-                      <div className="text-[11px] text-slate-400 flex items-center space-x-1.5 mt-0.5">
-                        <Phone className="w-3 h-3 text-slate-500" />
+                      <div className="font-bold text-slate-900 text-sm">{msg.name}</div>
+                      <div className="text-xs text-slate-500 flex items-center space-x-1.5 mt-0.5">
+                        <Phone className="w-3.5 h-3.5 text-[#00A89C]" />
                         <span className="font-mono">{msg.phone}</span>
                       </div>
                       {msg.email && (
-                        <div className="text-[10px] text-teal-400">{msg.email}</div>
+                        <div className="text-xs text-teal-600 mt-0.5">{msg.email}</div>
                       )}
                     </td>
 
                     <td className="p-4 max-w-xs sm:max-w-md">
-                      <p className="text-slate-300 line-clamp-2 text-xs leading-relaxed">
+                      <p className="text-slate-700 line-clamp-2 text-xs leading-relaxed">
                         {msg.message}
                       </p>
                     </td>
@@ -230,12 +230,12 @@ export default function AdminMessagesPage() {
                       <select
                         value={msg.status}
                         onChange={(e) => handleStatusChange(msg.id, e.target.value as ContactMessage["status"])}
-                        className={`text-[10px] font-bold px-2 py-1 rounded-lg border outline-none cursor-pointer ${
+                        className={`text-xs font-bold px-2.5 py-1 rounded-lg border outline-none cursor-pointer ${
                           msg.status === "নতুন"
-                            ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                            ? "bg-rose-50 text-rose-700 border-rose-200"
                             : msg.status === "উত্তর দেওয়া হয়েছে"
-                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                            : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : "bg-amber-50 text-amber-700 border-amber-200"
                         }`}
                       >
                         <option value="নতুন">নতুন</option>
@@ -244,7 +244,7 @@ export default function AdminMessagesPage() {
                       </select>
                     </td>
 
-                    <td className="p-4 text-slate-400 font-mono">
+                    <td className="p-4 text-slate-600 font-mono text-xs">
                       {msg.date}
                     </td>
 
@@ -257,14 +257,14 @@ export default function AdminMessagesPage() {
                               handleStatusChange(msg.id, "পঠিত");
                             }
                           }}
-                          className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors cursor-pointer"
+                          className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
                           title="সম্পূর্ণ বার্তা পড়ুন"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteMessage(msg.id, msg.name)}
-                          className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                          className="p-2 rounded-xl bg-slate-50 text-rose-500 hover:text-rose-700 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-colors cursor-pointer"
                           title="মুছে ফেলুন (Delete)"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -281,36 +281,36 @@ export default function AdminMessagesPage() {
 
       {/* View Message Modal */}
       {viewingMessage && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center space-x-2">
                 <Mail className="w-5 h-5 text-[#00A89C]" />
-                <h2 className="text-lg font-black text-white">বার্তার পূর্ণ বিবরণ</h2>
+                <h2 className="text-lg font-black text-slate-900">বার্তার পূর্ণ বিবরণ</h2>
               </div>
               <button
                 onClick={() => setViewingMessage(null)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-white bg-slate-800 cursor-pointer"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-4 text-xs">
-              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400 font-bold uppercase text-[10px]">প্রেরক:</span>
-                  <span className="text-[10px] text-slate-400 font-mono">{viewingMessage.date}</span>
+                  <span className="text-slate-500 font-bold uppercase text-xs">প্রেরক:</span>
+                  <span className="text-xs text-slate-500 font-mono">{viewingMessage.date}</span>
                 </div>
-                <div className="text-base font-black text-white">{viewingMessage.name}</div>
-                <div className="flex items-center space-x-4 text-slate-300 font-medium">
+                <div className="text-base font-black text-slate-900">{viewingMessage.name}</div>
+                <div className="flex items-center space-x-4 text-slate-700 font-medium">
                   <div className="flex items-center space-x-1 font-mono">
                     <Phone className="w-3.5 h-3.5 text-[#00A89C]" />
                     <span>{viewingMessage.phone}</span>
                   </div>
                   {viewingMessage.email && (
                     <div className="flex items-center space-x-1">
-                      <Mail className="w-3.5 h-3.5 text-sky-400" />
+                      <Mail className="w-3.5 h-3.5 text-sky-600" />
                       <span>{viewingMessage.email}</span>
                     </div>
                   )}
@@ -318,22 +318,22 @@ export default function AdminMessagesPage() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-1.5">
                   মূল বার্তা:
                 </label>
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-slate-200 text-sm leading-relaxed whitespace-pre-wrap">
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 text-sm leading-relaxed whitespace-pre-wrap">
                   {viewingMessage.message}
                 </div>
               </div>
 
               <div className="flex items-center justify-between pt-2">
-                <label className="text-[11px] font-bold text-slate-400 uppercase">
+                <label className="text-xs font-bold text-slate-600 uppercase">
                   স্ট্যাটাস পরিবর্তন করুন:
                 </label>
                 <select
                   value={viewingMessage.status}
                   onChange={(e) => handleStatusChange(viewingMessage.id, e.target.value as ContactMessage["status"])}
-                  className="bg-slate-950 border border-slate-700 text-white rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-[#00A89C] cursor-pointer"
+                  className="bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#00A89C] cursor-pointer"
                 >
                   <option value="নতুন">নতুন</option>
                   <option value="পঠিত">পঠিত</option>
@@ -342,12 +342,12 @@ export default function AdminMessagesPage() {
               </div>
 
               {/* Action Buttons: Phone Call or WhatsApp */}
-              <div className="flex items-center gap-3 pt-4 border-t border-slate-800">
+              <div className="flex items-center gap-3 pt-4 border-t border-slate-100">
                 <a
                   href={`tel:${viewingMessage.phone}`}
-                  className="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer"
+                  className="flex-1 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer"
                 >
-                  <Phone className="w-4 h-4 text-teal-400" />
+                  <Phone className="w-4 h-4 text-[#00A89C]" />
                   <span>সরাসরি কল দিন</span>
                 </a>
                 <a

@@ -162,22 +162,22 @@ export default function AdminTeachersPage() {
   const activeCount = teachers.filter((t) => t.status === "সক্রিয়").length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <Users className="w-6 h-6 text-[#00A89C]" />
             শিক্ষক ও শিক্ষিকা তালিকা (Teachers Directory)
           </h1>
-          <p className="text-slate-400 text-xs sm:text-sm">
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
             ওয়েবসাইট ফর্ম থেকে আসা শিক্ষক আবেদনসমূহ ও বর্তমান শিক্ষকদের সম্পূর্ণ তালিকা
           </p>
         </div>
 
         <button
           onClick={openAddModal}
-          className="bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-xl transition-all shadow-lg shadow-[#00A89C]/20 flex items-center justify-center space-x-2 cursor-pointer"
+          className="bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-xl transition-all shadow-md flex items-center justify-center space-x-2 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>নতুন শিক্ষক যোগ করুন</span>
@@ -186,33 +186,33 @@ export default function AdminTeachersPage() {
 
       {/* KPI Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-          <span className="text-slate-400 text-xs font-semibold">মোট শিক্ষক তালিকা</span>
-          <div className="text-2xl font-black text-white mt-1">{teachers.length} জন</div>
+        <div className="bg-white border border-slate-200 p-5 rounded-3xl shadow-xs">
+          <span className="text-slate-500 text-xs font-semibold">মোট শিক্ষক তালিকা</span>
+          <div className="text-2xl font-black text-slate-900 mt-1">{teachers.length} জন</div>
         </div>
 
-        <div className="bg-slate-900 border border-rose-500/30 p-4 rounded-2xl bg-rose-500/5">
+        <div className="bg-white border border-rose-200 p-5 rounded-3xl shadow-xs bg-rose-50/20">
           <div className="flex items-center justify-between">
-            <span className="text-rose-400 text-xs font-bold">নতুন আবেদন</span>
-            <span className="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full">
-              রিভিউ করুন
+            <span className="text-rose-700 text-xs font-bold">নতুন আবেদন</span>
+            <span className="bg-rose-100 text-rose-800 border border-rose-300 text-xs font-bold px-2 py-0.5 rounded-full">
+              নতুন
             </span>
           </div>
-          <div className="text-2xl font-black text-rose-300 mt-1">{newApplicantsCount} জন</div>
+          <div className="text-2xl font-black text-rose-600 mt-1">{newApplicantsCount} জন</div>
         </div>
 
-        <div className="bg-slate-900 border border-emerald-500/30 p-4 rounded-2xl bg-emerald-500/5">
-          <span className="text-emerald-400 text-xs font-bold">সক্রিয় শিক্ষক</span>
-          <div className="text-2xl font-black text-emerald-300 mt-1">{activeCount} জন</div>
+        <div className="bg-white border border-emerald-200 p-5 rounded-3xl shadow-xs bg-emerald-50/20">
+          <span className="text-emerald-700 text-xs font-bold">সক্রিয় শিক্ষক</span>
+          <div className="text-2xl font-black text-emerald-600 mt-1">{activeCount} জন</div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-          <span className="text-slate-400 text-xs font-semibold">পুরুষ / মহিলা শাখা</span>
-          <div className="text-sm font-bold text-slate-300 mt-2 flex gap-2">
-            <span className="bg-blue-500/10 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded">
+        <div className="bg-white border border-slate-200 p-5 rounded-3xl shadow-xs">
+          <span className="text-slate-500 text-xs font-semibold">পুরুষ / মহিলা শাখা</span>
+          <div className="text-xs font-bold text-slate-700 mt-2 flex gap-2">
+            <span className="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded-lg">
               পুরুষ: {teachers.filter((t) => t.gender === "পুরুষ").length}
             </span>
-            <span className="bg-pink-500/10 text-pink-400 border border-pink-500/30 px-2 py-0.5 rounded">
+            <span className="bg-pink-50 text-pink-700 border border-pink-200 px-2 py-1 rounded-lg">
               মহিলা: {teachers.filter((t) => t.gender === "মহিলা").length}
             </span>
           </div>
@@ -220,24 +220,24 @@ export default function AdminTeachersPage() {
       </div>
 
       {/* Filter and Search */}
-      <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="শিক্ষকের নাম, ফোন বা যোগ্যতা সার্চ..."
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-[#00A89C]"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white transition-all font-medium"
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           {/* Status Filter */}
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-[#00A89C]"
+            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-[#00A89C] cursor-pointer"
           >
             <option value="সব">সকল স্ট্যাটাস</option>
             <option value="নতুন আবেদন">নতুন আবেদন</option>
@@ -247,15 +247,15 @@ export default function AdminTeachersPage() {
           </select>
 
           {/* Gender Filter */}
-          <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+          <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
             {["সব", "পুরুষ", "মহিলা"].map((g) => (
               <button
                 key={g}
                 onClick={() => setGenderFilter(g)}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   genderFilter === g
-                    ? "bg-[#00A89C] text-white"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-[#00A89C] text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 {g === "সব" ? "সকল শাখা" : `${g} শাখা`}
@@ -268,14 +268,14 @@ export default function AdminTeachersPage() {
       {/* Teachers Grid Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredTeachers.length === 0 ? (
-          <div className="col-span-full py-16 text-center text-slate-500 bg-slate-900 border border-slate-800 rounded-3xl">
+          <div className="col-span-full py-16 text-center text-slate-500 bg-white border border-slate-200 rounded-3xl shadow-xs">
             কোনো শিক্ষক তথ্য পাওয়া যায়নি
           </div>
         ) : (
           filteredTeachers.map((teacher) => (
             <div
               key={teacher.id}
-              className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 hover:border-slate-700 transition-all shadow-xl relative group flex flex-col justify-between"
+              className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 hover:shadow-md transition-all shadow-xs relative group flex flex-col justify-between"
             >
               <div className="space-y-4">
                 <div className="flex items-start justify-between">
@@ -288,17 +288,17 @@ export default function AdminTeachersPage() {
                       {teacher.name.charAt(0)}
                     </div>
                     <div>
-                      <h3 className="text-base font-black text-white">{teacher.name}</h3>
+                      <h3 className="text-base font-black text-slate-900">{teacher.name}</h3>
                       <div className="flex items-center space-x-1.5 mt-0.5 flex-wrap gap-1">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
                           teacher.gender === "মহিলা"
-                            ? "bg-pink-500/10 text-pink-400 border-pink-500/30"
-                            : "bg-blue-500/10 text-blue-400 border-blue-500/30"
+                            ? "bg-pink-50 text-pink-700 border-pink-200"
+                            : "bg-blue-50 text-blue-700 border-blue-200"
                         }`}>
                           {teacher.gender} শাখা
                         </span>
                         {teacher.workType && (
-                          <span className="bg-amber-500/10 text-amber-300 border border-amber-500/30 text-[10px] font-bold px-1.5 py-0.5 rounded">
+                          <span className="bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold px-2 py-0.5 rounded-full">
                             {teacher.workType}
                           </span>
                         )}
@@ -309,7 +309,7 @@ export default function AdminTeachersPage() {
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => setViewingTeacher(teacher)}
-                      className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
                       title="আবেদনের বিস্তারিত দেখুন"
                     >
                       <MessageSquare className="w-4 h-4" />
@@ -327,14 +327,14 @@ export default function AdminTeachersPage() {
                         setNotes(teacher.notes || "");
                         setActiveStudents(teacher.activeStudents || 0);
                       }}
-                      className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
                       title="তথ্য এডিট করুন"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteTeacher(teacher.id, teacher.name)}
-                      className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-slate-50 text-rose-500 hover:text-rose-700 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-colors cursor-pointer"
                       title="মুছে ফেলুন (Delete)"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -344,18 +344,18 @@ export default function AdminTeachersPage() {
 
                 {/* Status Dropdown */}
                 <div className="flex items-center justify-between pt-1">
-                  <span className="text-xs text-slate-400 font-semibold">আবেদনের স্ট্যাটাস:</span>
+                  <span className="text-xs text-slate-500 font-bold">আবেদনের স্ট্যাটাস:</span>
                   <select
                     value={teacher.status}
                     onChange={(e) => handleStatusChange(teacher.id, e.target.value)}
-                    className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border outline-none cursor-pointer ${
+                    className={`text-xs font-bold px-2.5 py-1 rounded-lg border outline-none cursor-pointer ${
                       teacher.status === "সক্রিয়"
-                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                         : teacher.status === "নতুন আবেদন"
-                        ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                        ? "bg-rose-50 text-rose-700 border-rose-200"
                         : teacher.status === "অপেক্ষমাণ"
-                        ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                        : "bg-slate-800 text-slate-400 border-slate-700"
+                        ? "bg-amber-50 text-amber-700 border-amber-200"
+                        : "bg-slate-100 text-slate-700 border-slate-200"
                     }`}
                   >
                     <option value="নতুন আবেদন">নতুন আবেদন</option>
@@ -366,56 +366,56 @@ export default function AdminTeachersPage() {
                 </div>
 
                 {/* Detailed Info */}
-                <div className="space-y-2 text-xs border-t border-b border-slate-800 py-3 text-slate-300">
+                <div className="space-y-2.5 text-xs border-t border-b border-slate-100 py-3 text-slate-700">
                   <div className="flex items-start space-x-2">
                     <Award className="w-4 h-4 text-[#00A89C] flex-shrink-0 mt-0.5" />
                     <div>
-                      <span className="text-slate-400 block text-[10px]">দ্বীনি যোগ্যতা / বিশেষত্ব:</span>
-                      <span className="font-semibold text-white">{teacher.specialization}</span>
+                      <span className="text-slate-500 block text-xs font-medium">দ্বীনি যোগ্যতা / বিশেষত্ব:</span>
+                      <span className="font-bold text-slate-900">{teacher.specialization}</span>
                     </div>
                   </div>
 
                   {teacher.experience && (
-                    <div className="flex items-center space-x-2 text-slate-400">
-                      <Clock className="w-4 h-4 text-slate-500 flex-shrink-0" />
-                      <span>অভিজ্ঞতা: <strong className="text-slate-300">{teacher.experience}</strong></span>
+                    <div className="flex items-center space-x-2 text-slate-600">
+                      <Clock className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                      <span>অভিজ্ঞতা: <strong className="text-slate-800">{teacher.experience}</strong></span>
                     </div>
                   )}
 
-                  <div className="flex items-center space-x-2 text-slate-400">
-                    <Phone className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                  <div className="flex items-center space-x-2 text-slate-700">
+                    <Phone className="w-4 h-4 text-[#00A89C] flex-shrink-0" />
                     <span className="font-mono">{teacher.phone}</span>
                   </div>
 
                   {teacher.email && (
-                    <div className="flex items-center space-x-2 text-slate-400">
-                      <Mail className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                    <div className="flex items-center space-x-2 text-slate-600">
+                      <Mail className="w-4 h-4 text-slate-400 flex-shrink-0" />
                       <span>{teacher.email}</span>
                     </div>
                   )}
 
                   {teacher.joinedDate && (
-                    <div className="flex items-center space-x-2 text-slate-400 text-[11px]">
-                      <Calendar className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
+                    <div className="flex items-center space-x-2 text-slate-500 text-xs">
+                      <Calendar className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
                       <span>আবেদনের তারিখ: {teacher.joinedDate}</span>
                     </div>
                   )}
 
                   {teacher.notes && (
-                    <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-[11px] text-slate-300">
-                      <span className="text-slate-400 block text-[10px] font-bold">শিক্ষকের বার্তা / পরিচিতি:</span>
-                      <p className="line-clamp-2 mt-0.5 italic">&ldquo;{teacher.notes}&rdquo;</p>
+                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
+                      <span className="text-slate-500 block text-xs font-bold mb-0.5">শিক্ষকের বার্তা / পরিচিতি:</span>
+                      <p className="line-clamp-2 italic">&ldquo;{teacher.notes}&rdquo;</p>
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="flex items-center justify-between text-xs font-bold pt-2">
-                <span className="text-slate-400 flex items-center gap-1">
+                <span className="text-slate-500 flex items-center gap-1">
                   <BookOpen className="w-4 h-4 text-[#00A89C]" />
                   সক্রিয় শিক্ষার্থী:
                 </span>
-                <span className="bg-[#00A89C]/10 text-[#00A89C] px-3 py-1 rounded-full border border-[#00A89C]/30 text-sm font-black">
+                <span className="bg-teal-50 text-[#007C7A] px-3 py-1 rounded-full border border-teal-200 text-xs font-black">
                   {teacher.activeStudents || 0} জন
                 </span>
               </div>
@@ -426,72 +426,72 @@ export default function AdminTeachersPage() {
 
       {/* View Teacher Application Details Modal */}
       {viewingTeacher && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
-                <span className="bg-[#00A89C]/20 text-[#00A89C] border border-[#00A89C]/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full inline-block mb-1">
+                <span className="bg-teal-50 text-[#007C7A] border border-teal-200 text-xs font-bold px-2.5 py-0.5 rounded-full inline-block mb-1">
                   আবেদনের পূর্ণ বিবরণ
                 </span>
-                <h2 className="text-xl font-black text-white">{viewingTeacher.name}</h2>
+                <h2 className="text-xl font-black text-slate-900">{viewingTeacher.name}</h2>
               </div>
               <button
                 onClick={() => setViewingTeacher(null)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white bg-slate-800"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-4 text-sm text-slate-300">
-              <div className="grid grid-cols-2 gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+            <div className="space-y-4 text-xs text-slate-700">
+              <div className="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                 <div>
                   <span className="text-xs text-slate-500 block">শাখা ও লিঙ্গ:</span>
-                  <span className="font-bold text-white">{viewingTeacher.gender} শিক্ষক</span>
+                  <span className="font-bold text-slate-900">{viewingTeacher.gender} শিক্ষক</span>
                 </div>
                 <div>
                   <span className="text-xs text-slate-500 block">কাজের ধরন:</span>
-                  <span className="font-bold text-teal-400">{viewingTeacher.workType || "স্বল্প সম্মানী"}</span>
+                  <span className="font-bold text-[#007C7A]">{viewingTeacher.workType || "স্বল্প সম্মানী"}</span>
                 </div>
                 <div>
                   <span className="text-xs text-slate-500 block">ফোন নম্বর:</span>
-                  <span className="font-bold text-white font-mono">{viewingTeacher.phone}</span>
+                  <span className="font-bold text-slate-900 font-mono">{viewingTeacher.phone}</span>
                 </div>
                 <div>
                   <span className="text-xs text-slate-500 block">ইমেইল:</span>
-                  <span className="font-bold text-white">{viewingTeacher.email || "দেওয়া হয়নি"}</span>
+                  <span className="font-bold text-slate-900">{viewingTeacher.email || "দেওয়া হয়নি"}</span>
                 </div>
                 <div>
                   <span className="text-xs text-slate-500 block">অভিজ্ঞতা:</span>
-                  <span className="font-bold text-white">{viewingTeacher.experience || "১-২ বছর"}</span>
+                  <span className="font-bold text-slate-900">{viewingTeacher.experience || "১-২ বছর"}</span>
                 </div>
                 <div>
                   <span className="text-xs text-slate-500 block">আবেদনের তারিখ:</span>
-                  <span className="font-bold text-white">{viewingTeacher.joinedDate}</span>
+                  <span className="font-bold text-slate-900">{viewingTeacher.joinedDate}</span>
                 </div>
               </div>
 
               <div>
-                <span className="text-xs text-slate-400 block font-bold mb-1">দ্বীনি ও শিক্ষাগত যোগ্যতা:</span>
-                <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-white font-semibold">
+                <span className="text-xs text-slate-600 block font-bold mb-1">দ্বীনি ও শিক্ষাগত যোগ্যতা:</span>
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 font-semibold">
                   {viewingTeacher.specialization}
                 </div>
               </div>
 
               {viewingTeacher.notes && (
                 <div>
-                  <span className="text-xs text-slate-400 block font-bold mb-1">শিক্ষকের বার্তা / পরিচিতি:</span>
-                  <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-slate-200 whitespace-pre-wrap leading-relaxed">
+                  <span className="text-xs text-slate-600 block font-bold mb-1">শিক্ষকের বার্তা / পরিচিতি:</span>
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 whitespace-pre-wrap leading-relaxed">
                     {viewingTeacher.notes}
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+            <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
               <button
                 onClick={() => setViewingTeacher(null)}
-                className="px-5 py-2.5 rounded-xl bg-[#00A89C] text-white font-bold hover:bg-[#00897B]"
+                className="px-5 py-2.5 rounded-xl bg-[#00A89C] text-white font-bold hover:bg-[#00897B] cursor-pointer shadow-md"
               >
                 ঠিক আছে
               </button>
@@ -502,10 +502,10 @@ export default function AdminTeachersPage() {
 
       {/* Add / Edit Teacher Modal */}
       {(isAddModalOpen || editingTeacher) && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h2 className="text-lg font-black text-white">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <h2 className="text-lg font-black text-slate-900">
                 {editingTeacher ? "শিক্ষকের তথ্য এডিট করুন" : "নতুন শিক্ষক যুক্ত করুন"}
               </h2>
               <button
@@ -513,7 +513,7 @@ export default function AdminTeachersPage() {
                   setIsAddModalOpen(false);
                   setEditingTeacher(null);
                 }}
-                className="p-1 rounded-lg text-slate-400 hover:text-white bg-slate-800"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -521,24 +521,24 @@ export default function AdminTeachersPage() {
 
             <form onSubmit={handleSaveTeacher} className="space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-300 mb-1">শিক্ষক / শিক্ষিকার নাম <span className="text-red-500">*</span></label>
+                <label className="block font-bold text-slate-700 mb-1">শিক্ষক / শিক্ষিকার নাম <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="যেমন: উস্তাদ আহমেদ রফিক"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">শাখা / লিঙ্গ</label>
+                  <label className="block font-bold text-slate-700 mb-1">শাখা / লিঙ্গ</label>
                   <select
                     value={gender}
                     onChange={(e) => setGender(e.target.value as "পুরুষ" | "মহিলা")}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white font-bold cursor-pointer"
                   >
                     <option value="পুরুষ">পুরুষ শিক্ষক</option>
                     <option value="মহিলা">মহিলা শিক্ষিকা</option>
@@ -546,13 +546,13 @@ export default function AdminTeachersPage() {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">ফোন নম্বর <span className="text-red-500">*</span></label>
+                  <label className="block font-bold text-slate-700 mb-1">ফোন নম্বর <span className="text-red-500">*</span></label>
                   <input
                     type="text"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+880 1700-000000"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white font-mono"
                     required
                   />
                 </div>
@@ -560,22 +560,22 @@ export default function AdminTeachersPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">ইমেইল (ঐচ্ছিক)</label>
+                  <label className="block font-bold text-slate-700 mb-1">ইমেইল (ঐচ্ছিক)</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="teacher@quranijibon.com"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">অভিজ্ঞতা</label>
+                  <label className="block font-bold text-slate-700 mb-1">অভিজ্ঞতা</label>
                   <select
                     value={experience}
                     onChange={(e) => setExperience(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white font-bold cursor-pointer"
                   >
                     <option value="১ বছরের কম">১ বছরের কম</option>
                     <option value="১-২ বছর">১-২ বছর</option>
@@ -587,11 +587,11 @@ export default function AdminTeachersPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">কাজের ধরন</label>
+                  <label className="block font-bold text-slate-700 mb-1">কাজের ধরন</label>
                   <select
                     value={workType}
                     onChange={(e) => setWorkType(e.target.value as "স্বেচ্ছাসেবী" | "স্বল্প সম্মানী")}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white font-bold cursor-pointer"
                   >
                     <option value="স্বল্প সম্মানী">স্বল্প সম্মানী</option>
                     <option value="স্বেচ্ছাসেবী">স্বেচ্ছাসেবী (Fi Sabilillah)</option>
@@ -599,53 +599,53 @@ export default function AdminTeachersPage() {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">সক্রিয় শিক্ষার্থী সংখ্যা</label>
+                  <label className="block font-bold text-slate-700 mb-1">সক্রিয় শিক্ষার্থী সংখ্যা</label>
                   <input
                     type="number"
                     value={activeStudents}
                     onChange={(e) => setActiveStudents(parseInt(e.target.value) || 0)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white font-bold"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-bold text-slate-300 mb-1">দ্বীনি ও শিক্ষাগত যোগ্যতা <span className="text-red-500">*</span></label>
+                <label className="block font-bold text-slate-700 mb-1">দ্বীনি ও শিক্ষাগত যোগ্যতা <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   value={specialization}
                   onChange={(e) => setSpecialization(e.target.value)}
                   placeholder="যেমন: দাওরায়ে হাদীস, হাফেজ ও তাজবীদ সনদপ্রাপ্ত"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-300 mb-1">শিক্ষকের বার্তা / পরিচিতি</label>
+                <label className="block font-bold text-slate-700 mb-1">শিক্ষকের বার্তা / পরিচিতি</label>
                 <textarea
                   rows={3}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="শিক্ষক সম্পর্কে বিশেষ নোট বা বার্তা..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 focus:outline-none focus:border-[#00A89C]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white"
                 />
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => {
                     setIsAddModalOpen(false);
                     setEditingTeacher(null);
                   }}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700"
+                  className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 cursor-pointer"
                 >
                   বাতিল
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-[#00A89C] text-white font-bold hover:bg-[#00897B] shadow-md"
+                  className="px-5 py-2.5 rounded-xl bg-[#00A89C] text-white font-bold hover:bg-[#00897B] shadow-md cursor-pointer"
                 >
                   সংরক্ষণ করুন
                 </button>

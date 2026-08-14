@@ -60,25 +60,23 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Top Welcome & Overview Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-slate-800 p-6 rounded-3xl shadow-lg relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#00A89C]/10 rounded-full blur-2xl pointer-events-none" />
-
-        <div className="space-y-1 relative z-10">
+      {/* Top Welcome & Overview Header with Mosque Silhouette Theme Gradient */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gradient-to-r from-[#203935] via-[#155653] to-[#007C7A] text-white p-8 rounded-3xl shadow-sm relative overflow-hidden">
+        <div className="space-y-2 relative z-10">
           <div className="flex items-center space-x-2">
-            <span className="bg-[#00A89C]/20 text-[#00A89C] text-xs font-extrabold px-3 py-1 rounded-full border border-[#00A89C]/30 flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              লাইভ সিস্টেম
+            <span className="bg-white/15 text-emerald-200 text-xs font-extrabold px-3 py-1 rounded-full border border-white/20 flex items-center gap-1.5 backdrop-blur-xs">
+              <ShieldCheck className="w-4 h-4" />
+              লাইভ কন্ট্রোল প্যানেল
             </span>
-            <span className="text-slate-400 text-xs font-semibold">
+            <span className="text-emerald-100 text-xs font-semibold">
               স্বাগতম, এডমিন!
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
             কুরআন জীবন ড্যাশবোর্ড ওভারভিউ
           </h1>
-          <p className="text-slate-400 text-xs sm:text-sm">
-            আজকের শিক্ষার্থী ভর্তি, শিক্ষক সংখ্যা ও ব্লগ পোস্টের সর্বশেষ আপডেটসমূহ
+          <p className="text-emerald-100/90 text-xs sm:text-sm max-w-xl">
+            আজকের শিক্ষার্থী ভর্তি, শিক্ষক কার্যক্রম, অনুদান ও ব্লগ পোস্টের সর্বশেষ আপডেটসমূহ
           </p>
         </div>
 
@@ -86,17 +84,17 @@ export default function AdminDashboardPage() {
         <div className="flex items-center space-x-3 relative z-10">
           <Link
             href="/admin/blogs"
-            className="bg-[#00A89C] hover:bg-[#00897B] text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition-all shadow-md flex items-center space-x-1.5"
+            className="bg-white text-[#007C7A] hover:bg-emerald-50 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition-all shadow-md flex items-center space-x-1.5 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>নতুন ব্লগ লিখুন</span>
           </Link>
           <Link
             href="/admin/students"
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition-all flex items-center space-x-1.5"
+            className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition-all flex items-center space-x-1.5 backdrop-blur-xs cursor-pointer"
           >
-            <GraduationCap className="w-4 h-4 text-[#00A89C]" />
-            <span>শিক্ষার্থী তালিকা</span>
+            <GraduationCap className="w-4 h-4 text-emerald-200" />
+            <span>শিক্ষার্থী ডাটাবেজ</span>
           </Link>
         </div>
       </div>
@@ -104,98 +102,98 @@ export default function AdminDashboardPage() {
       {/* 4 Metric KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Card 1: Total Active Students */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all shadow-md relative overflow-hidden group">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 hover:shadow-md transition-all shadow-xs relative overflow-hidden group">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400">মোট নিবন্ধিত শিক্ষার্থী</span>
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition-transform">
+            <span className="text-xs font-bold text-slate-500">মোট নিবন্ধিত শিক্ষার্থী</span>
+            <div className="p-2.5 rounded-2xl bg-teal-50 text-[#00A89C] group-hover:scale-110 transition-transform">
               <GraduationCap className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <span className="text-3xl font-black text-white">{totalStudentsCount}</span>
-            <span className="inline-flex items-center text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md">
-              <TrendingUp className="w-3 h-3 mr-1" />
+            <span className="text-3xl font-black text-slate-900">{totalStudentsCount}</span>
+            <span className="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+              <TrendingUp className="w-3.5 h-3.5 mr-1" />
               +১২% এই মাসে
             </span>
           </div>
-          <p className="text-[11px] text-slate-500 mt-2">ওয়ান-টু-ওয়ান নিয়মিত ব্যাচ</p>
+          <p className="text-xs text-slate-400 mt-2 font-medium">ওয়ান-টু-ওয়ান নিয়মিত ব্যাচ</p>
         </div>
 
         {/* Card 2: Active Instructors */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all shadow-md relative overflow-hidden group">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 hover:shadow-md transition-all shadow-xs relative overflow-hidden group">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400">সক্রিয় শিক্ষক ও শিক্ষিকা</span>
-            <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-400 group-hover:scale-110 transition-transform">
+            <span className="text-xs font-bold text-slate-500">সক্রিয় শিক্ষক ও শিক্ষিকা</span>
+            <div className="p-2.5 rounded-2xl bg-sky-50 text-sky-600 group-hover:scale-110 transition-transform">
               <Users className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <span className="text-3xl font-black text-white">{activeTeachersCount} জন</span>
-            <span className="text-xs font-bold text-slate-400">১০ পুরুষ / ৮ মহিলা</span>
+            <span className="text-3xl font-black text-slate-900">{activeTeachersCount} জন</span>
+            <span className="text-xs font-bold text-slate-600">১০ পুরুষ / ৮ মহিলা</span>
           </div>
-          <p className="text-[11px] text-slate-500 mt-2">তাজবীদ ও হিফজ স্পেশালিস্ট</p>
+          <p className="text-xs text-slate-400 mt-2 font-medium">তাজবীদ ও হিফজ স্পেশালিস্ট</p>
         </div>
 
         {/* Card 3: Monthly Funds & Revenue */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all shadow-md relative overflow-hidden group">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 hover:shadow-md transition-all shadow-xs relative overflow-hidden group">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400">মাসিক কোর্স ফি ও হাদিয়া</span>
-            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 group-hover:scale-110 transition-transform">
+            <span className="text-xs font-bold text-slate-500">মাসিক কোর্স ফি ও হাদিয়া</span>
+            <div className="p-2.5 rounded-2xl bg-amber-50 text-amber-600 group-hover:scale-110 transition-transform">
               <HeartHandshake className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <span className="text-3xl font-black text-amber-400">{monthlyRevenue}</span>
-            <span className="inline-flex items-center text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md">
+            <span className="text-3xl font-black text-amber-600">{monthlyRevenue}</span>
+            <span className="inline-flex items-center text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
               ফান্ডিং ওকে
             </span>
           </div>
-          <p className="text-[11px] text-slate-500 mt-2">সাদাকা ও স্পন্সরশিপ সহ</p>
+          <p className="text-xs text-slate-400 mt-2 font-medium">সাদাকা ও স্পন্সরশিপ সহ</p>
         </div>
 
         {/* Card 4: Pending Admissions */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all shadow-md relative overflow-hidden group">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 hover:shadow-md transition-all shadow-xs relative overflow-hidden group">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400">নতুন ভর্তির আবেদন</span>
-            <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-400 group-hover:scale-110 transition-transform">
+            <span className="text-xs font-bold text-slate-500">নতুন ভর্তির আবেদন</span>
+            <div className="p-2.5 rounded-2xl bg-rose-50 text-rose-600 group-hover:scale-110 transition-transform">
               <Clock className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <span className="text-3xl font-black text-rose-400">{pendingApplicationsCount} টি</span>
-            <span className="text-xs font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-md">
+            <span className="text-3xl font-black text-rose-600">{pendingApplicationsCount} টি</span>
+            <span className="text-xs font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
               জরুরি রেসপন্স
             </span>
           </div>
-          <p className="text-[11px] text-slate-500 mt-2">যোগাযোগ ও টিচার অ্যাসাইন বাকি</p>
+          <p className="text-xs text-slate-400 mt-2 font-medium">যোগাযোগ ও টিচার অ্যাসাইন বাকি</p>
         </div>
       </div>
 
       {/* Grid Section: Interactive Admissions Management & Analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column (2 Cols): Student Admissions Table */}
-        <div className="lg:col-span-2 bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-5">
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-black text-white flex items-center gap-2">
+              <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
                 <GraduationCap className="w-5 h-5 text-[#00A89C]" />
                 সর্বশেষ ভর্তি আবেদনসমূহ
               </h2>
-              <p className="text-slate-400 text-xs">
+              <p className="text-slate-500 text-xs mt-0.5">
                 শিক্ষার্থীদের স্ট্যাটাস পরিবর্তনের জন্য ড্রপডাউন ব্যবহার করুন
               </p>
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800">
+            <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
               {["সব", "নতুন আবেদন", "সক্রিয়", "অপেক্ষমাণ"].map((status) => (
                 <button
                   key={status}
                   onClick={() => setStatusFilter(status)}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     statusFilter === status
-                      ? "bg-[#00A89C] text-white"
-                      : "text-slate-400 hover:text-slate-200"
+                      ? "bg-[#00A89C] text-white shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
                   {status}
@@ -206,66 +204,66 @@ export default function AdminDashboardPage() {
 
           {/* Search box for table */}
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="শিক্ষার্থীর নাম, ফোন বা প্যাকেজ সার্চ করুন..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-[#00A89C]"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white transition-all font-medium"
             />
           </div>
 
           {/* Table Container */}
-          <div className="overflow-x-auto rounded-2xl border border-slate-800">
+          <div className="overflow-x-auto rounded-2xl border border-slate-200">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider font-bold">
+              <thead className="bg-slate-50 text-slate-700 uppercase tracking-wider font-bold border-b border-slate-200">
                 <tr>
-                  <th className="p-3.5">আইডি ও নাম</th>
-                  <th className="p-3.5">প্যাকেজ</th>
-                  <th className="p-3.5">শিক্ষিকা/শিক্ষক</th>
-                  <th className="p-3.5">স্ট্যাটাস</th>
-                  <th className="p-3.5 text-right">একশন</th>
+                  <th className="p-4">আইডি ও নাম</th>
+                  <th className="p-4">প্যাকেজ</th>
+                  <th className="p-4">শিক্ষিকা/শিক্ষক</th>
+                  <th className="p-4">স্ট্যাটাস</th>
+                  <th className="p-4 text-right">একশন</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800 text-slate-300">
+              <tbody className="divide-y divide-slate-100 text-slate-800">
                 {filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="p-6 text-center text-slate-500">
+                    <td colSpan={5} className="p-8 text-center text-slate-500">
                       কোনো তথ্য পাওয়া যায়নি
                     </td>
                   </tr>
                 ) : (
                   filteredStudents.map((student) => (
-                    <tr key={student.id} className="hover:bg-slate-800/50 transition-colors">
-                      <td className="p-3.5">
-                        <div className="font-bold text-white text-sm">{student.name}</div>
-                        <div className="text-[11px] text-slate-400">
+                    <tr key={student.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="p-4">
+                        <div className="font-bold text-slate-900 text-sm">{student.name}</div>
+                        <div className="text-xs text-slate-500 font-mono mt-0.5">
                           {student.id} • {student.phone}
                         </div>
                       </td>
-                      <td className="p-3.5 font-medium">
-                        <span className="bg-slate-800 px-2.5 py-1 rounded-md text-slate-300 text-[11px] border border-slate-700">
+                      <td className="p-4">
+                        <span className="bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md text-xs font-semibold border border-slate-200 inline-block">
                           {student.package}
                         </span>
                       </td>
-                      <td className="p-3.5 text-slate-300 font-medium">
+                      <td className="p-4 text-slate-700 font-medium">
                         {student.assignedTeacher || "নির্ধারিত নয়"}
                       </td>
-                      <td className="p-3.5">
+                      <td className="p-4">
                         <select
                           value={student.status}
                           onChange={(e) =>
                             handleStatusChange(student.id, e.target.value as StudentRecord["status"])
                           }
-                          className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border outline-none cursor-pointer ${
+                          className={`text-xs font-bold px-2.5 py-1 rounded-lg border outline-none cursor-pointer ${
                             student.status === "সক্রিয়"
-                              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                               : student.status === "নতুন আবেদন"
-                              ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                              ? "bg-rose-50 text-rose-700 border-rose-200"
                               : student.status === "অপেক্ষমাণ"
-                              ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                              : "bg-slate-800 text-slate-400 border-slate-700"
+                              ? "bg-amber-50 text-amber-700 border-amber-200"
+                              : "bg-slate-100 text-slate-700 border-slate-200"
                           }`}
                         >
                           <option value="নতুন আবেদন">নতুন আবেদন</option>
@@ -274,10 +272,10 @@ export default function AdminDashboardPage() {
                           <option value="সম্পন্ন">সম্পন্ন</option>
                         </select>
                       </td>
-                      <td className="p-3.5 text-right">
+                      <td className="p-4 text-right">
                         <Link
                           href={`/admin/students`}
-                          className="inline-flex items-center text-[#00A89C] hover:text-[#00897B] font-bold text-[11px]"
+                          className="inline-flex items-center text-[#00A89C] hover:text-[#007C7A] font-bold text-xs cursor-pointer"
                         >
                           <span>বিস্তারিত</span>
                           <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
@@ -294,15 +292,15 @@ export default function AdminDashboardPage() {
         {/* Right Column (1 Col): Blog Management & Quick Links Widget */}
         <div className="space-y-6">
           {/* Blog Articles Widget */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base font-black text-white flex items-center gap-2">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
                 <FileText className="w-4 h-4 text-[#00A89C]" />
                 সর্বশেষ প্রকাশিত ব্লগ
               </h2>
               <Link
                 href="/admin/blogs"
-                className="text-xs text-[#00A89C] hover:underline font-bold"
+                className="text-xs text-[#00A89C] hover:text-[#007C7A] font-bold"
               >
                 সব ব্লগ ({BLOG_POSTS.length})
               </Link>
@@ -312,15 +310,15 @@ export default function AdminDashboardPage() {
               {BLOG_POSTS.slice(0, 3).map((post) => (
                 <div
                   key={post.id}
-                  className="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all space-y-1.5"
+                  className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 hover:border-teal-200 hover:bg-teal-50/30 transition-all space-y-1.5"
                 >
-                  <span className="bg-[#00A89C]/10 text-[#00A89C] text-[10px] font-bold px-2 py-0.5 rounded">
+                  <span className="bg-teal-50 text-[#007C7A] text-xs font-bold px-2 py-0.5 rounded border border-teal-200">
                     {post.category}
                   </span>
-                  <h3 className="text-xs font-bold text-slate-200 line-clamp-2 leading-relaxed">
+                  <h3 className="text-xs font-bold text-slate-900 line-clamp-2 leading-relaxed">
                     {post.title}
                   </h3>
-                  <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1">
+                  <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
                     <span>{post.author}</span>
                     <span>{post.date}</span>
                   </div>
@@ -330,7 +328,7 @@ export default function AdminDashboardPage() {
 
             <Link
               href="/admin/blogs"
-              className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs py-2.5 rounded-xl transition-colors flex items-center justify-center space-x-1.5"
+              className="w-full bg-slate-50 hover:bg-teal-50 text-slate-700 hover:text-[#007C7A] border border-slate-200 font-bold text-xs py-2.5 rounded-xl transition-colors flex items-center justify-center space-x-1.5 cursor-pointer"
             >
               <Plus className="w-4 h-4 text-[#00A89C]" />
               <span>নতুন আর্টিকেল যোগ করুন</span>
@@ -338,17 +336,17 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Quick System Summary Box */}
-          <div className="bg-gradient-to-br from-[#00A89C]/20 to-slate-900 border border-[#00A89C]/30 rounded-3xl p-6 text-slate-300 space-y-3">
-            <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
+          <div className="bg-teal-50 border border-teal-200 rounded-3xl p-6 text-slate-800 space-y-3 shadow-xs">
+            <h3 className="text-sm font-black text-[#007C7A] flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-[#00A89C]" />
               সিস্টেম লাইভ স্ট্যাটাস
             </h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed font-medium">
               কুরআন জীবন প্ল্যাটফর্মের সার্ভার ও ডাটাবেজ সচল রয়েছে। শিক্ষার্থী রেজিস্ট্রেশন ও ফর্ম সাবমিশন সঠিকভাবে কাজ করছে।
             </p>
-            <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] font-semibold text-slate-400">
+            <div className="pt-3 border-t border-teal-200/70 flex items-center justify-between text-xs font-bold text-slate-500">
               <span>ভার্সন: v1.2.0</span>
-              <span className="text-emerald-400">● অল ওকে</span>
+              <span className="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">● অল ওকে</span>
             </div>
           </div>
         </div>

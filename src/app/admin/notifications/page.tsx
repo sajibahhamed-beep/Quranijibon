@@ -31,32 +31,32 @@ const CATEGORY_MAP: Record<
   admission: {
     label: "শিক্ষার্থী ও ভর্তি",
     icon: GraduationCap,
-    color: "text-emerald-400",
-    bg: "bg-emerald-500/15 border-emerald-500/30",
+    color: "text-emerald-700",
+    bg: "bg-emerald-50 border-emerald-200",
   },
   donation: {
     label: "সাদাকা ও অনুদান",
     icon: HeartHandshake,
-    color: "text-teal-400",
-    bg: "bg-teal-500/15 border-teal-500/30",
+    color: "text-[#007C7A]",
+    bg: "bg-teal-50 border-teal-200",
   },
   teacher: {
     label: "শিক্ষক ও ক্লাস",
     icon: Users,
-    color: "text-sky-400",
-    bg: "bg-sky-500/15 border-sky-500/30",
+    color: "text-sky-700",
+    bg: "bg-sky-50 border-sky-200",
   },
   message: {
     label: "বার্তা ও ইনকোয়ারি",
     icon: MessageSquare,
-    color: "text-amber-400",
-    bg: "bg-amber-500/15 border-amber-500/30",
+    color: "text-amber-700",
+    bg: "bg-amber-50 border-amber-200",
   },
   system: {
     label: "সিস্টেম ও ইন্টারঅ্যাকশন",
     icon: ShieldCheck,
-    color: "text-indigo-400",
-    bg: "bg-indigo-500/15 border-indigo-500/30",
+    color: "text-indigo-700",
+    bg: "bg-indigo-50 border-indigo-200",
   },
 };
 
@@ -109,22 +109,22 @@ export default function AdminNotificationsPage() {
   });
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
         <div>
           <div className="flex items-center space-x-3">
-            <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center space-x-3">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 flex items-center space-x-3">
               <Bell className="w-7 h-7 text-[#00A89C]" />
               <span>নোটিফিকেশন সেন্টার</span>
             </h1>
             {unreadCount > 0 && (
-              <span className="bg-[#00A89C] text-white text-xs font-extrabold px-2.5 py-0.5 rounded-full shadow-sm animate-pulse">
+              <span className="bg-[#00A89C] text-white text-xs font-black px-2.5 py-0.5 rounded-full shadow-sm animate-pulse">
                 {unreadCount} টি নতুন
               </span>
             )}
           </div>
-          <p className="text-slate-400 text-xs sm:text-sm mt-1">
+          <p className="text-slate-500 text-xs sm:text-sm mt-1">
             ওয়েবসাইটে শিক্ষার্থীদের ভর্তি আবেদন, যোগাযোগ ফর্ম পূরণ, প্রিমিয়াম প্যাকেজ বুকিং ও সাদাকা অনুদানের লাইভ নোটিফিকেশন।
           </p>
         </div>
@@ -133,7 +133,7 @@ export default function AdminNotificationsPage() {
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllRead}
-              className="flex items-center space-x-1.5 bg-[#00A89C] hover:bg-[#00897B] text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md shadow-[#00A89C]/20"
+              className="flex items-center space-x-1.5 bg-[#00A89C] hover:bg-[#00897B] text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer"
             >
               <CheckCheck className="w-4 h-4" />
               <span>সবগুলো পঠিত করুন</span>
@@ -143,7 +143,7 @@ export default function AdminNotificationsPage() {
           {notifications.length > 0 && (
             <button
               onClick={handleClearAll}
-              className="flex items-center space-x-1.5 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white px-3.5 py-2 rounded-xl text-xs font-bold transition-all"
+              className="flex items-center space-x-1.5 bg-slate-50 hover:bg-rose-50 text-rose-600 hover:text-rose-700 border border-slate-200 hover:border-rose-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer"
               title="সব নোটিফিকেশন মুছুন"
             >
               <Trash2 className="w-4 h-4" />
@@ -154,53 +154,53 @@ export default function AdminNotificationsPage() {
       </div>
 
       {/* Filter Tabs Row */}
-      <div className="flex items-center space-x-2 overflow-x-auto pb-2 border-b border-slate-800/80 text-xs font-bold scrollbar-none">
+      <div className="flex items-center space-x-2 overflow-x-auto pb-2 border-b border-slate-200 text-xs font-bold scrollbar-none">
         <button
           onClick={() => setFilter("all")}
-          className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap ${
+          className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap cursor-pointer ${
             filter === "all"
-              ? "bg-[#00A89C] text-white shadow-md shadow-[#00A89C]/20"
-              : "text-slate-400 hover:text-white hover:bg-slate-800"
+              ? "bg-[#00A89C] text-white shadow-xs"
+              : "bg-slate-50 text-slate-600 border border-slate-200 hover:text-slate-900"
           }`}
         >
           সকল ইন্টারঅ্যাকশন ({notifications.length})
         </button>
         <button
           onClick={() => setFilter("unread")}
-          className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap ${
+          className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap cursor-pointer ${
             filter === "unread"
-              ? "bg-[#00A89C] text-white shadow-md shadow-[#00A89C]/20"
-              : "text-slate-400 hover:text-white hover:bg-slate-800"
+              ? "bg-[#00A89C] text-white shadow-xs"
+              : "bg-slate-50 text-slate-600 border border-slate-200 hover:text-slate-900"
           }`}
         >
           অপঠিত ({unreadCount})
         </button>
         <button
           onClick={() => setFilter("admission")}
-          className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap ${
+          className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap cursor-pointer ${
             filter === "admission"
-              ? "bg-[#00A89C] text-white shadow-md shadow-[#00A89C]/20"
-              : "text-slate-400 hover:text-white hover:bg-slate-800"
+              ? "bg-[#00A89C] text-white shadow-xs"
+              : "bg-slate-50 text-slate-600 border border-slate-200 hover:text-slate-900"
           }`}
         >
           ভর্তি ও শিক্ষার্থী আবেদন
         </button>
         <button
           onClick={() => setFilter("donation")}
-          className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap ${
+          className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap cursor-pointer ${
             filter === "donation"
-              ? "bg-[#00A89C] text-white shadow-md shadow-[#00A89C]/20"
-              : "text-slate-400 hover:text-white hover:bg-slate-800"
+              ? "bg-[#00A89C] text-white shadow-xs"
+              : "bg-slate-50 text-slate-600 border border-slate-200 hover:text-slate-900"
           }`}
         >
           অনুদান ও সাদাকা
         </button>
         <button
           onClick={() => setFilter("message")}
-          className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap ${
+          className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap cursor-pointer ${
             filter === "message"
-              ? "bg-[#00A89C] text-white shadow-md shadow-[#00A89C]/20"
-              : "text-slate-400 hover:text-white hover:bg-slate-800"
+              ? "bg-[#00A89C] text-white shadow-xs"
+              : "bg-slate-50 text-slate-600 border border-slate-200 hover:text-slate-900"
           }`}
         >
           ইনকোয়ারি ও বার্তা
@@ -209,16 +209,16 @@ export default function AdminNotificationsPage() {
 
       {/* Notifications List */}
       {loading ? (
-        <div className="text-center py-16 text-slate-400 text-sm">
+        <div className="text-center py-16 text-slate-500 text-xs sm:text-sm">
           নোটিফিকেশন ডাটা লোড হচ্ছে...
         </div>
       ) : filteredNotifications.length === 0 ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center space-y-3">
-          <div className="w-14 h-14 rounded-full bg-slate-800/80 text-slate-400 flex items-center justify-center mx-auto">
-            <Bell className="w-7 h-7" />
+        <div className="bg-white border border-slate-200 rounded-3xl p-12 text-center space-y-3 shadow-xs">
+          <div className="w-14 h-14 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+            <Bell className="w-7 h-7 text-[#00A89C]" />
           </div>
-          <h3 className="text-lg font-bold text-white">কোনো নোটিফিকেশন নেই</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+          <h3 className="text-lg font-black text-slate-900">কোনো নোটিফিকেশন নেই</h3>
+          <p className="text-xs text-slate-500 max-w-sm mx-auto">
             বর্তমানে কোনো নতুন ইন্টারঅ্যাকশন বা নোটিফিকেশন পাওয়া যায়নি। ব্যবহারকারীরা ওয়েবসাইটে ফর্ম পূরণ বা বাটনে ক্লিক করলে তা এখানে প্রদর্শিত হবে।
           </p>
         </div>
@@ -234,8 +234,8 @@ export default function AdminNotificationsPage() {
                 key={notif.id}
                 className={`p-5 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
                   notif.read
-                    ? "bg-slate-900/60 border-slate-800/70 opacity-85 hover:opacity-100"
-                    : "bg-slate-900 border-teal-500/40 shadow-lg shadow-teal-500/5 ring-1 ring-[#00A89C]/30"
+                    ? "bg-white border-slate-200 opacity-90 hover:opacity-100 shadow-xs"
+                    : "bg-teal-50/20 border-teal-300 shadow-sm ring-1 ring-[#00A89C]/30"
                 }`}
               >
                 <div className="flex items-start space-x-4 flex-1">
@@ -250,27 +250,27 @@ export default function AdminNotificationsPage() {
                   <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
                       {!notif.read && (
-                        <span className="flex items-center space-x-1 text-[10px] font-black text-[#00A89C] bg-[#00A89C]/15 px-2 py-0.5 rounded-full">
-                          <Sparkles className="w-2.5 h-2.5 animate-spin" />
+                        <span className="flex items-center space-x-1 text-xs font-black text-[#007C7A] bg-teal-100 px-2 py-0.5 rounded-full border border-teal-200">
+                          <Sparkles className="w-3 h-3 text-[#007C7A]" />
                           <span>নতুন ইন্টারঅ্যাকশন</span>
                         </span>
                       )}
                       <span
-                        className={`text-[10px] font-black px-2 py-0.5 rounded-md border ${cat.bg} ${cat.color}`}
+                        className={`text-xs font-bold px-2 py-0.5 rounded-md border ${cat.bg} ${cat.color}`}
                       >
                         {cat.label}
                       </span>
-                      <span className="text-[11px] text-slate-500 font-medium flex items-center space-x-1">
-                        <Clock className="w-3 h-3 text-slate-600" />
+                      <span className="text-xs text-slate-500 font-medium flex items-center space-x-1 font-mono">
+                        <Clock className="w-3.5 h-3.5 text-slate-400" />
                         <span>{notif.timestamp}</span>
                       </span>
                     </div>
 
-                    <h4 className="text-sm font-bold text-white leading-snug">
+                    <h4 className="text-sm font-black text-slate-900 leading-snug">
                       {notif.title}
                     </h4>
 
-                    <p className="text-xs text-slate-300 leading-relaxed font-medium">
+                    <p className="text-xs text-slate-700 leading-relaxed font-medium">
                       {notif.message}
                     </p>
                   </div>
@@ -282,26 +282,26 @@ export default function AdminNotificationsPage() {
                     <Link
                       href={notif.link}
                       onClick={() => handleMarkAsRead(notif.id)}
-                      className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 transition-colors border border-slate-700/60"
+                      className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-700 transition-colors border border-slate-200"
                     >
                       <span>বিস্তারিত দেখুন</span>
-                      <ExternalLink className="w-3 h-3 text-[#00A89C]" />
+                      <ExternalLink className="w-3.5 h-3.5 text-[#00A89C]" />
                     </Link>
                   )}
 
                   {!notif.read && (
                     <button
                       onClick={() => handleMarkAsRead(notif.id)}
-                      className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                      className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors cursor-pointer"
                       title="পঠিত হিসেবে চিহ্নিত করুন"
                     >
-                      <CheckCheck className="w-4 h-4 text-emerald-400" />
+                      <CheckCheck className="w-4 h-4" />
                     </button>
                   )}
 
                   <button
                     onClick={() => handleDelete(notif.id)}
-                    className="p-2 rounded-xl bg-slate-800/60 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors"
+                    className="p-2 rounded-xl bg-slate-50 text-rose-500 hover:text-rose-700 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-colors cursor-pointer"
                     title="মুছে ফেলুন"
                   >
                     <Trash2 className="w-4 h-4" />
