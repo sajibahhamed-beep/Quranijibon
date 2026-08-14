@@ -2,26 +2,26 @@
 
 import fs from "fs";
 import path from "path";
-import { SiteSettings, getSiteSettings } from "@/data/siteSettingsStorage";
+import { SiteSettings, getSiteSettingsAsync, saveSiteSettingsAsync } from "@/data/siteSettingsStorage";
 import { revalidatePath } from "next/cache";
 
 const SETTINGS_FILE_PATH = path.join(process.cwd(), "src", "data", "siteSettings.json");
 
 export async function fetchSiteSettings(): Promise<SiteSettings> {
-  try {
-    if (fs.existsSync(SETTINGS_FILE_PATH)) {
-      const data = fs.readFileSync(SETTINGS_FILE_PATH, "utf-8");
-      return JSON.parse(data);
-    }
-  } catch (err) {
-    console.error("Error reading site settings:", err);
-  }
-  return getSiteSettings();
+  return await getSiteSettingsAsync();
 }
 
 export async function updateAllSiteSettings(settings: SiteSettings): Promise<{ success: boolean }> {
   try {
-    fs.writeFileSync(SETTINGS_FILE_PATH, JSON.stringify(settings, null, 2), "utf-8");
+    await saveSiteSettingsAsync(settings);
+
+    // Also update local file if possible
+    try {
+      if (fs.existsSync(SETTINGS_FILE_PATH)) {
+        fs.writeFileSync(SETTINGS_FILE_PATH, JSON.stringify(settings, null, 2), "utf-8");
+      }
+    } catch (e) {}
+
     revalidatePath("/", "layout");
     revalidatePath("/contact");
     revalidatePath("/about");

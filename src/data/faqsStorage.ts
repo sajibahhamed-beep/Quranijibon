@@ -17,7 +17,7 @@ const DEFAULT_FAQS: FaqItem[] = [
   {
     id: "faq-1",
     question: "কুরআন জীবন অনলাইন প্লাটফর্মে ক্লাস করার নিয়ম কি?",
-    answer: "আমাদের প্ল্যাটফর্মে ক্লাস করার জন্য আপনার একটি স্মার্টফোন, ট্যাবলেট বা কম্পিউটার এবং ইন্টারনেট কানেকশন প্রয়োজন। Zoom বা Google Meet অ্যাপের মাধ্যমে সরাসরি লাইভ ওয়ান-টু-ওয়ান ক্লাস নেওয়া হয়।",
+    answer: "আমাদের প্ল্যাটফর্মে ক্লাস করার জন্য আপনার একটি স্মার্টফোন, tablet বা কম্পিউটার এবং ইন্টারনেট কানেকশন প্রয়োজন। Zoom বা Google Meet অ্যাপের মাধ্যমে সরাসরি লাইভ ওয়ান-টু-ওয়ান ক্লাস নেওয়া হয়।",
     category: "ক্লাস সংক্রান্ত",
     order: 1,
     isActive: true,
@@ -69,8 +69,12 @@ export async function getFaqsData(): Promise<FaqItem[]> {
     try {
       const supabase = getSupabaseClient();
       if (supabase) {
-        const { data: dbFaqs, error } = await supabase.from("faqs").select("*").order("sort_order", { ascending: true });
-        if (!error && dbFaqs && dbFaqs.length > 0) {
+        const { data: dbFaqs, error } = await supabase
+          .from("faqs")
+          .select("*")
+          .order("sort_order", { ascending: true });
+
+        if (!error && Array.isArray(dbFaqs)) {
           return dbFaqs.map((f) => ({
             id: f.id,
             question: f.question,
@@ -80,9 +84,12 @@ export async function getFaqsData(): Promise<FaqItem[]> {
             isActive: f.is_active !== false,
           }));
         }
+        if (error) {
+          console.warn("Supabase FAQs fetch error:", error.message);
+        }
       }
     } catch (e) {
-      console.warn("Supabase FAQs fetch error, falling back to local file:", e);
+      console.warn("Supabase FAQs fetch exception:", e);
     }
   }
 
@@ -94,25 +101,25 @@ export async function getFaqsData(): Promise<FaqItem[]> {
     }
     return data.sort((a, b) => a.order - b.order);
   } catch (error) {
-    await saveFaqsData(DEFAULT_FAQS);
     return DEFAULT_FAQS;
   }
 }
 
 export async function saveFaqsData(faqs: FaqItem[]): Promise<void> {
-  const dir = path.dirname(DATA_FILE_PATH);
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(DATA_FILE_PATH, JSON.stringify(faqs, null, 2), "utf-8");
+  try {
+    const dir = path.dirname(DATA_FILE_PATH);
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(DATA_FILE_PATH, JSON.stringify(faqs, null, 2), "utf-8");
+  } catch (e) {}
 }
 
 export async function createFaqItem(faqData: Partial<FaqItem>): Promise<FaqItem> {
-  const faqs = await getFaqsData();
   const newFaq: FaqItem = {
     id: faqData.id || `faq-${Date.now()}`,
     question: faqData.question || "",
     answer: faqData.answer || "",
     category: faqData.category || "সাধারণ",
-    order: faqData.order !== undefined ? faqData.order : faqs.length + 1,
+    order: faqData.order !== undefined ? faqData.order : 0,
     isActive: faqData.isActive !== undefined ? faqData.isActive : true,
   };
 
@@ -120,25 +127,48 @@ export async function createFaqItem(faqData: Partial<FaqItem>): Promise<FaqItem>
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("faqs").insert([{
+        const { error } = await supabase.from("faqs").insert([{
           id: newFaq.id,
           question: newFaq.question,
           answer: newFaq.answer,
           is_active: newFaq.isActive,
           sort_order: newFaq.order,
         }]);
+        if (error) {
+          console.error("Supabase create FAQ error:", error.message);
+        }
       }
     } catch (e) {
-      console.warn("Supabase create FAQ error:", e);
+      console.warn("Supabase create FAQ exception:", e);
     }
   }
 
-  faqs.push(newFaq);
-  await saveFaqsData(faqs);
   return newFaq;
 }
 
 export async function updateFaqItem(id: string, updatedFields: Partial<FaqItem>): Promise<FaqItem | null> {
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        const updateObj: Record<string, any> = {};
+        if (updatedFields.question !== undefined) updateObj.question = updatedFields.question;
+        if (updatedFields.answer !== undefined) updateObj.answer = updatedFields.answer;
+        if (updatedFields.isActive !== undefined) updateObj.is_active = updatedFields.isActive;
+        if (updatedFields.order !== undefined) updateObj.sort_order = updatedFields.order;
+
+        const { error } = await supabase.from("faqs").update(updateObj).eq("id", id);
+        if (!error) {
+          const faqs = await getFaqsData();
+          return faqs.find((f) => f.id === id) || null;
+        }
+        console.error("Supabase update FAQ error:", error.message);
+      }
+    } catch (e) {
+      console.warn("Supabase update FAQ exception:", e);
+    }
+  }
+
   const faqs = await getFaqsData();
   const index = faqs.findIndex((f) => f.id === id);
   if (index === -1) return null;
@@ -147,22 +177,6 @@ export async function updateFaqItem(id: string, updatedFields: Partial<FaqItem>)
     ...faqs[index],
     ...updatedFields,
   };
-
-  if (isSupabaseConfigured) {
-    try {
-      const supabase = getSupabaseAdmin();
-      if (supabase) {
-        await supabase.from("faqs").update({
-          question: updatedFaq.question,
-          answer: updatedFaq.answer,
-          is_active: updatedFaq.isActive,
-          sort_order: updatedFaq.order,
-        }).eq("id", id);
-      }
-    } catch (e) {
-      console.warn("Supabase update FAQ error:", e);
-    }
-  }
 
   faqs[index] = updatedFaq;
   await saveFaqsData(faqs);
@@ -174,17 +188,17 @@ export async function deleteFaqItem(id: string): Promise<boolean> {
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("faqs").delete().eq("id", id);
+        const { error } = await supabase.from("faqs").delete().eq("id", id);
+        if (!error) return true;
+        console.error("Supabase delete FAQ error:", error.message);
       }
     } catch (e) {
-      console.warn("Supabase delete FAQ error:", e);
+      console.warn("Supabase delete FAQ exception:", e);
     }
   }
 
   const faqs = await getFaqsData();
   const filtered = faqs.filter((f) => f.id !== id);
-  if (filtered.length === faqs.length) return false;
-
   await saveFaqsData(filtered);
   return true;
 }

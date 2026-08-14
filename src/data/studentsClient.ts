@@ -31,7 +31,10 @@ export async function registerStudentAction(params: {
       body: JSON.stringify(params),
     });
 
-    if (!res.ok) throw new Error("Failed to register student");
+    if (!res.ok) {
+      const errData = await res.json().catch(() => null);
+      throw new Error(errData?.message || `Failed to register student (Status ${res.status})`);
+    }
     const data = await res.json();
     return data.student || null;
   } catch (error) {

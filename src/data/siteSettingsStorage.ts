@@ -1,5 +1,5 @@
 import defaultSettingsData from "./siteSettings.json";
-import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
+import { getSupabaseClient, getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase";
 
 export interface SocialLinkItem {
   id: string;
@@ -49,4 +49,24 @@ export async function getSiteSettingsAsync(): Promise<SiteSettings> {
   }
 
   return getSiteSettings();
+}
+
+export async function saveSiteSettingsAsync(settings: SiteSettings): Promise<boolean> {
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        const { error } = await supabase.from("site_settings").upsert(
+          [{ id: 1, settings, updated_at: new Date().toISOString() }],
+          { onConflict: "id" }
+        );
+        if (!error) return true;
+        console.error("Supabase save site settings error:", error.message);
+      }
+    } catch (e) {
+      console.warn("Supabase save site settings exception:", e);
+    }
+  }
+
+  return true;
 }

@@ -45,7 +45,23 @@ CREATE TABLE IF NOT EXISTS public.students (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 4. Dynamic Pages Table (CMS Pages)
+-- 4. Teachers Table (Applications & Instructor Directory)
+CREATE TABLE IF NOT EXISTS public.teachers (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    gender TEXT DEFAULT 'পুরুষ',
+    phone TEXT NOT NULL,
+    email TEXT,
+    specialization TEXT,
+    experience TEXT,
+    work_type TEXT,
+    active_students INT DEFAULT 0,
+    status TEXT DEFAULT 'pending',
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 5. Dynamic Pages Table (CMS Pages)
 CREATE TABLE IF NOT EXISTS public.pages (
     id TEXT PRIMARY KEY,
     slug TEXT UNIQUE NOT NULL,
@@ -56,7 +72,7 @@ CREATE TABLE IF NOT EXISTS public.pages (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 5. Notifications Table
+-- 6. Notifications Table
 CREATE TABLE IF NOT EXISTS public.notifications (
     id TEXT PRIMARY KEY,
     title TEXT NOT NULL,
@@ -67,7 +83,7 @@ CREATE TABLE IF NOT EXISTS public.notifications (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 6. Site Settings Table
+-- 7. Site Settings Table
 CREATE TABLE IF NOT EXISTS public.site_settings (
     id INT PRIMARY KEY DEFAULT 1,
     settings JSONB NOT NULL,
@@ -79,30 +95,44 @@ CREATE INDEX IF NOT EXISTS idx_blogs_slug ON public.blogs(slug);
 CREATE INDEX IF NOT EXISTS idx_blogs_featured ON public.blogs(featured);
 CREATE INDEX IF NOT EXISTS idx_faqs_active_order ON public.faqs(is_active, sort_order);
 CREATE INDEX IF NOT EXISTS idx_students_status ON public.students(status);
+CREATE INDEX IF NOT EXISTS idx_teachers_status ON public.teachers(status);
 CREATE INDEX IF NOT EXISTS idx_pages_slug ON public.pages(slug);
 
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.blogs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.faqs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.students ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.teachers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.pages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
 
--- Create RLS Policies for Public Access
-CREATE POLICY "Public Read Blogs" ON public.blogs FOR SELECT USING (true);
-CREATE POLICY "Public Read FAQs" ON public.faqs FOR SELECT USING (true);
-CREATE POLICY "Public Read Pages" ON public.pages FOR SELECT USING (true);
-CREATE POLICY "Public Read Settings" ON public.site_settings FOR SELECT USING (true);
+-- Drop existing policies if any to prevent conflicts
+DROP POLICY IF EXISTS "Public Read Blogs" ON public.blogs;
+DROP POLICY IF EXISTS "Public Read FAQs" ON public.faqs;
+DROP POLICY IF EXISTS "Public Read Pages" ON public.pages;
+DROP POLICY IF EXISTS "Public Read Settings" ON public.site_settings;
+DROP POLICY IF EXISTS "Public Read Teachers" ON public.teachers;
+DROP POLICY IF EXISTS "Public Read Students" ON public.students;
+DROP POLICY IF EXISTS "Public Read Notifications" ON public.notifications;
 
--- Allow Public Insert for Student Registrations & Notifications
-CREATE POLICY "Public Insert Students" ON public.students FOR INSERT WITH CHECK (true);
-CREATE POLICY "Public Insert Notifications" ON public.notifications FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Public Insert Students" ON public.students;
+DROP POLICY IF EXISTS "Public Insert Notifications" ON public.notifications;
+DROP POLICY IF EXISTS "Public Insert Teachers" ON public.teachers;
 
--- Admin Full Access Policies (Service Role / Auth users)
-CREATE POLICY "Admin Full Blogs" ON public.blogs FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admin Full FAQs" ON public.faqs FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admin Full Students" ON public.students FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admin Full Pages" ON public.pages FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admin Full Notifications" ON public.notifications FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admin Full Settings" ON public.site_settings FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Admin Full Blogs" ON public.blogs;
+DROP POLICY IF EXISTS "Admin Full FAQs" ON public.faqs;
+DROP POLICY IF EXISTS "Admin Full Students" ON public.students;
+DROP POLICY IF EXISTS "Admin Full Teachers" ON public.teachers;
+DROP POLICY IF EXISTS "Admin Full Pages" ON public.pages;
+DROP POLICY IF EXISTS "Admin Full Notifications" ON public.notifications;
+DROP POLICY IF EXISTS "Admin Full Settings" ON public.site_settings;
+
+-- Allow full CRUD for anon and authenticated users across all tables
+CREATE POLICY "Allow Full Access Blogs" ON public.blogs FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow Full Access FAQs" ON public.faqs FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow Full Access Students" ON public.students FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow Full Access Teachers" ON public.teachers FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow Full Access Pages" ON public.pages FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow Full Access Notifications" ON public.notifications FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow Full Access Settings" ON public.site_settings FOR ALL USING (true) WITH CHECK (true);

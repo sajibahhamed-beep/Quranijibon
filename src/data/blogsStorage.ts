@@ -16,8 +16,12 @@ export async function getBlogsData(): Promise<BlogsData> {
     try {
       const supabase = getSupabaseClient();
       if (supabase) {
-        const { data: dbPosts, error } = await supabase.from("blogs").select("*").order("created_at", { ascending: false });
-        if (!error && dbPosts && dbPosts.length > 0) {
+        const { data: dbPosts, error } = await supabase
+          .from("blogs")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (!error && Array.isArray(dbPosts)) {
           const posts: BlogPost[] = dbPosts.map((p) => ({
             id: p.id,
             slug: p.slug,
@@ -53,9 +57,12 @@ export async function getBlogsData(): Promise<BlogsData> {
             authors: BLOG_AUTHORS,
           };
         }
+        if (error) {
+          console.warn("Supabase blogs fetch error:", error.message);
+        }
       }
     } catch (e) {
-      console.warn("Supabase blogs fetch error, falling back to local storage:", e);
+      console.warn("Supabase blogs fetch exception:", e);
     }
   }
 
@@ -72,15 +79,16 @@ export async function getBlogsData(): Promise<BlogsData> {
       sidebarArticles: RECENT_SIDEBAR_ARTICLES,
       authors: BLOG_AUTHORS,
     };
-    await saveBlogsData(initialData);
     return initialData;
   }
 }
 
 export async function saveBlogsData(data: BlogsData): Promise<void> {
-  const dir = path.dirname(DATA_FILE_PATH);
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+  try {
+    const dir = path.dirname(DATA_FILE_PATH);
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+  } catch (e) {}
 }
 
 export async function getBlogPostByIdOrSlug(idOrSlug: string): Promise<BlogPost | null> {
@@ -93,6 +101,7 @@ export async function getBlogPostByIdOrSlug(idOrSlug: string): Promise<BlogPost 
           .select("*")
           .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
           .single();
+
         if (!error && data) {
           return {
             id: data.id,
@@ -165,7 +174,7 @@ export async function createBlogPost(newPostData: Partial<BlogPost>): Promise<Bl
         if (formattedPost.featured) {
           await supabase.from("blogs").update({ featured: false }).neq("id", id);
         }
-        await supabase.from("blogs").insert([{
+        const { error } = await supabase.from("blogs").insert([{
           id: formattedPost.id,
           slug: formattedPost.slug,
           title: formattedPost.title,
@@ -183,28 +192,14 @@ export async function createBlogPost(newPostData: Partial<BlogPost>): Promise<Bl
           toc: formattedPost.toc,
           content: formattedPost.content,
         }]);
+        if (error) {
+          console.error("Supabase create blog error:", error.message);
+        }
       }
     } catch (e) {
-      console.warn("Supabase create blog error:", e);
+      console.warn("Supabase create blog exception:", e);
     }
   }
-
-  // Also update local JSON storage
-  const data = await getBlogsData();
-  if (formattedPost.featured) {
-    data.posts = data.posts.map((p) => ({ ...p, featured: false }));
-  }
-  data.posts = [formattedPost, ...data.posts];
-  data.sidebarArticles = data.posts.slice(0, 3).map((p, i) => ({
-    id: `side-${p.id}`,
-    num: `0${i + 1}`,
-    rank: `0${i + 1}`,
-    title: p.title,
-    slug: p.slug,
-    category: p.category,
-    readTime: p.readTime,
-  }));
-  await saveBlogsData(data);
 
   return formattedPost;
 }
@@ -229,7 +224,7 @@ export async function updateBlogPost(id: string, updatedFields: Partial<BlogPost
         if (updatedFields.featured) {
           await supabase.from("blogs").update({ featured: false }).neq("id", id);
         }
-        await supabase.from("blogs").update({
+        const { error } = await supabase.from("blogs").update({
           slug: updatedPost.slug,
           title: updatedPost.title,
           category: updatedPost.category,
@@ -246,29 +241,13 @@ export async function updateBlogPost(id: string, updatedFields: Partial<BlogPost
           toc: updatedPost.toc,
           content: updatedPost.content,
         }).or(`id.eq.${id},slug.eq.${id}`);
+        if (error) {
+          console.error("Supabase update blog error:", error.message);
+        }
       }
     } catch (e) {
-      console.warn("Supabase update blog error:", e);
+      console.warn("Supabase update blog exception:", e);
     }
-  }
-
-  const data = await getBlogsData();
-  const index = data.posts.findIndex((p) => p.id === id || p.slug === id);
-  if (index !== -1) {
-    if (updatedFields.featured) {
-      data.posts = data.posts.map((p) => ({ ...p, featured: false }));
-    }
-    data.posts[index] = updatedPost;
-    data.sidebarArticles = data.posts.slice(0, 3).map((p, i) => ({
-      id: `side-${p.id}`,
-      num: `0${i + 1}`,
-      rank: `0${i + 1}`,
-      title: p.title,
-      slug: p.slug,
-      category: p.category,
-      readTime: p.readTime,
-    }));
-    await saveBlogsData(data);
   }
 
   return updatedPost;
@@ -279,35 +258,17 @@ export async function deleteBlogPost(id: string): Promise<boolean> {
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("blogs").delete().or(`id.eq.${id},slug.eq.${id}`);
+        const { error } = await supabase.from("blogs").delete().or(`id.eq.${id},slug.eq.${id}`);
+        if (!error) return true;
+        console.error("Supabase delete blog error:", error.message);
       }
     } catch (e) {
-      console.warn("Supabase delete blog error:", e);
+      console.warn("Supabase delete blog exception:", e);
     }
   }
 
   const data = await getBlogsData();
-  const initialLength = data.posts.length;
   data.posts = data.posts.filter((p) => p.id !== id && p.slug !== id);
-
-  if (data.posts.length === initialLength) {
-    return false;
-  }
-
-  if (data.posts.length > 0 && !data.posts.some((p) => p.featured)) {
-    data.posts[0].featured = true;
-  }
-
-  data.sidebarArticles = data.posts.slice(0, 3).map((p, i) => ({
-    id: `side-${p.id}`,
-    num: `0${i + 1}`,
-    rank: `0${i + 1}`,
-    title: p.title,
-    slug: p.slug,
-    category: p.category,
-    readTime: p.readTime,
-  }));
-
   await saveBlogsData(data);
   return true;
 }

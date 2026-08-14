@@ -16,8 +16,12 @@ export async function getTeachers(): Promise<ExtendedTeacherRecord[]> {
     try {
       const supabase = getSupabaseClient();
       if (supabase) {
-        const { data: dbTeachers, error } = await supabase.from("teachers").select("*").order("created_at", { ascending: false });
-        if (!error && dbTeachers && dbTeachers.length > 0) {
+        const { data: dbTeachers, error } = await supabase
+          .from("teachers")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (!error && Array.isArray(dbTeachers)) {
           return dbTeachers.map((t) => ({
             id: t.id,
             name: t.name,
@@ -33,9 +37,12 @@ export async function getTeachers(): Promise<ExtendedTeacherRecord[]> {
             notes: t.notes || "",
           }));
         }
+        if (error) {
+          console.warn("Supabase teachers fetch error:", error.message);
+        }
       }
     } catch (e) {
-      console.warn("Supabase teachers fetch error, falling back to local file:", e);
+      console.warn("Supabase teachers fetch exception:", e);
     }
   }
 
@@ -45,27 +52,32 @@ export async function getTeachers(): Promise<ExtendedTeacherRecord[]> {
     const data = JSON.parse(fileContent) as ExtendedTeacherRecord[];
     return Array.isArray(data) ? data : INITIAL_TEACHERS;
   } catch (error) {
-    console.warn("Error reading teachers.json, fallback to INITIAL_TEACHERS:", error);
     return INITIAL_TEACHERS;
   }
 }
 
 export async function saveTeachers(data: ExtendedTeacherRecord[]): Promise<void> {
-  const dir = path.dirname(DATA_FILE_PATH);
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+  try {
+    const dir = path.dirname(DATA_FILE_PATH);
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+  } catch (e) {}
 }
 
 export async function addTeacher(
   data: Partial<ExtendedTeacherRecord> & { name: string; phone: string }
 ): Promise<ExtendedTeacherRecord> {
-  const teachers = await getTeachers();
+  const safePhone = String(data.phone || "").trim();
+  const safeEmail = data.email && String(data.email).trim()
+    ? String(data.email).trim()
+    : `${safePhone.replace(/\D/g, "") || "teacher"}@quranijibon.com`;
+
   const newTeacher: ExtendedTeacherRecord = {
-    id: data.id || `TCH-${100 + teachers.length + 1}`,
-    name: data.name,
+    id: data.id || `TCH-${Date.now()}`,
+    name: String(data.name || "").trim(),
     gender: data.gender === "মহিলা" ? "মহিলা" : "পুরুষ",
-    phone: data.phone,
-    email: data.email || `${data.phone.replace(/\D/g, "")}@quranijibon.com`,
+    phone: safePhone,
+    email: safeEmail,
     specialization: data.specialization || "তাজবীদ ও কুরআন শিক্ষক",
     activeStudents: data.activeStudents || 0,
     status: data.status || "নতুন আবেদন",
@@ -75,32 +87,50 @@ export async function addTeacher(
     notes: data.notes || "",
   };
 
+  // 1. Persist to local JSON storage
+  try {
+    const teachers = await getTeachers();
+    const existingIndex = teachers.findIndex((t) => t.id === newTeacher.id);
+    if (existingIndex >= 0) {
+      teachers[existingIndex] = newTeacher;
+    } else {
+      teachers.unshift(newTeacher);
+    }
+    await saveTeachers(teachers);
+  } catch (err) {
+    console.warn("Failed to persist teacher to local file:", err);
+  }
+
+  // 2. Sync to Supabase if configured
   if (isSupabaseConfigured) {
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("teachers").insert([{
-          id: newTeacher.id,
-          name: newTeacher.name,
-          gender: newTeacher.gender,
-          phone: newTeacher.phone,
-          email: newTeacher.email,
-          specialization: newTeacher.specialization,
-          experience: newTeacher.experience,
-          work_type: newTeacher.workType,
-          active_students: newTeacher.activeStudents,
-          status: newTeacher.status,
-          notes: newTeacher.notes,
-          created_at: new Date().toISOString(),
-        }]);
+        const { error } = await supabase.from("teachers").insert([
+          {
+            id: newTeacher.id,
+            name: newTeacher.name,
+            gender: newTeacher.gender,
+            phone: newTeacher.phone,
+            email: newTeacher.email,
+            specialization: newTeacher.specialization,
+            experience: newTeacher.experience,
+            work_type: newTeacher.workType,
+            active_students: newTeacher.activeStudents,
+            status: newTeacher.status,
+            notes: newTeacher.notes,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+        if (error) {
+          console.error("Supabase insert teacher error:", error.message);
+        }
       }
     } catch (e) {
       console.warn("Supabase add teacher error:", e);
     }
   }
 
-  const updated = [newTeacher, ...teachers];
-  await saveTeachers(updated);
   return newTeacher;
 }
 
@@ -112,7 +142,9 @@ export async function updateTeacherStatus(
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("teachers").update({ status: newStatus }).eq("id", id);
+        const { error } = await supabase.from("teachers").update({ status: newStatus }).eq("id", id);
+        if (!error) return true;
+        console.error("Supabase update teacher status error:", error.message);
       }
     } catch (e) {
       console.warn("Supabase update teacher status error:", e);
@@ -134,18 +166,23 @@ export async function updateTeacher(
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("teachers").update({
-          name: updatedTeacher.name,
-          gender: updatedTeacher.gender,
-          phone: updatedTeacher.phone,
-          email: updatedTeacher.email,
-          specialization: updatedTeacher.specialization,
-          experience: updatedTeacher.experience,
-          work_type: updatedTeacher.workType,
-          active_students: updatedTeacher.activeStudents,
-          status: updatedTeacher.status,
-          notes: updatedTeacher.notes || "",
-        }).eq("id", updatedTeacher.id);
+        const { error } = await supabase
+          .from("teachers")
+          .update({
+            name: updatedTeacher.name,
+            gender: updatedTeacher.gender,
+            phone: updatedTeacher.phone,
+            email: updatedTeacher.email,
+            specialization: updatedTeacher.specialization,
+            experience: updatedTeacher.experience,
+            work_type: updatedTeacher.workType,
+            active_students: updatedTeacher.activeStudents,
+            status: updatedTeacher.status,
+            notes: updatedTeacher.notes || "",
+          })
+          .eq("id", updatedTeacher.id);
+        if (!error) return true;
+        console.error("Supabase update teacher error:", error.message);
       }
     } catch (e) {
       console.warn("Supabase update teacher error:", e);
@@ -157,5 +194,24 @@ export async function updateTeacher(
   if (index === -1) return false;
   teachers[index] = updatedTeacher;
   await saveTeachers(teachers);
+  return true;
+}
+
+export async function deleteTeacher(id: string): Promise<boolean> {
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        const { error } = await supabase.from("teachers").delete().eq("id", id);
+        if (!error) return true;
+      }
+    } catch (e) {
+      console.warn("Supabase delete teacher error:", e);
+    }
+  }
+
+  const teachers = await getTeachers();
+  const filtered = teachers.filter((t) => t.id !== id);
+  await saveTeachers(filtered);
   return true;
 }

@@ -10,8 +10,12 @@ export async function getStudents(): Promise<StudentRecord[]> {
     try {
       const supabase = getSupabaseClient();
       if (supabase) {
-        const { data: dbStudents, error } = await supabase.from("students").select("*").order("created_at", { ascending: false });
-        if (!error && dbStudents && dbStudents.length > 0) {
+        const { data: dbStudents, error } = await supabase
+          .from("students")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (!error && Array.isArray(dbStudents)) {
           return dbStudents.map((s) => ({
             id: s.id,
             name: s.name,
@@ -26,9 +30,12 @@ export async function getStudents(): Promise<StudentRecord[]> {
             notes: s.notes || "",
           }));
         }
+        if (error) {
+          console.warn("Supabase students fetch error:", error.message);
+        }
       }
     } catch (e) {
-      console.warn("Supabase students fetch error, falling back to local file:", e);
+      console.warn("Supabase students fetch exception:", e);
     }
   }
 
@@ -38,59 +45,82 @@ export async function getStudents(): Promise<StudentRecord[]> {
     const data = JSON.parse(fileContent) as StudentRecord[];
     return Array.isArray(data) ? data : INITIAL_STUDENTS;
   } catch (error) {
-    console.warn("Error reading students.json, fallback to INITIAL_STUDENTS:", error);
     return INITIAL_STUDENTS;
   }
 }
 
 export async function saveStudents(data: StudentRecord[]): Promise<void> {
-  const dir = path.dirname(DATA_FILE_PATH);
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+  try {
+    const dir = path.dirname(DATA_FILE_PATH);
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+  } catch (e) {}
 }
 
 export async function addStudent(
   data: Omit<StudentRecord, "id" | "date"> & { date?: string; id?: string }
 ): Promise<StudentRecord> {
-  const students = await getStudents();
+  const safePhone = String(data.phone || "").trim();
+  const safeEmail = data.email && String(data.email).trim()
+    ? String(data.email).trim()
+    : `${safePhone.replace(/\D/g, "") || "student"}@quranijibon.com`;
+
   const newStudent: StudentRecord = {
-    id: data.id || `STU-${100 + students.length + 1}`,
-    name: data.name,
-    phone: data.phone,
-    email: data.email || `${data.phone.replace(/\D/g, "")}@example.com`,
-    package: data.package,
-    schedule: data.schedule,
+    id: data.id || `STU-${Date.now()}`,
+    name: String(data.name || "").trim(),
+    phone: safePhone,
+    email: safeEmail,
+    package: data.package || "বিনামূল্যে",
+    schedule: data.schedule || "সুবিধাজনক সময়ে",
     teacherPreference: data.teacherPreference || "যে কোনটি",
     assignedTeacher: data.assignedTeacher || "নির্ধারিত নয়",
     status: data.status || "নতুন আবেদন",
     date: data.date || new Date().toISOString().split("T")[0],
-    notes: data.notes,
+    notes: data.notes || "",
   };
 
+  // 1. Persist to local JSON storage
+  try {
+    const students = await getStudents();
+    const existingIndex = students.findIndex((s) => s.id === newStudent.id);
+    if (existingIndex >= 0) {
+      students[existingIndex] = newStudent;
+    } else {
+      students.unshift(newStudent);
+    }
+    await saveStudents(students);
+  } catch (err) {
+    console.warn("Failed to persist student to local file:", err);
+  }
+
+  // 2. Sync to Supabase if configured
   if (isSupabaseConfigured) {
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("students").insert([{
-          id: newStudent.id,
-          name: newStudent.name,
-          phone: newStudent.phone,
-          email: newStudent.email,
-          course: newStudent.package,
-          student_type: newStudent.teacherPreference,
-          preferred_time: newStudent.schedule,
-          notes: newStudent.notes || "",
-          status: newStudent.status,
-          created_at: new Date().toISOString(),
-        }]);
+        const { error } = await supabase.from("students").insert([
+          {
+            id: newStudent.id,
+            name: newStudent.name,
+            phone: newStudent.phone,
+            email: newStudent.email,
+            course: newStudent.package,
+            student_type: newStudent.teacherPreference,
+            preferred_time: newStudent.schedule,
+            notes: newStudent.notes || "",
+            status: newStudent.status,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+        if (error) {
+          console.error("Supabase insert student error:", error.message);
+        }
       }
     } catch (e) {
       console.warn("Supabase add student error:", e);
     }
   }
 
-  const updated = [newStudent, ...students];
-  await saveStudents(updated);
   return newStudent;
 }
 
@@ -102,7 +132,9 @@ export async function updateStudentStatus(
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("students").update({ status: newStatus }).eq("id", id);
+        const { error } = await supabase.from("students").update({ status: newStatus }).eq("id", id);
+        if (!error) return true;
+        console.error("Supabase update student status error:", error.message);
       }
     } catch (e) {
       console.warn("Supabase update student status error:", e);
@@ -124,16 +156,21 @@ export async function updateStudent(
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("students").update({
-          name: updatedStudent.name,
-          phone: updatedStudent.phone,
-          email: updatedStudent.email,
-          course: updatedStudent.package,
-          student_type: updatedStudent.teacherPreference,
-          preferred_time: updatedStudent.schedule,
-          notes: updatedStudent.notes || "",
-          status: updatedStudent.status,
-        }).eq("id", updatedStudent.id);
+        const { error } = await supabase
+          .from("students")
+          .update({
+            name: updatedStudent.name,
+            phone: updatedStudent.phone,
+            email: updatedStudent.email,
+            course: updatedStudent.package,
+            student_type: updatedStudent.teacherPreference,
+            preferred_time: updatedStudent.schedule,
+            notes: updatedStudent.notes || "",
+            status: updatedStudent.status,
+          })
+          .eq("id", updatedStudent.id);
+        if (!error) return true;
+        console.error("Supabase update student error:", error.message);
       }
     } catch (e) {
       console.warn("Supabase update student error:", e);
@@ -145,5 +182,24 @@ export async function updateStudent(
   if (index === -1) return false;
   students[index] = updatedStudent;
   await saveStudents(students);
+  return true;
+}
+
+export async function deleteStudent(id: string): Promise<boolean> {
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        const { error } = await supabase.from("students").delete().eq("id", id);
+        if (!error) return true;
+      }
+    } catch (e) {
+      console.warn("Supabase delete student error:", e);
+    }
+  }
+
+  const students = await getStudents();
+  const filtered = students.filter((s) => s.id !== id);
+  await saveStudents(filtered);
   return true;
 }

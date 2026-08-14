@@ -37,7 +37,7 @@ export async function getPagesData(): Promise<PageData[]> {
       const supabase = getSupabaseClient();
       if (supabase) {
         const { data: dbPages, error } = await supabase.from("pages").select("*");
-        if (!error && dbPages && dbPages.length > 0) {
+        if (!error && Array.isArray(dbPages)) {
           return dbPages.map((pg) => {
             let parsedContent: Partial<PageData> = {};
             try {
@@ -54,9 +54,12 @@ export async function getPagesData(): Promise<PageData[]> {
             };
           });
         }
+        if (error) {
+          console.warn("Supabase pages fetch error:", error.message);
+        }
       }
     } catch (e) {
-      console.warn("Supabase pages fetch error, falling back to local file:", e);
+      console.warn("Supabase pages fetch exception:", e);
     }
   }
 
@@ -68,12 +71,42 @@ export async function getPagesData(): Promise<PageData[]> {
     }
     return data;
   } catch (error) {
-    console.error("Error reading pages.json", error);
     return [];
   }
 }
 
 export async function getPageById(idOrSlug: string): Promise<PageData | null> {
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getSupabaseClient();
+      if (supabase) {
+        const { data, error } = await supabase
+          .from("pages")
+          .select("*")
+          .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
+          .single();
+
+        if (!error && data) {
+          let parsedContent: Partial<PageData> = {};
+          try {
+            parsedContent = typeof data.content === "string" ? JSON.parse(data.content) : (data.content || {});
+          } catch (e) {}
+
+          return {
+            id: data.id,
+            slug: data.slug,
+            badge: parsedContent.badge || "তথ্য ও নীতিমালা",
+            title: data.title,
+            description: data.excerpt || parsedContent.description || "",
+            sections: parsedContent.sections || [],
+          };
+        }
+      }
+    } catch (e) {
+      console.warn("Supabase single page fetch error:", e);
+    }
+  }
+
   const pages = await getPagesData();
   return pages.find((p) => p.id === idOrSlug || p.slug === idOrSlug) || null;
 }
@@ -91,15 +124,18 @@ export async function updatePageData(id: string, updatedFields: Partial<PageData
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("pages").update({
+        const { error } = await supabase.from("pages").update({
           title: updatedPage.title,
           excerpt: updatedPage.description,
           content: JSON.stringify(updatedPage),
           updated_at: new Date().toISOString(),
         }).or(`id.eq.${id},slug.eq.${id}`);
+
+        if (!error) return updatedPage;
+        console.error("Supabase update page error:", error.message);
       }
     } catch (e) {
-      console.warn("Supabase update page error:", e);
+      console.warn("Supabase update page exception:", e);
     }
   }
 
@@ -142,7 +178,7 @@ export async function createPage(newPageData: Partial<PageData>): Promise<PageDa
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("pages").insert([{
+        const { error } = await supabase.from("pages").insert([{
           id: formattedPage.id,
           slug: formattedPage.slug,
           title: formattedPage.title,
@@ -150,15 +186,15 @@ export async function createPage(newPageData: Partial<PageData>): Promise<PageDa
           content: JSON.stringify(formattedPage),
           updated_at: new Date().toISOString(),
         }]);
+        if (error) {
+          console.error("Supabase create page error:", error.message);
+        }
       }
     } catch (e) {
-      console.warn("Supabase create page error:", e);
+      console.warn("Supabase create page exception:", e);
     }
   }
 
-  const pages = await getPagesData();
-  pages.push(formattedPage);
-  await savePagesData(pages);
   return formattedPage;
 }
 
@@ -167,22 +203,25 @@ export async function deletePage(id: string): Promise<boolean> {
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("pages").delete().or(`id.eq.${id},slug.eq.${id}`);
+        const { error } = await supabase.from("pages").delete().or(`id.eq.${id},slug.eq.${id}`);
+        if (!error) return true;
+        console.error("Supabase delete page error:", error.message);
       }
     } catch (e) {
-      console.warn("Supabase delete page error:", e);
+      console.warn("Supabase delete page exception:", e);
     }
   }
 
   const pages = await getPagesData();
   const filtered = pages.filter((p) => p.id !== id && p.slug !== id);
-  if (filtered.length === pages.length) return false;
   await savePagesData(filtered);
   return true;
 }
 
 export async function savePagesData(data: PageData[]): Promise<void> {
-  const dir = path.dirname(DATA_FILE_PATH);
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+  try {
+    const dir = path.dirname(DATA_FILE_PATH);
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+  } catch (e) {}
 }

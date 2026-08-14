@@ -20,8 +20,18 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    if (!body.name || !body.phone) {
+    let body: any;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error("POST /api/teachers json parse error:", parseError);
+      return NextResponse.json(
+        { success: false, message: "Invalid JSON in request body" },
+        { status: 400 }
+      );
+    }
+
+    if (!body || !body.name || !body.phone) {
       return NextResponse.json(
         { success: false, message: "Name and Phone are required" },
         { status: 400 }
@@ -29,10 +39,10 @@ export async function POST(request: Request) {
     }
 
     const newTeacher = await addTeacher({
-      name: body.name,
+      name: String(body.name).trim(),
       gender: body.gender || "পুরুষ",
-      phone: body.phone,
-      email: body.email || "",
+      phone: String(body.phone).trim(),
+      email: body.email ? String(body.email).trim() : "",
       specialization: body.qualification || body.specialization || "তাজবীদ ও কুরআন শিক্ষক",
       experience: body.experience || "১-২ বছর",
       workType: body.workType || "স্বল্প সম্মানী",
@@ -49,28 +59,33 @@ export async function POST(request: Request) {
         link: "/admin/teachers",
       });
     } catch (e) {
-      console.error("Error adding notification for teacher application", e);
+      console.error("Error adding notification for teacher application:", e);
     }
 
-    // Send email notification to admins (non-blocking)
-    sendTeacherApplicationEmail({
-      name: newTeacher.name,
-      gender: newTeacher.gender,
-      phone: newTeacher.phone,
-      email: newTeacher.email,
-      qualification: newTeacher.specialization,
-      experience: newTeacher.experience,
-      workType: newTeacher.workType,
-      notes: newTeacher.notes,
-    }).catch((err) => console.error("Teacher email error:", err));
+    // Send email notification to admins (non-blocking, fail-safe)
+    try {
+      sendTeacherApplicationEmail({
+        name: newTeacher.name,
+        gender: newTeacher.gender,
+        phone: newTeacher.phone,
+        email: newTeacher.email,
+        qualification: newTeacher.specialization,
+        experience: newTeacher.experience,
+        workType: newTeacher.workType,
+        notes: newTeacher.notes,
+      }).catch((err) => console.error("Teacher email sending error:", err));
+    } catch (emailErr) {
+      console.error("Teacher email trigger error:", emailErr);
+    }
 
     return NextResponse.json(
       { success: true, message: "Teacher application submitted successfully", teacher: newTeacher },
       { status: 201 }
     );
   } catch (error: any) {
+    console.error("Error in POST /api/teachers:", error);
     return NextResponse.json(
-      { success: false, message: error.message || "Failed to submit teacher application" },
+      { success: false, message: error?.message || "Failed to submit teacher application" },
       { status: 500 }
     );
   }

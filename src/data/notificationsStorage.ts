@@ -19,21 +19,28 @@ export async function getNotifications(): Promise<AdminNotification[]> {
     try {
       const supabase = getSupabaseClient();
       if (supabase) {
-        const { data: dbNotifs, error } = await supabase.from("notifications").select("*").order("created_at", { ascending: false });
-        if (!error && dbNotifs && dbNotifs.length > 0) {
+        const { data: dbNotifs, error } = await supabase
+          .from("notifications")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (!error && Array.isArray(dbNotifs)) {
           return dbNotifs.map((n) => ({
             id: n.id,
             title: n.title,
             message: n.message,
-            category: n.category || "system",
+            category: (n.category as AdminNotification["category"]) || "system",
             timestamp: n.created_at ? new Date(n.created_at).toLocaleDateString("bn-BD") : "এইমাত্র",
             read: n.read || false,
             link: n.link || "",
           }));
         }
+        if (error) {
+          console.warn("Supabase notifications fetch error:", error.message);
+        }
       }
     } catch (e) {
-      console.warn("Supabase notifications fetch error, falling back to local file:", e);
+      console.warn("Supabase notifications fetch exception:", e);
     }
   }
 
@@ -43,7 +50,6 @@ export async function getNotifications(): Promise<AdminNotification[]> {
     const data = JSON.parse(fileContent) as AdminNotification[];
     return Array.isArray(data) ? data : [];
   } catch (error) {
-    console.warn("Error reading notifications.json:", error);
     return [];
   }
 }
@@ -53,10 +59,12 @@ export async function markAsRead(id: string): Promise<boolean> {
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("notifications").update({ read: true }).eq("id", id);
+        const { error } = await supabase.from("notifications").update({ read: true }).eq("id", id);
+        if (!error) return true;
+        console.error("Supabase markAsRead error:", error.message);
       }
     } catch (e) {
-      console.warn("Supabase markAsRead error:", e);
+      console.warn("Supabase markAsRead exception:", e);
     }
   }
 
@@ -73,10 +81,12 @@ export async function markAllAsRead(): Promise<boolean> {
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("notifications").update({ read: true }).neq("id", "");
+        const { error } = await supabase.from("notifications").update({ read: true }).neq("id", "");
+        if (!error) return true;
+        console.error("Supabase markAllAsRead error:", error.message);
       }
     } catch (e) {
-      console.warn("Supabase markAllAsRead error:", e);
+      console.warn("Supabase markAllAsRead exception:", e);
     }
   }
 
@@ -91,10 +101,12 @@ export async function deleteNotification(id: string): Promise<boolean> {
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("notifications").delete().eq("id", id);
+        const { error } = await supabase.from("notifications").delete().eq("id", id);
+        if (!error) return true;
+        console.error("Supabase deleteNotification error:", error.message);
       }
     } catch (e) {
-      console.warn("Supabase deleteNotification error:", e);
+      console.warn("Supabase deleteNotification exception:", e);
     }
   }
 
@@ -109,10 +121,12 @@ export async function clearAllNotifications(): Promise<boolean> {
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("notifications").delete().neq("id", "");
+        const { error } = await supabase.from("notifications").delete().neq("id", "");
+        if (!error) return true;
+        console.error("Supabase clearAllNotifications error:", error.message);
       }
     } catch (e) {
-      console.warn("Supabase clearAllNotifications error:", e);
+      console.warn("Supabase clearAllNotifications exception:", e);
     }
   }
 
@@ -123,7 +137,6 @@ export async function clearAllNotifications(): Promise<boolean> {
 export async function addNotification(
   data: Omit<AdminNotification, "id" | "timestamp" | "read">
 ): Promise<AdminNotification> {
-  const notifs = await getNotifications();
   const newNotif: AdminNotification = {
     id: `notif-${Date.now()}`,
     ...data,
@@ -135,7 +148,7 @@ export async function addNotification(
     try {
       const supabase = getSupabaseAdmin();
       if (supabase) {
-        await supabase.from("notifications").insert([{
+        const { error } = await supabase.from("notifications").insert([{
           id: newNotif.id,
           title: newNotif.title,
           message: newNotif.message,
@@ -144,19 +157,22 @@ export async function addNotification(
           read: false,
           created_at: new Date().toISOString(),
         }]);
+        if (error) {
+          console.error("Supabase addNotification error:", error.message);
+        }
       }
     } catch (e) {
-      console.warn("Supabase addNotification error:", e);
+      console.warn("Supabase addNotification exception:", e);
     }
   }
 
-  const updated = [newNotif, ...notifs];
-  await saveNotifications(updated);
   return newNotif;
 }
 
 export async function saveNotifications(data: AdminNotification[]): Promise<void> {
-  const dir = path.dirname(DATA_FILE_PATH);
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+  try {
+    const dir = path.dirname(DATA_FILE_PATH);
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+  } catch (e) {}
 }
