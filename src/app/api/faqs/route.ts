@@ -48,3 +48,39 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+
+    if (body.action === "move" && body.id && typeof body.targetOrder === "number") {
+      const { moveFaqPosition } = await import("@/data/faqsStorage");
+      const faqs = await moveFaqPosition(body.id, body.targetOrder);
+      return NextResponse.json({
+        success: true,
+        message: "FAQ এর অবস্থান পরিবর্তন সম্পন্ন হয়েছে",
+        faqs,
+      });
+    }
+
+    if (body.action === "reorder" && Array.isArray(body.orders)) {
+      const { reorderFaqs } = await import("@/data/faqsStorage");
+      const faqs = await reorderFaqs(body.orders);
+      return NextResponse.json({
+        success: true,
+        message: "FAQ ক্রম হালনাগাদ সম্পন্ন হয়েছে",
+        faqs,
+      });
+    }
+
+    return NextResponse.json(
+      { success: false, message: "Invalid action or parameters" },
+      { status: 400 }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, message: error.message || "Failed to update FAQ order" },
+      { status: 500 }
+    );
+  }
+}

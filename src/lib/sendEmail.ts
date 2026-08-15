@@ -1,18 +1,30 @@
 import nodemailer from "nodemailer";
 
 // Both emails will each receive their own individual copy
-const RECIPIENT_EMAILS = [
+const DEFAULT_RECIPIENT_EMAILS = [
   "sajibahhamed@gmail.com",
-  "sajib.taf@gmail.com",
+  "mahiyaakter148@gmail.com",
 ];
 
+function getRecipientEmails(): string[] {
+  const envRecipients = process.env.RECIPIENT_EMAILS?.trim();
+  if (envRecipients) {
+    const list = envRecipients
+      .split(",")
+      .map((e) => e.trim())
+      .filter(Boolean);
+    if (list.length > 0) return list;
+  }
+  return DEFAULT_RECIPIENT_EMAILS;
+}
+
 function createTransporter() {
-  const user = process.env.SMTP_EMAIL?.trim();
-  const rawPass = process.env.SMTP_PASSWORD?.trim();
+  const user = (process.env.SMTP_EMAIL || process.env.SMTP_USER)?.trim();
+  const rawPass = (process.env.SMTP_PASSWORD || process.env.SMTP_PASS)?.trim();
   const pass = rawPass ? rawPass.replace(/\s+/g, "") : "";
 
   if (!user || !pass) {
-    console.warn("SMTP_EMAIL or SMTP_PASSWORD not set in environment — email skipped.");
+    console.warn("SMTP_EMAIL/SMTP_USER or SMTP_PASSWORD/SMTP_PASS not set in environment — email skipped.");
     return null;
   }
 
@@ -37,13 +49,15 @@ export async function sendNotificationEmail({
   subject: string;
   htmlBody: string;
 }) {
-  const user = process.env.SMTP_EMAIL?.trim();
+  const user = (process.env.SMTP_EMAIL || process.env.SMTP_USER)?.trim();
   const transporter = createTransporter();
   if (!transporter || !user) return;
 
+  const recipients = getRecipientEmails();
+
   // Send a separate individual email to each recipient
   const results = await Promise.allSettled(
-    RECIPIENT_EMAILS.map((recipient) =>
+    recipients.map((recipient) =>
       transporter.sendMail({
         from: `"Quranijibon Academy" <${user}>`,
         to: recipient,
@@ -55,9 +69,9 @@ export async function sendNotificationEmail({
 
   results.forEach((result, i) => {
     if (result.status === "fulfilled") {
-      console.log(`✅ Production Email sent to ${RECIPIENT_EMAILS[i]}: ${subject}`);
+      console.log(`✅ Production Email sent to ${recipients[i]}: ${subject}`);
     } else {
-      console.error(`❌ Production Email failed for ${RECIPIENT_EMAILS[i]}:`, result.reason);
+      console.error(`❌ Production Email failed for ${recipients[i]}:`, result.reason);
     }
   });
 }

@@ -13,6 +13,11 @@ import {
   Eye,
   EyeOff,
   ArrowUpDown,
+  ChevronUp,
+  ChevronDown,
+  ArrowUp,
+  ArrowDown,
+  MoveVertical,
 } from "lucide-react";
 import { FaqItem } from "@/data/faqsStorage";
 
@@ -20,14 +25,20 @@ export default function AdminFaqsPage() {
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [reorderingId, setReorderingId] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("সব");
 
-  // Modal States
+  // Create / Edit Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFaq, setEditingFaq] = useState<FaqItem | null>(null);
+
+  // Position Shift Modal States
+  const [isShiftModalOpen, setIsShiftModalOpen] = useState(false);
+  const [shiftingFaq, setShiftingFaq] = useState<FaqItem | null>(null);
+  const [targetPosition, setTargetPosition] = useState<number>(1);
 
   // Form Fields
   const [formQuestion, setFormQuestion] = useState("");
@@ -80,6 +91,48 @@ export default function AdminFaqsPage() {
     setFormOrder(faq.order);
     setFormIsActive(faq.isActive);
     setIsModalOpen(true);
+  };
+
+  const openShiftPositionModal = (faq: FaqItem) => {
+    setShiftingFaq(faq);
+    setTargetPosition(faq.order);
+    setIsShiftModalOpen(true);
+  };
+
+  const handleQuickMove = async (faq: FaqItem, direction: "up" | "down") => {
+    const currentOrder = faq.order;
+    const newTarget = direction === "up" ? currentOrder - 1 : currentOrder + 1;
+    if (newTarget < 1 || newTarget > faqs.length) return;
+
+    await executeMovePosition(faq.id, newTarget);
+  };
+
+  const executeMovePosition = async (id: string, newOrder: number) => {
+    try {
+      setReorderingId(id);
+      const res = await fetch("/api/faqs", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "move",
+          id,
+          targetOrder: newOrder,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setFaqs(data.faqs || []);
+        showStatus("success", `প্রশ্নটির অবস্থান সফলভাবে #${newOrder} নম্বরে স্থানান্তর করা হয়েছে`);
+        setIsShiftModalOpen(false);
+      } else {
+        showStatus("error", data.message || "অবস্থান পরিবর্তন ব্যর্থ হয়েছে");
+      }
+    } catch (err) {
+      showStatus("error", "অবস্থান পরিবর্তনের সময় ত্রুটি হয়েছে");
+    } finally {
+      setReorderingId(null);
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -206,7 +259,7 @@ export default function AdminFaqsPage() {
             FAQ ও জিজ্ঞাসাবলী ব্যবস্থাপনা (FAQ Management)
           </h1>
           <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-            ওয়েবসাইটের সাধারণ জিজ্ঞাসাবলির প্রশ্ন ও উত্তর ডাইনামিকভাবে পরিচালনা করুন
+            ওয়েবসাইটের সাধারণ জিজ্ঞাসাবলির প্রশ্ন ও উত্তর এবং যেকোনো প্রশ্নের অবস্থান/ক্রম পরিবর্তন করুন
           </p>
         </div>
 
@@ -255,7 +308,7 @@ export default function AdminFaqsPage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-700 uppercase tracking-wider font-bold border-b border-slate-200">
               <tr>
-                <th className="p-4 w-16 text-center">ক্রম</th>
+                <th className="p-4 w-28 text-center">ক্রম ও অবস্থান</th>
                 <th className="p-4">প্রশ্ন ও উত্তর</th>
                 <th className="p-4">ক্যাটাগরি</th>
                 <th className="p-4 text-center">অবস্থা</th>
@@ -279,71 +332,251 @@ export default function AdminFaqsPage() {
                   </td>
                 </tr>
               ) : (
-                filteredFaqs.map((faq) => (
-                  <tr key={faq.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="p-4 text-center font-extrabold text-[#00A89C]">
-                      #{faq.order}
-                    </td>
-                    <td className="p-4 max-w-lg">
-                      <div className="font-bold text-slate-900 text-sm line-clamp-1 mb-1">
-                        {faq.question}
-                      </div>
-                      <p className="text-slate-500 text-xs line-clamp-2 font-normal leading-relaxed">
-                        {faq.answer}
-                      </p>
-                    </td>
-                    <td className="p-4">
-                      <span className="bg-teal-50 text-[#007C7A] border border-teal-200 px-2.5 py-1 rounded-md text-xs font-bold inline-block">
-                        {faq.category}
-                      </span>
-                    </td>
-                    <td className="p-4 text-center">
-                      <button
-                        onClick={() => handleToggleActive(faq)}
-                        className={`px-3 py-1 rounded-full text-xs font-bold inline-flex items-center space-x-1 border transition-all cursor-pointer ${
-                          faq.isActive
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                            : "bg-slate-100 text-slate-500 border-slate-200"
-                        }`}
-                      >
-                        {faq.isActive ? (
-                          <>
-                            <Eye className="w-3.5 h-3.5" />
-                            <span>সক্রিয়</span>
-                          </>
-                        ) : (
-                          <>
-                            <EyeOff className="w-3.5 h-3.5" />
-                            <span>হিডেন</span>
-                          </>
-                        )}
-                      </button>
-                    </td>
-                    <td className="p-4 text-right">
-                      <div className="flex items-center justify-end space-x-2">
+                filteredFaqs.map((faq, index) => {
+                  const isFirst = faq.order === 1 || index === 0;
+                  const isLast = faq.order === faqs.length || index === filteredFaqs.length - 1;
+                  const isBusy = reorderingId === faq.id;
+
+                  return (
+                    <tr key={faq.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="p-4 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          {/* Order Badge */}
+                          <span className="font-mono font-black text-xs px-2 py-1 rounded-lg bg-teal-50 text-[#00A89C] border border-teal-200 min-w-[32px] text-center">
+                            #{faq.order}
+                          </span>
+
+                          {/* Quick Up/Down & Shift Controls */}
+                          <div className="flex flex-col gap-0.5">
+                            <button
+                              disabled={isFirst || isBusy}
+                              onClick={() => handleQuickMove(faq, "up")}
+                              title="এক ধাপ উপরে নিন"
+                              className="p-1 rounded bg-slate-100 hover:bg-[#00A89C] hover:text-white text-slate-600 disabled:opacity-30 disabled:hover:bg-slate-100 disabled:hover:text-slate-600 transition-colors cursor-pointer disabled:cursor-not-allowed"
+                            >
+                              <ChevronUp className="w-3 h-3" />
+                            </button>
+                            <button
+                              disabled={isLast || isBusy}
+                              onClick={() => handleQuickMove(faq, "down")}
+                              title="এক ধাপ নিচে নিন"
+                              className="p-1 rounded bg-slate-100 hover:bg-[#00A89C] hover:text-white text-slate-600 disabled:opacity-30 disabled:hover:bg-slate-100 disabled:hover:text-slate-600 transition-colors cursor-pointer disabled:cursor-not-allowed"
+                            >
+                              <ChevronDown className="w-3 h-3" />
+                            </button>
+                          </div>
+
+                          {/* Move to custom position button */}
+                          <button
+                            onClick={() => openShiftPositionModal(faq)}
+                            disabled={isBusy}
+                            title="যেকোনো নির্দিষ্ট নম্বরে অবস্থান পরিবর্তন করুন"
+                            className="p-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 hover:border-indigo-300 transition-all cursor-pointer"
+                          >
+                            {isBusy ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-600" />
+                            ) : (
+                              <ArrowUpDown className="w-3.5 h-3.5" />
+                            )}
+                          </button>
+                        </div>
+                      </td>
+                      <td className="p-4 max-w-lg">
+                        <div className="font-bold text-slate-900 text-sm line-clamp-1 mb-1">
+                          {faq.question}
+                        </div>
+                        <p className="text-slate-500 text-xs line-clamp-2 font-normal leading-relaxed">
+                          {faq.answer}
+                        </p>
+                      </td>
+                      <td className="p-4">
+                        <span className="bg-teal-50 text-[#007C7A] border border-teal-200 px-2.5 py-1 rounded-md text-xs font-bold inline-block">
+                          {faq.category}
+                        </span>
+                      </td>
+                      <td className="p-4 text-center">
                         <button
-                          onClick={() => openEditModal(faq)}
-                          className="p-2 rounded-xl bg-slate-50 text-sky-600 hover:text-sky-800 hover:bg-sky-50 border border-slate-200 transition-colors cursor-pointer"
-                          title="Edit FAQ"
+                          onClick={() => handleToggleActive(faq)}
+                          className={`px-3 py-1 rounded-full text-xs font-bold inline-flex items-center space-x-1 border transition-all cursor-pointer ${
+                            faq.isActive
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              : "bg-slate-100 text-slate-500 border-slate-200"
+                          }`}
                         >
-                          <Edit3 className="w-4 h-4" />
+                          {faq.isActive ? (
+                            <>
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>সক্রিয়</span>
+                            </>
+                          ) : (
+                            <>
+                              <EyeOff className="w-3.5 h-3.5" />
+                              <span>হিডেন</span>
+                            </>
+                          )}
                         </button>
-                        <button
-                          onClick={() => handleDelete(faq.id, faq.question)}
-                          className="p-2 rounded-xl bg-slate-50 text-rose-500 hover:text-rose-700 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-colors cursor-pointer"
-                          title="Delete FAQ"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                      <td className="p-4 text-right">
+                        <div className="flex items-center justify-end space-x-2">
+                          <button
+                            onClick={() => openShiftPositionModal(faq)}
+                            className="p-2 rounded-xl bg-indigo-50 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 border border-indigo-200 transition-colors cursor-pointer flex items-center gap-1 font-bold text-xs"
+                            title="পজিশন শিফট করুন"
+                          >
+                            <ArrowUpDown className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">পজিশন</span>
+                          </button>
+                          <button
+                            onClick={() => openEditModal(faq)}
+                            className="p-2 rounded-xl bg-slate-50 text-sky-600 hover:text-sky-800 hover:bg-sky-50 border border-slate-200 transition-colors cursor-pointer"
+                            title="Edit FAQ"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(faq.id, faq.question)}
+                            className="p-2 rounded-xl bg-slate-50 text-rose-500 hover:text-rose-700 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-colors cursor-pointer"
+                            title="Delete FAQ"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* Position Shifting Modal */}
+      {isShiftModalOpen && shiftingFaq && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 w-full max-w-md rounded-3xl p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <ArrowUpDown className="w-5 h-5 text-indigo-600" />
+                প্রশ্নের অবস্থান ও ক্রম পরিবর্তন
+              </h2>
+              <button
+                onClick={() => setIsShiftModalOpen(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs">
+              <span className="text-slate-500 font-medium block mb-1">নির্বাচিত প্রশ্ন:</span>
+              <p className="font-bold text-slate-900 line-clamp-2">
+                {shiftingFaq.question}
+              </p>
+              <div className="mt-2 flex items-center gap-2 text-slate-600 font-bold">
+                <span>বর্তমান ক্রম:</span>
+                <span className="bg-teal-100 text-[#007C7A] px-2 py-0.5 rounded-md font-mono">
+                  #{shiftingFaq.order}
+                </span>
+                <span className="text-slate-400 font-normal">
+                  (মোট প্রশ্ন: {faqs.length} টি)
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <label className="block text-xs font-bold text-slate-800">
+                নতুন ক্রম / পজিশন নির্বাচন করুন (১ থেকে {faqs.length}):
+              </label>
+
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min={1}
+                  max={faqs.length}
+                  value={targetPosition}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value) || 1;
+                    setTargetPosition(Math.max(1, Math.min(faqs.length, val)));
+                  }}
+                  className="w-24 text-center text-lg font-black font-mono bg-slate-50 border-2 border-indigo-300 rounded-xl py-2 text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                />
+
+                <select
+                  value={targetPosition}
+                  onChange={(e) => setTargetPosition(Number(e.target.value))}
+                  className="flex-1 text-xs font-bold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                >
+                  {faqs.map((_, i) => {
+                    const pos = i + 1;
+                    return (
+                      <option key={pos} value={pos}>
+                        অবস্থান #{pos} {pos === 1 ? "(সবার প্রথমে)" : pos === faqs.length ? "(সবার শেষে)" : ""}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+
+              {/* Quick Presets */}
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setTargetPosition(1)}
+                  className={`p-2 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    targetPosition === 1
+                      ? "bg-indigo-600 text-white border-indigo-600"
+                      : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                  }`}
+                >
+                  <ArrowUp className="w-3.5 h-3.5" />
+                  <span>সবার উপরে (#১)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTargetPosition(faqs.length)}
+                  className={`p-2 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    targetPosition === faqs.length
+                      ? "bg-indigo-600 text-white border-indigo-600"
+                      : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                  }`}
+                >
+                  <ArrowDown className="w-3.5 h-3.5" />
+                  <span>সবার নিচে (#{faqs.length})</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end space-x-3 pt-3 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setIsShiftModalOpen(false)}
+                className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200 cursor-pointer"
+              >
+                বাতিল
+              </button>
+              <button
+                type="button"
+                onClick={() => executeMovePosition(shiftingFaq.id, targetPosition)}
+                disabled={reorderingId !== null}
+                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md flex items-center space-x-2 cursor-pointer"
+              >
+                {reorderingId ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>স্থানান্তর হচ্ছে...</span>
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" />
+                    <span>অবস্থান পরিবর্তন নিশ্চিত করুন</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Create / Edit FAQ Modal */}
       {isModalOpen && (

@@ -202,3 +202,65 @@ export async function deleteFaqItem(id: string): Promise<boolean> {
   await saveFaqsData(filtered);
   return true;
 }
+
+export async function moveFaqPosition(id: string, targetOrder: number): Promise<FaqItem[]> {
+  const faqs = await getFaqsData();
+  const sorted = [...faqs].sort((a, b) => a.order - b.order);
+  const currentIndex = sorted.findIndex((f) => f.id === id);
+  if (currentIndex === -1) return faqs;
+
+  const [movedItem] = sorted.splice(currentIndex, 1);
+  const safeTargetIndex = Math.max(0, Math.min(sorted.length, targetOrder - 1));
+  sorted.splice(safeTargetIndex, 0, movedItem);
+
+  const resequenced = sorted.map((item, idx) => ({
+    ...item,
+    order: idx + 1,
+  }));
+
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        await Promise.allSettled(
+          resequenced.map((item) =>
+            supabase.from("faqs").update({ sort_order: item.order }).eq("id", item.id)
+          )
+        );
+      }
+    } catch (e) {
+      console.warn("Supabase reorder FAQs exception:", e);
+    }
+  }
+
+  await saveFaqsData(resequenced);
+  return resequenced;
+}
+
+export async function reorderFaqs(newOrderList: { id: string; order: number }[]): Promise<FaqItem[]> {
+  const faqs = await getFaqsData();
+  const orderMap = new Map(newOrderList.map((item) => [item.id, item.order]));
+
+  const updatedFaqs = faqs.map((f) => ({
+    ...f,
+    order: orderMap.has(f.id) ? (orderMap.get(f.id) as number) : f.order,
+  })).sort((a, b) => a.order - b.order);
+
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        await Promise.allSettled(
+          updatedFaqs.map((item) =>
+            supabase.from("faqs").update({ sort_order: item.order }).eq("id", item.id)
+          )
+        );
+      }
+    } catch (e) {
+      console.warn("Supabase reorder FAQs exception:", e);
+    }
+  }
+
+  await saveFaqsData(updatedFaqs);
+  return updatedFaqs;
+}
