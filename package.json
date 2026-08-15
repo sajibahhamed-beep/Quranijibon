@@ -10,7 +10,8 @@
     "start": "next start",
     "lint": "next lint",
     "db:seed": "node scripts/seed-supabase.js",
-    "db:setup": "node scripts/db-setup.js"
+    "db:setup": "node scripts/db-setup.js",
+    "test:smtp": "node scripts/test-smtp.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",

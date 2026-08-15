@@ -1,12 +1,12 @@
 import nodemailer from "nodemailer";
 
-// Both emails will each receive their own individual copy
+// Fallback recipient emails if RECIPIENT_EMAILS is not provided in .env
 const DEFAULT_RECIPIENT_EMAILS = [
   "sajibahhamed@gmail.com",
   "mahiyaakter148@gmail.com",
 ];
 
-function getRecipientEmails(): string[] {
+export function getRecipientEmails(): string[] {
   const envRecipients = process.env.RECIPIENT_EMAILS?.trim();
   if (envRecipients) {
     const list = envRecipients
@@ -18,48 +18,117 @@ function getRecipientEmails(): string[] {
   return DEFAULT_RECIPIENT_EMAILS;
 }
 
-function createTransporter() {
+export function getSmtpConfig() {
   const user = (process.env.SMTP_EMAIL || process.env.SMTP_USER)?.trim();
   const rawPass = (process.env.SMTP_PASSWORD || process.env.SMTP_PASS)?.trim();
   const pass = rawPass ? rawPass.replace(/\s+/g, "") : "";
+  const host = process.env.SMTP_HOST?.trim() || "smtp.gmail.com";
+  const port = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 465;
+  const secure = process.env.SMTP_SECURE !== undefined 
+    ? process.env.SMTP_SECURE === "true" 
+    : port === 465;
+  const fromName = process.env.SMTP_FROM_NAME?.trim() || "Quranijibon Academy";
 
-  if (!user || !pass) {
-    console.warn("SMTP_EMAIL/SMTP_USER or SMTP_PASSWORD/SMTP_PASS not set in environment — email skipped.");
+  return {
+    user,
+    pass,
+    host,
+    port,
+    secure,
+    fromName,
+    isConfigured: Boolean(user && pass),
+  };
+}
+
+export function createTransporter() {
+  const config = getSmtpConfig();
+
+  if (!config.isConfigured || !config.user || !config.pass) {
+    console.warn("[Nodemailer] SMTP_USER/SMTP_EMAIL or SMTP_PASS/SMTP_PASSWORD not set in environment — email skipped.");
     return null;
   }
 
   return nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // SSL on port 465 (required for serverless/cloud environments like Vercel, AWS, Netlify)
-    auth: { user, pass },
+    host: config.host,
+    port: config.port,
+    secure: config.secure, // SSL on port 465, STARTTLS on port 587
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
     tls: {
       rejectUnauthorized: false,
     },
-    connectionTimeout: 10000, // 10s timeout
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 20000,
   });
+}
+
+/**
+ * Test SMTP connection and return verification result
+ */
+export async function verifySmtp(): Promise<{ success: boolean; message: string; config?: any }> {
+  try {
+    const config = getSmtpConfig();
+    if (!config.isConfigured) {
+      return { success: false, message: "SMTP credentials (user/password) not found in environment variables." };
+    }
+
+    const transporter = createTransporter();
+    if (!transporter) {
+      return { success: false, message: "Failed to initialize SMTP transporter." };
+    }
+
+    await transporter.verify();
+    return {
+      success: true,
+      message: "SMTP Transporter verified successfully and ready to send messages.",
+      config: {
+        host: config.host,
+        port: config.port,
+        secure: config.secure,
+        user: config.user,
+        recipients: getRecipientEmails(),
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error?.message || "Failed to verify SMTP transporter.",
+    };
+  }
 }
 
 export async function sendNotificationEmail({
   subject,
   htmlBody,
+  to,
 }: {
   subject: string;
   htmlBody: string;
+  to?: string | string[];
 }) {
-  const user = (process.env.SMTP_EMAIL || process.env.SMTP_USER)?.trim();
+  const config = getSmtpConfig();
   const transporter = createTransporter();
-  if (!transporter || !user) return;
 
-  const recipients = getRecipientEmails();
+  if (!transporter || !config.user) {
+    console.warn(`[Nodemailer] Skipping email "${subject}" because SMTP is not configured.`);
+    return { success: false, reason: "SMTP not configured" };
+  }
+
+  let recipients: string[] = [];
+  if (to) {
+    recipients = Array.isArray(to) ? to : [to];
+  } else {
+    recipients = getRecipientEmails();
+  }
 
   // Send a separate individual email to each recipient
   const results = await Promise.allSettled(
     recipients.map((recipient) =>
       transporter.sendMail({
-        from: `"Quranijibon Academy" <${user}>`,
+        from: `"${config.fromName}" <${config.user}>`,
         to: recipient,
         subject,
         html: htmlBody,
@@ -67,13 +136,22 @@ export async function sendNotificationEmail({
     )
   );
 
+  let successCount = 0;
   results.forEach((result, i) => {
     if (result.status === "fulfilled") {
-      console.log(`✅ Production Email sent to ${recipients[i]}: ${subject}`);
+      successCount++;
+      console.log(`✅ [Nodemailer] Email sent to ${recipients[i]}: ${subject}`);
     } else {
-      console.error(`❌ Production Email failed for ${recipients[i]}:`, result.reason);
+      console.error(`❌ [Nodemailer] Email failed for ${recipients[i]}:`, result.reason);
     }
   });
+
+  return {
+    success: successCount > 0,
+    deliveredCount: successCount,
+    totalCount: recipients.length,
+    results,
+  };
 }
 
 
@@ -116,7 +194,7 @@ export async function sendStudentApplicationEmail(student: {
       </div>
     </div>
   `;
-  await sendNotificationEmail({ subject, htmlBody });
+  return await sendNotificationEmail({ subject, htmlBody });
 }
 
 export async function sendTeacherApplicationEmail(teacher: {
@@ -156,7 +234,7 @@ export async function sendTeacherApplicationEmail(teacher: {
       </div>
     </div>
   `;
-  await sendNotificationEmail({ subject, htmlBody });
+  return await sendNotificationEmail({ subject, htmlBody });
 }
 
 export async function sendContactMessageEmail(contact: {
@@ -185,7 +263,7 @@ export async function sendContactMessageEmail(contact: {
       </div>
     </div>
   `;
-  await sendNotificationEmail({ subject, htmlBody });
+  return await sendNotificationEmail({ subject, htmlBody });
 }
 
 export async function sendDonationAlertEmail(donation: {
@@ -223,5 +301,5 @@ export async function sendDonationAlertEmail(donation: {
       </div>
     </div>
   `;
-  await sendNotificationEmail({ subject, htmlBody });
+  return await sendNotificationEmail({ subject, htmlBody });
 }
