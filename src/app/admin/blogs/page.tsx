@@ -23,11 +23,13 @@ import {
 import { BlogPost } from "@/data/blogs";
 
 const PRESET_IMAGES = [
-  { label: "তাজবীদ / ক্লাস", url: "/assets/why-learn-video-preview.webp" },
-  { label: "হিফজ / বই", url: "/assets/figma_img_37_1993.png" },
-  { label: "মাখরাজ / নিয়ম", url: "/assets/figma_img_37_1997.png" },
-  { label: "জীবনধারা / রু ক্বিয়াহ", url: "/assets/figma_img_37_2001.png" },
-  { label: "কুরআন তিলাওয়াত", url: "/assets/hero_bg.png" },
+  { label: "ভিডিও / ক্লাস", url: "/assets/why-learn-video-preview.webp" },
+  { label: "হিফজ / বই", url: "/assets/boy-is-sitting-rug-with-quran-titled-boy.jpg" },
+  { label: "মাখরাজ / নিয়ম", url: "/assets/Quran 2.jpg" },
+  { label: "জীবনধারা / রু ক্বিয়াহ", url: "/assets/Person reading Quran.jpg" },
+  { label: "অনলাইন ক্লাস", url: "/assets/muslim-boy-student-studying-online-computer-laptop.jpg" },
+  { label: "কুরআন পাঠ", url: "/assets/jakarta-indonesia-april-18-2018-young-muslim-man-reading-quran-ramadan-time-home.jpg" },
+  { label: "শিশু শিক্ষার্থী", url: "/assets/a child reading quran online.png" },
 ];
 
 export default function AdminBlogsPage() {

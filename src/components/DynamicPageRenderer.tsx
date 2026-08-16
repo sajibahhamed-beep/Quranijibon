@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
+import Image from "next/image";
 import { PageData } from "@/data/pagesStorage";
 import {
   FileText,
@@ -65,10 +66,13 @@ export default function DynamicPageRenderer({
 
         {/* Right Mosque Vector Image Aligned to Bottom Right */}
         <div className="absolute right-0 bottom-0 pointer-events-none h-44 sm:h-56 lg:h-64 hidden md:block">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/assets/mosque_silhouette.png"
-            alt="Mosque Silhouette Vector"
+          <Image
+            src="/assets/mosque-silhouette.png"
+            alt=""
+            aria-hidden="true"
+            width={300}
+            height={200}
+            loading="lazy"
             className="h-full w-auto object-contain object-bottom-right opacity-90"
           />
         </div>

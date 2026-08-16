@@ -137,9 +137,11 @@ export default function AboutPage() {
 
             <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
               <Image
-                src="/assets/figma_img_37_1993.png"
-                alt="Quran Teaching"
+                src="/assets/jakarta-indonesia-april-18-2018-young-muslim-man-reading-quran-ramadan-time-home.jpg"
+                alt="কুরআন জীবন অনলাইন কুরআন শিক্ষার ক্লাস ও পাঠদান"
                 fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                loading="lazy"
                 className="object-cover"
               />
             </div>

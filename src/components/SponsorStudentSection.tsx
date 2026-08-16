@@ -12,17 +12,19 @@ export default function SponsorStudentSection() {
           <div className="hidden sm:flex flex-row md:flex-col gap-3 justify-center items-center flex-shrink-0">
             <div className="relative w-44 sm:w-52 h-24 sm:h-28 rounded-2xl overflow-hidden shadow-md">
               <Image
-                src="/assets/figma_section_37_2300.png"
-                alt="Students outdoors"
+                src="/assets/a child reading quran online.png"
+                alt="অনলাইনে কুরআন অধ্যয়নরত শিশু শিক্ষার্থী"
                 fill
+                sizes="(max-width: 640px) 176px, 208px"
                 className="object-cover"
               />
             </div>
             <div className="relative w-44 sm:w-52 h-24 sm:h-28 rounded-2xl overflow-hidden shadow-md">
               <Image
-                src="/assets/figma_section_37_2306.png"
-                alt="Hands united"
+                src="/assets/boy-is-sitting-rug-with-quran-titled-boy.jpg"
+                alt="কুরআন মুখস্থকারী শিশু শিক্ষার্থী"
                 fill
+                sizes="(max-width: 640px) 176px, 208px"
                 className="object-cover"
               />
             </div>
@@ -50,17 +52,19 @@ export default function SponsorStudentSection() {
           <div className="hidden sm:flex flex-row md:flex-col gap-3 justify-center items-center flex-shrink-0">
             <div className="relative w-44 sm:w-52 h-24 sm:h-28 rounded-2xl overflow-hidden shadow-md">
               <Image
-                src="/assets/figma_img_37_2292.png"
-                alt="Group learning"
+                src="/assets/muslim-boy-student-studying-online-computer-laptop.jpg"
+                alt="অনলাইন ক্লাসে যুক্ত কিশোর শিক্ষার্থী"
                 fill
+                sizes="(max-width: 640px) 176px, 208px"
                 className="object-cover"
               />
             </div>
             <div className="relative w-44 sm:w-52 h-24 sm:h-28 rounded-2xl overflow-hidden shadow-md">
               <Image
-                src="/assets/figma_section_37_2020.png"
-                alt="Team hands"
+                src="/assets/person reading quran 2.jpg"
+                alt="পবিত্র কুরআন তিলাওয়াতরত শিক্ষার্থী"
                 fill
+                sizes="(max-width: 640px) 176px, 208px"
                 className="object-cover"
               />
             </div>

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Calendar, Clock } from "lucide-react";
-import { BLOG_POSTS, BlogPost } from "@/data/blogs";
+import { BLOG_POSTS, BlogPost, sanitizeBlogImage } from "@/data/blogs";
 
 export default function RecentBlogSection({ posts }: { posts?: BlogPost[] }) {
   const displayPosts = posts && posts.length > 0 ? posts : BLOG_POSTS;
@@ -32,17 +32,19 @@ export default function RecentBlogSection({ posts }: { posts?: BlogPost[] }) {
 
         {/* 3 Cards Grid on Home Page */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {recentThreeBlogs.map((b) => (
+          {recentThreeBlogs.map((b, index) => (
             <article
               key={b.id}
               className="bg-white rounded-3xl overflow-hidden border border-slate-200 hover:border-[#00A89C] transition-all shadow-md hover:shadow-xl hover:-translate-y-1 flex flex-col group"
             >
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
                 <Image
-                  src={b.img}
+                  src={sanitizeBlogImage(b.img, index)}
                   alt={b.title}
                   width={600}
                   height={375}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                  loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <span className="absolute top-4 left-4 bg-[#00A89C] text-white text-xs font-bold px-3.5 py-1 rounded-lg shadow-xs">

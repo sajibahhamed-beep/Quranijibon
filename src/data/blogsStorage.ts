@@ -1,6 +1,15 @@
 import fs from "fs/promises";
 import path from "path";
-import { BLOG_POSTS, RECENT_SIDEBAR_ARTICLES, BLOG_AUTHORS, BlogPost, SidebarArticle, BlogAuthor } from "./blogs";
+import {
+  BLOG_POSTS,
+  RECENT_SIDEBAR_ARTICLES,
+  BLOG_AUTHORS,
+  BlogPost,
+  SidebarArticle,
+  BlogAuthor,
+  UNUSED_BLOG_IMAGES,
+  sanitizeBlogImage,
+} from "./blogs";
 import { getSupabaseClient, getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase";
 
 export interface BlogsData {
@@ -22,24 +31,33 @@ export async function getBlogsData(): Promise<BlogsData> {
           .order("created_at", { ascending: false });
 
         if (!error && Array.isArray(dbPosts)) {
-          const posts: BlogPost[] = dbPosts.map((p) => ({
-            id: p.id,
-            slug: p.slug,
-            title: p.title,
-            category: p.category,
-            date: p.date,
-            readTime: p.read_time || "৫ মিনিট পড়া",
-            author: p.author,
-            authorAvatar: p.author_avatar,
-            authorRole: p.author_role,
-            authorBio: p.author_bio,
-            excerpt: p.excerpt || "",
-            img: p.img || "/assets/why-learn-video-preview.webp",
-            featured: p.featured || false,
-            tags: p.tags || [],
-            toc: p.toc || [],
-            content: p.content || {},
-          }));
+          const posts: BlogPost[] = dbPosts.map((p, index) => {
+            const cleanImg = sanitizeBlogImage(p.img, index);
+            if (p.img !== cleanImg && isSupabaseConfigured) {
+              const adminSupabase = getSupabaseAdmin();
+              if (adminSupabase) {
+                adminSupabase.from("blogs").update({ img: cleanImg }).eq("id", p.id).then(() => {});
+              }
+            }
+            return {
+              id: p.id,
+              slug: p.slug,
+              title: p.title,
+              category: p.category,
+              date: p.date,
+              readTime: p.read_time || "৫ মিনিট পড়া",
+              author: p.author,
+              authorAvatar: p.author_avatar,
+              authorRole: p.author_role,
+              authorBio: p.author_bio,
+              excerpt: p.excerpt || "",
+              img: cleanImg,
+              featured: p.featured || false,
+              tags: p.tags || [],
+              toc: p.toc || [],
+              content: p.content || {},
+            };
+          });
 
           const sidebarArticles: SidebarArticle[] = posts.slice(0, 3).map((p, i) => ({
             id: `side-${p.id}`,
@@ -72,10 +90,17 @@ export async function getBlogsData(): Promise<BlogsData> {
     if (!data.posts || !Array.isArray(data.posts)) {
       throw new Error("Invalid json format");
     }
+    data.posts = data.posts.map((p, i) => ({
+      ...p,
+      img: sanitizeBlogImage(p.img, i),
+    }));
     return data;
   } catch (error) {
     const initialData: BlogsData = {
-      posts: BLOG_POSTS,
+      posts: BLOG_POSTS.map((p, i) => ({
+        ...p,
+        img: sanitizeBlogImage(p.img, i),
+      })),
       sidebarArticles: RECENT_SIDEBAR_ARTICLES,
       authors: BLOG_AUTHORS,
     };
@@ -115,7 +140,7 @@ export async function getBlogPostByIdOrSlug(idOrSlug: string): Promise<BlogPost 
             authorRole: data.author_role,
             authorBio: data.author_bio,
             excerpt: data.excerpt || "",
-            img: data.img || "/assets/why-learn-video-preview.webp",
+            img: sanitizeBlogImage(data.img, 0),
             featured: data.featured || false,
             tags: data.tags || [],
             toc: data.toc || [],

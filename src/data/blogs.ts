@@ -30,6 +30,46 @@ export interface BlogPost {
   };
 }
 
+export const BLOG_POOL_IMAGES = [
+  "/assets/Quran 2.jpg",
+  "/assets/Person reading Quran.jpg",
+  "/assets/jakarta-indonesia-april-18-2018-young-muslim-man-reading-quran-ramadan-time-home.jpg",
+  "/assets/medium-shot-islamic-man-reading.jpg",
+  "/assets/asian-muslim-businessman-working-using-laptop-while-sitting-desk.jpg",
+  "/assets/young-girl-is-sitting-floor-reading-book.jpg",
+  "/assets/happy-arabian-middleaged-man-is-using-laptop-while-sitting-sofa-home-mature.jpg",
+  "/assets/close-up-senior-person-while-learning.jpg",
+  "/assets/muslim-professional-guy-uses-his-computer-monitor-notes-demonstrate-his-professionalism-dedication (1).jpg",
+  "/assets/senior-person-college-library-working-his-thesis-green-lamp-surrounded-by-books.jpg",
+  "/assets/old-lady-using-laptop-modern-living-room-online-purposes.jpg",
+  "/assets/medium-shot-islamic-girl-lifestyle.jpg",
+  "/assets/senior-male-video-conferencing.jpg",
+];
+
+export const UNUSED_BLOG_IMAGES = BLOG_POOL_IMAGES;
+
+export function getUniqueBlogImage(img: string | undefined | null, index: number = 0): string {
+  if (
+    img &&
+    typeof img === "string" &&
+    !img.includes("figma") &&
+    !img.includes("hero_bg") &&
+    !img.includes("why-learn") &&
+    !img.includes("boy-is-sitting") &&
+    !img.includes("a child reading") &&
+    !img.includes("muslim-boy-student") &&
+    !img.includes("person reading quran 2") &&
+    !img.includes("arab-businessman") &&
+    !img.includes("5668") &&
+    (BLOG_POOL_IMAGES.includes(img) || img.startsWith("http://") || img.startsWith("https://") || img.startsWith("data:"))
+  ) {
+    return img;
+  }
+  return BLOG_POOL_IMAGES[index % BLOG_POOL_IMAGES.length];
+}
+
+export const sanitizeBlogImage = getUniqueBlogImage;
+
 export interface SidebarArticle {
   id: string;
   num: string;
@@ -120,7 +160,7 @@ export const BLOG_POSTS: BlogPost[] = [
     authorBio: "তাজবীদ ও কুরআন বিজ্ঞান ২০ বছরের অভিজ্ঞতাসম্পন্ন শিক্ষক। মদিনা ইসলামি বিশ্ববিদ্যালয়ের থিওলজি গ্রাজুয়েট।",
     excerpt:
       "সঠিকভাবে কুরআন তিলাওয়াতের জন্য তাজবীদের নিয়ম আয়ত্ত করা অত্যন্ত জরুরি। এই লেখায় আমরা সেই মূল নিয়মগুলো নিয়ে বিস্তারিত আলোচনা করব।",
-    img: "/assets/why-learn-video-preview.webp",
+    img: "/assets/Quran 2.jpg",
     featured: true,
     tags: ["# তাজবীদ", "# কুরআন", "# শিক্ষা", "# মাখরাজ"],
     toc: [
@@ -202,7 +242,7 @@ export const BLOG_POSTS: BlogPost[] = [
     authorBio: "১০ বছর ধরে অনলাইনে শত শত শিক্ষার্থীকে হিফজ করানোর অভিজ্ঞতা রয়েছে।",
     excerpt:
       "হিফজ একটি পবিত্র যাত্রা। সঠিক পদ্ধতি ও নিয়মানুবর্তিতায় ঘরে বসেই এই যাত্রা সফলভাবে সম্পন্ন করা সম্ভব।",
-    img: "/assets/figma_img_37_1993.png",
+    img: "/assets/Person reading Quran.jpg",
     tags: ["# হিফজ", "# কুরআন", "# টিপস", "# রুটিন"],
     toc: [
       { num: 1, title: "দৈনন্দিন হিফজ রুটিন তৈরি" },
@@ -263,7 +303,7 @@ export const BLOG_POSTS: BlogPost[] = [
     authorBio: "তাজবীদ ও কুরআন বিজ্ঞান ২০ বছরের অভিজ্ঞতাসম্পন্ন শিক্ষক। মদিনা ইসলামি বিশ্ববিদ্যালয়ের থিওলজি গ্রাজুয়েট।",
     excerpt:
       "প্রতিটি আরবি হরফের সঠিক উচ্চারণস্থান জানা তাজবীদ শিক্ষার প্রথম ও অপরিহার্য ধাপ।",
-    img: "/assets/figma_img_37_1997.png",
+    img: "/assets/jakarta-indonesia-april-18-2018-young-muslim-man-reading-quran-ramadan-time-home.jpg",
     tags: ["# তাজবীদ", "# মাখরাজ", "# আরবি phonetics"],
     toc: [
       { num: 1, title: "মাখরাজ শব্দের অর্থ ও গুরুত্ব" },
@@ -326,7 +366,7 @@ export const BLOG_POSTS: BlogPost[] = [
     authorBio: "কুরআন ও হাদিসের আল-মেডিসিন ও রু ক্বিয়াহ বিষয়ে ১০ বছরের বেশি গবেষণার অভিজ্ঞতা।",
     excerpt:
       "বদনজর ও হিংসা থেকে বাঁচতে কুরআনি দোয়া ও শরীয়াহ সম্মত রুকইয়াহ করার মাসনুন আমল জানুন।",
-    img: "/assets/figma_img_37_2001.png",
+    img: "/assets/muslim-professional-guy-uses-his-computer-monitor-notes-demonstrate-his-professionalism-dedication (1).jpg",
     tags: ["# রুকইয়াহ", "# বদনজর", "# দোয়া", "# শিফা"],
     toc: [
       { num: 1, title: "বদনজর (Evil Eye) এর বাস্তবতা" },

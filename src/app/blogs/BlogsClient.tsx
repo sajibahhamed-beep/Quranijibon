@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
-import { BlogPost, SidebarArticle, BlogAuthor } from "@/data/blogs";
+import { BlogPost, SidebarArticle, BlogAuthor, sanitizeBlogImage } from "@/data/blogs";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Clock, ChevronRight, TrendingUp, PenTool, Send, Loader2 } from "lucide-react";
@@ -90,9 +90,10 @@ export default function BlogsClient({
               <section className="relative rounded-3xl overflow-hidden shadow-2xl min-h-[380px] sm:min-h-[420px] lg:min-h-[440px] flex items-end">
                 {/* Background Image */}
                 <Image
-                  src={featuredPost.img || "/assets/why-learn-video-preview.webp"}
+                  src={sanitizeBlogImage(featuredPost.img, 0)}
                   alt={featuredPost.title}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 1200px"
                   className="object-cover object-center"
                   priority
                 />
@@ -172,7 +173,7 @@ export default function BlogsClient({
               <div className="flex-1 w-full">
                 {gridPosts.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {gridPosts.map((b) => (
+                    {gridPosts.map((b, index) => (
                       <article
                         key={b.id}
                         className="bg-white rounded-3xl overflow-hidden border border-slate-200/90 hover:border-[#00796B] transition-all shadow-sm hover:shadow-xl flex flex-col justify-between group"
@@ -181,9 +182,11 @@ export default function BlogsClient({
                         <div>
                           <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
                             <Image
-                              src={b.img || "/assets/why-learn-video-preview.webp"}
+                              src={sanitizeBlogImage(b.img, index + 1)}
                               alt={b.title}
                               fill
+                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+                              loading="lazy"
                               className="object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                           </div>

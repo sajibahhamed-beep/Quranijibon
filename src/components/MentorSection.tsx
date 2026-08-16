@@ -98,8 +98,10 @@ export default function MentorSection() {
             <Image
               src="/assets/mosque-silhouette.png"
               alt=""
+              aria-hidden="true"
               width={250}
               height={150}
+              loading="lazy"
               className="object-contain"
             />
           </div>

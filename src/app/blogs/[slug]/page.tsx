@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
 import { getBlogPostByIdOrSlug, getBlogsData } from "@/data/blogsStorage";
+import { sanitizeBlogImage } from "@/data/blogs";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -14,8 +15,6 @@ import {
   Bookmark,
   CheckCircle2,
   Lightbulb,
-  Mail,
-  Send,
 } from "lucide-react";
 
 export async function generateMetadata({
@@ -29,7 +28,7 @@ export async function generateMetadata({
 
   const title = `${post.title} | কুরআন জীবন`;
   const description = post.excerpt;
-  const articleImage = post.img || "/assets/why-learn-video-preview.webp";
+  const articleImage = sanitizeBlogImage(post.img, 0);
 
   return {
     title,
@@ -98,7 +97,7 @@ export default async function BlogDetailPage({
       "name": "কুরআন জীবন",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://quranijibon.com/assets/website%20logo.png",
+        "url": "https://quranijibon.com/assets/website-logo.png",
       },
     },
     "mainEntityOfPage": {
@@ -141,9 +140,10 @@ export default async function BlogDetailPage({
       {/* Top Hero Banner Section */}
       <section className="relative w-full min-h-[380px] sm:min-h-[420px] bg-black/90 text-white flex items-end overflow-hidden py-12 border-b border-slate-200">
         <Image
-          src={post.img || "/assets/why-learn-video-preview.webp"}
+          src={sanitizeBlogImage(post.img, 0)}
           alt={post.title}
           fill
+          sizes="100vw"
           className="object-cover opacity-35"
           priority
         />
@@ -358,9 +358,11 @@ export default async function BlogDetailPage({
                       >
                         <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-100">
                           <Image
-                            src={rel.img || "/assets/why-learn-video-preview.webp"}
+                            src={sanitizeBlogImage(rel.img, 1)}
                             alt={rel.title}
                             fill
+                            sizes="(max-width: 1024px) 100vw, 360px"
+                            loading="lazy"
                             className="object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         </div>
@@ -376,37 +378,25 @@ export default async function BlogDetailPage({
                 </div>
               )}
 
-              {/* Widget 3: নতুন লেখার আপডেট পান (Newsletter) */}
-              <div className="bg-[#00796B] text-white p-6 rounded-3xl space-y-4 shadow-lg border border-teal-600">
-                <div className="flex items-center space-x-2 text-teal-200">
-                  <Mail className="w-5 h-5 text-teal-300" />
-                  <span className="text-xs font-bold uppercase tracking-wider">
-                    আর্টিকেল আপডেট
-                  </span>
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-base font-black text-white">
-                    নতুন লেখার আপডেট পান
+              {/* Sidebar Widget 3: লেখা পাঠিয়ে সওয়াব অর্জন করুন */}
+              <div className="bg-gradient-to-br from-[#00796B] to-[#004D40] text-white p-6 rounded-3xl space-y-4 shadow-lg border border-teal-600/40 relative overflow-hidden">
+                <div className="space-y-1.5">
+                  <h3 className="text-base font-black text-white leading-snug">
+                    আপনার লেখা পাঠাও এবং সওয়াব হাসিল করুন
                   </h3>
-                  <p className="text-teal-100 text-xs font-medium">
-                    প্রতি সপ্তাহে সেরা লেখাটি দেখুন সরাসরি ইমেইলে।
+                  <p className="text-teal-100 text-xs leading-relaxed font-medium">
+                    আপনি কি দ্বীনি শিক্ষা বা কুরআন তিলাওয়াতের ওপর লেখালেখি করেন? লেখা জমা দিয়ে সদকা-ই-জারিয়ার অংশ হোন।
                   </p>
                 </div>
-                <form className="space-y-2.5">
-                  <input
-                    type="email"
-                    placeholder="আপনার ইমেইল..."
-                    required
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/10 text-white placeholder:text-teal-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-300 border border-white/20"
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-white text-[#004D40] font-black text-xs py-2.5 rounded-xl flex items-center justify-center space-x-1.5 transition-all shadow-md active:scale-95"
-                  >
-                    <span>সাবস্ক্রাইব</span>
-                    <Send className="w-3.5 h-3.5 text-[#00796B]" />
-                  </button>
-                </form>
+
+                <a
+                  href="https://wa.me/8801775551325?text=আসসালামু%20আলাইকুম,%20আমি%20কুরআন%20জীবন%20ব্লগে%20আমার%20লেখা%20জমা%20দিতে%20চাই।"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full bg-white hover:bg-teal-50 text-[#004D40] font-black text-xs py-2.5 px-4 rounded-xl flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95"
+                >
+                  <span>লেখা জমা দিন</span>
+                </a>
               </div>
             </aside>
           </div>

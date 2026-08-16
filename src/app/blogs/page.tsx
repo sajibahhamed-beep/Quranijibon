@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     locale: "bn_BD",
     images: [
       {
-        url: "/assets/why-learn-video-preview.webp",
+        url: "/assets/Quran 2.jpg",
         width: 1200,
         height: 525,
         alt: "কুরআন শিক্ষা ব্লগ - কুরআন জীবন",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     title: "কুরআন শিক্ষা ব্লগ | কুরআন জীবন",
     description:
       "কুরআন শিক্ষা, তাজবীদ, কুরআন পড়ার নিয়ম ও দ্বীনি জ্ঞান নিয়ে সহজ ভাষায় লেখা পড়ুন কুরআন জীবনের ব্লগে।",
-    images: ["/assets/why-learn-video-preview.webp"],
+    images: ["/assets/Quran 2.jpg"],
   },
 };
 

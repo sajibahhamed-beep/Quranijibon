@@ -62,7 +62,7 @@ export default async function Home() {
     "@type": "Organization",
     "name": "কুরআন জীবন",
     "url": "https://quranijibon.com",
-    "logo": "https://quranijibon.com/assets/website%20logo.png",
+    "logo": "https://quranijibon.com/assets/website-logo.png",
   };
 
   const websiteSchema = {

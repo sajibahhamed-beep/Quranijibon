@@ -97,7 +97,7 @@ export default function AppFeaturesSection() {
           <div className="lg:col-span-6 relative flex flex-col">
             <div className="relative w-full h-full min-h-[380px] lg:min-h-full rounded-3xl overflow-hidden border border-slate-200 shadow-xl bg-white">
               <Image
-                src="/assets/why-learn-video-preview.webp"
+                src="/assets/arab-businessman-engrossed-his-work.jpg"
                 alt="কুরআন জীবন অনলাইন ক্লাসরুম ফিচারসমূহ চিত্র"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
