@@ -19,11 +19,10 @@ import {
   Sparkles,
   Trash2,
 } from "lucide-react";
-import { INITIAL_TEACHERS } from "@/data/adminStore";
 import { ExtendedTeacherRecord } from "@/data/teachersStorage";
 
 export default function AdminTeachersPage() {
-  const [teachers, setTeachers] = useState<ExtendedTeacherRecord[]>(INITIAL_TEACHERS);
+  const [teachers, setTeachers] = useState<ExtendedTeacherRecord[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [genderFilter, setGenderFilter] = useState<string>("সব");
   const [statusFilter, setStatusFilter] = useState<string>("সব");

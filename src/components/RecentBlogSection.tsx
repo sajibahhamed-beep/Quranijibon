@@ -6,7 +6,8 @@ import { ArrowRight, Calendar, Clock } from "lucide-react";
 import { BLOG_POSTS, BlogPost, sanitizeBlogImage } from "@/data/blogs";
 
 export default function RecentBlogSection({ posts }: { posts?: BlogPost[] }) {
-  const displayPosts = posts && posts.length > 0 ? posts : BLOG_POSTS;
+  const displayPosts = posts || [];
+  if (displayPosts.length === 0) return null;
   const recentThreeBlogs = displayPosts.slice(0, 3);
 
   return (

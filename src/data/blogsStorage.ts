@@ -84,36 +84,11 @@ export async function getBlogsData(): Promise<BlogsData> {
     }
   }
 
-  try {
-    const fileContent = await fs.readFile(DATA_FILE_PATH, "utf-8");
-    const data = JSON.parse(fileContent) as BlogsData;
-    if (!data.posts || !Array.isArray(data.posts)) {
-      throw new Error("Invalid json format");
-    }
-    data.posts = data.posts.map((p, i) => ({
-      ...p,
-      img: sanitizeBlogImage(p.img, i),
-    }));
-    return data;
-  } catch (error) {
-    const initialData: BlogsData = {
-      posts: BLOG_POSTS.map((p, i) => ({
-        ...p,
-        img: sanitizeBlogImage(p.img, i),
-      })),
-      sidebarArticles: RECENT_SIDEBAR_ARTICLES,
-      authors: BLOG_AUTHORS,
-    };
-    return initialData;
-  }
-}
-
-export async function saveBlogsData(data: BlogsData): Promise<void> {
-  try {
-    const dir = path.dirname(DATA_FILE_PATH);
-    await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
-  } catch (e) {}
+  return {
+    posts: [],
+    sidebarArticles: [],
+    authors: BLOG_AUTHORS,
+  };
 }
 
 export async function getBlogPostByIdOrSlug(idOrSlug: string): Promise<BlogPost | null> {
@@ -153,9 +128,7 @@ export async function getBlogPostByIdOrSlug(idOrSlug: string): Promise<BlogPost 
     }
   }
 
-  const data = await getBlogsData();
-  const post = data.posts.find((p) => p.id === idOrSlug || p.slug === idOrSlug);
-  return post || null;
+  return null;
 }
 
 export async function createBlogPost(newPostData: Partial<BlogPost>): Promise<BlogPost> {
@@ -292,8 +265,5 @@ export async function deleteBlogPost(id: string): Promise<boolean> {
     }
   }
 
-  const data = await getBlogsData();
-  data.posts = data.posts.filter((p) => p.id !== id && p.slug !== id);
-  await saveBlogsData(data);
-  return true;
+  return false;
 }

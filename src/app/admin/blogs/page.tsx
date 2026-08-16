@@ -120,8 +120,9 @@ export default function AdminBlogsPage() {
       setLoading(true);
       const res = await fetch("/api/blogs");
       const data = await res.json();
-      if (data.success && Array.isArray(data.blogs)) {
-        setPosts(data.blogs);
+      const postsArray = Array.isArray(data.posts) ? data.posts : (Array.isArray(data.blogs) ? data.blogs : []);
+      if (data.success && Array.isArray(postsArray)) {
+        setPosts(postsArray);
       }
     } catch (err) {
       console.error("Failed to load blogs:", err);

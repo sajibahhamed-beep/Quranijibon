@@ -17,27 +17,64 @@ import {
   Search,
   Filter,
 } from "lucide-react";
-import { INITIAL_STUDENTS, StudentRecord } from "@/data/adminStore";
-import { BLOG_POSTS } from "@/data/blogs";
+import { StudentRecord, DonationRecord } from "@/data/adminStore";
+import { BlogPost } from "@/data/blogs";
+import { ExtendedTeacherRecord } from "@/data/teachersStorage";
 import { fetchStudentsAction, changeStudentStatusAction } from "@/data/studentsClient";
 
 export default function AdminDashboardPage() {
-  const [students, setStudents] = useState<StudentRecord[]>(INITIAL_STUDENTS);
+  const [students, setStudents] = useState<StudentRecord[]>([]);
+  const [teachers, setTeachers] = useState<ExtendedTeacherRecord[]>([]);
+  const [donations, setDonations] = useState<DonationRecord[]>([]);
+  const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("সব");
 
   useEffect(() => {
     fetchStudentsAction().then((data) => {
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setStudents(data);
       }
     });
+
+    fetch("/api/teachers")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.teachers)) {
+          setTeachers(data.teachers);
+        }
+      })
+      .catch(() => {});
+
+    fetch("/api/donations")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.donations)) {
+          setDonations(data.donations);
+        }
+      })
+      .catch(() => {});
+
+    fetch("/api/blogs")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.posts)) {
+          setBlogs(data.posts);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   // Metrics
-  const totalStudentsCount = 428 + (students.length > INITIAL_STUDENTS.length ? students.length - INITIAL_STUDENTS.length : 0);
-  const activeTeachersCount = 18;
-  const monthlyRevenue = "৳১,৩৫,০০০";
+  const totalStudentsCount = students.length;
+  const activeTeachers = teachers.filter((t) => t.status === "সক্রিয়");
+  const activeTeachersCount = activeTeachers.length;
+  const maleTeachersCount = activeTeachers.filter((t) => t.gender === "পুরুষ").length;
+  const femaleTeachersCount = activeTeachers.filter((t) => t.gender === "মহিলা").length;
+
+  const totalRevenue = donations.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+  const monthlyRevenue = `৳${totalRevenue.toLocaleString("bn-BD")}`;
+
   const pendingApplicationsCount = students.filter(
     (s) => s.status === "নতুন আবেদন" || s.status === "অপেক্ষমাণ"
   ).length;
@@ -113,10 +150,10 @@ export default function AdminDashboardPage() {
             <span className="text-3xl font-black text-slate-900">{totalStudentsCount}</span>
             <span className="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
               <TrendingUp className="w-3.5 h-3.5 mr-1" />
-              +১২% এই মাসে
+              লাইভ ডাটা
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-2 font-medium">ওয়ান-টু-ওয়ান নিয়মিত ব্যাচ</p>
+          <p className="text-xs text-slate-400 mt-2 font-medium">নিবন্ধিত শিক্ষার্থী তালিকা</p>
         </div>
 
         {/* Card 2: Active Instructors */}
@@ -129,7 +166,9 @@ export default function AdminDashboardPage() {
           </div>
           <div className="mt-3 flex items-baseline justify-between">
             <span className="text-3xl font-black text-slate-900">{activeTeachersCount} জন</span>
-            <span className="text-xs font-bold text-slate-600">১০ পুরুষ / ৮ মহিলা</span>
+            <span className="text-xs font-bold text-slate-600">
+              {maleTeachersCount} পুরুষ / {femaleTeachersCount} মহিলা
+            </span>
           </div>
           <p className="text-xs text-slate-400 mt-2 font-medium">তাজবীদ ও হিফজ স্পেশালিস্ট</p>
         </div>
@@ -145,7 +184,7 @@ export default function AdminDashboardPage() {
           <div className="mt-3 flex items-baseline justify-between">
             <span className="text-3xl font-black text-amber-600">{monthlyRevenue}</span>
             <span className="inline-flex items-center text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-              ফান্ডিং ওকে
+              {donations.length} টি পেমেন্ট
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-2 font-medium">সাদাকা ও স্পন্সরশিপ সহ</p>
@@ -162,7 +201,7 @@ export default function AdminDashboardPage() {
           <div className="mt-3 flex items-baseline justify-between">
             <span className="text-3xl font-black text-rose-600">{pendingApplicationsCount} টি</span>
             <span className="text-xs font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
-              জরুরি রেসপন্স
+              {pendingApplicationsCount > 0 ? "জরুরি রেসপন্স" : "আপ-টু-ডেট"}
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-2 font-medium">যোগাযোগ ও টিচার অ্যাসাইন বাকি</p>
@@ -302,28 +341,32 @@ export default function AdminDashboardPage() {
                 href="/admin/blogs"
                 className="text-xs text-[#00A89C] hover:text-[#007C7A] font-bold"
               >
-                সব ব্লগ ({BLOG_POSTS.length})
+                সব ব্লগ ({blogs.length})
               </Link>
             </div>
 
             <div className="space-y-3">
-              {BLOG_POSTS.slice(0, 3).map((post) => (
-                <div
-                  key={post.id}
-                  className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 hover:border-teal-200 hover:bg-teal-50/30 transition-all space-y-1.5"
-                >
-                  <span className="bg-teal-50 text-[#007C7A] text-xs font-bold px-2 py-0.5 rounded border border-teal-200">
-                    {post.category}
-                  </span>
-                  <h3 className="text-xs font-bold text-slate-900 line-clamp-2 leading-relaxed">
-                    {post.title}
-                  </h3>
-                  <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
-                    <span>{post.author}</span>
-                    <span>{post.date}</span>
+              {blogs.length === 0 ? (
+                <p className="text-xs text-slate-400 py-4 text-center">কোনো ব্লগ পাওয়া যায়নি</p>
+              ) : (
+                blogs.slice(0, 3).map((post) => (
+                  <div
+                    key={post.id}
+                    className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 hover:border-teal-200 hover:bg-teal-50/30 transition-all space-y-1.5"
+                  >
+                    <span className="bg-teal-50 text-[#007C7A] text-xs font-bold px-2 py-0.5 rounded border border-teal-200">
+                      {post.category}
+                    </span>
+                    <h3 className="text-xs font-bold text-slate-900 line-clamp-2 leading-relaxed">
+                      {post.title}
+                    </h3>
+                    <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+                      <span>{post.author}</span>
+                      <span>{post.date}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
 
             <Link

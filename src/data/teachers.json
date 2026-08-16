@@ -12,49 +12,5 @@
     "experience": "১-২ বছর",
     "workType": "স্বেচ্ছাসেবী",
     "notes": "adfdf"
-  },
-  {
-    "id": "TCH-01",
-    "name": "উস্তাদ রফিকুল ইসলাম",
-    "gender": "পুরুষ",
-    "phone": "+880 1700-112233",
-    "email": "rafiqul@quranijibon.com",
-    "specialization": "তাজবীদ ও মাখরাজ specialist",
-    "activeStudents": 24,
-    "status": "সক্রিয়",
-    "joinedDate": "২০২৪-০১-১৫"
-  },
-  {
-    "id": "TCH-02",
-    "name": "হাফেজ আব্দুল্লাহ",
-    "gender": "পুরুষ",
-    "phone": "+880 1800-223344",
-    "email": "abdullah@quranijibon.com",
-    "specialization": "হিফজ মেন্টরিং ও রিভিশন",
-    "activeStudents": 18,
-    "status": "সক্রিয়",
-    "joinedDate": "২০২৪-০৩-১০"
-  },
-  {
-    "id": "TCH-03",
-    "name": "নুসরাত জাহান",
-    "gender": "মহিলা",
-    "phone": "+880 1900-334455",
-    "email": "nusrat@quranijibon.com",
-    "specialization": "মহিলা শাখা তাজবীদ ও কিরাত",
-    "activeStudents": 32,
-    "status": "সক্রিয়",
-    "joinedDate": "২০২৪-০২-২০"
-  },
-  {
-    "id": "TCH-04",
-    "name": "মারিয়া সুলতানা",
-    "gender": "মহিলা",
-    "phone": "+880 1600-445566",
-    "email": "mariya@quranijibon.com",
-    "specialization": "শিশু ও নতুনদের হিফজ শিক্ষা",
-    "activeStudents": 15,
-    "status": "সক্রিয়",
-    "joinedDate": "২০২৪-০৫-১২"
   }
 ]

@@ -18,7 +18,8 @@ import {
   AlertCircle,
   Trash2,
 } from "lucide-react";
-import { INITIAL_STUDENTS, INITIAL_TEACHERS, StudentRecord } from "@/data/adminStore";
+import { StudentRecord } from "@/data/adminStore";
+import { ExtendedTeacherRecord } from "@/data/teachersStorage";
 import {
   fetchStudentsAction,
   registerStudentAction,
@@ -28,7 +29,8 @@ import {
 } from "@/data/studentsClient";
 
 export default function AdminStudentsPage() {
-  const [students, setStudents] = useState<StudentRecord[]>(INITIAL_STUDENTS);
+  const [students, setStudents] = useState<StudentRecord[]>([]);
+  const [teachersList, setTeachersList] = useState<ExtendedTeacherRecord[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("সব");
   const [selectedPackage, setSelectedPackage] = useState<string>("সব");
@@ -45,14 +47,23 @@ export default function AdminStudentsPage() {
   const [pkg, setPkg] = useState<StudentRecord["package"]>("সাশ্রয়ী (৳৩২০)");
   const [schedule, setSchedule] = useState("সপ্তাহে ৩ দিন (রাত ৮:০০)");
   const [teacherPref, setTeacherPref] = useState<StudentRecord["teacherPreference"]>("পুরুষ শিক্ষক");
-  const [assignedTeacher, setAssignedTeacher] = useState("উস্তাদ রফিকুল ইসলাম");
+  const [assignedTeacher, setAssignedTeacher] = useState("নির্ধারিত নয়");
 
   useEffect(() => {
     fetchStudentsAction().then((data) => {
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setStudents(data);
       }
     });
+
+    fetch("/api/teachers")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.teachers)) {
+          setTeachersList(data.teachers);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const openAddModal = () => {
@@ -63,7 +74,7 @@ export default function AdminStudentsPage() {
     setPkg("সাশ্রয়ী (৳৩২০)");
     setSchedule("সপ্তাহে ৩ দিন (রাত ৮:০০)");
     setTeacherPref("পুরুষ শিক্ষক");
-    setAssignedTeacher("উস্তাদ রফিকুল ইসলাম");
+    setAssignedTeacher("নির্ধারিত নয়");
     setIsAddModalOpen(true);
   };
 
@@ -482,9 +493,10 @@ export default function AdminStudentsPage() {
                   onChange={(e) => setAssignedTeacher(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A89C] focus:bg-white font-bold cursor-pointer"
                 >
-                  {INITIAL_TEACHERS.map((t) => (
+                  <option value="নির্ধারিত নয়">নির্ধারিত নয়</option>
+                  {teachersList.map((t) => (
                     <option key={t.id} value={t.name}>
-                      {t.name} ({t.gender} • {t.specialization})
+                      {t.name} ({t.gender} • {t.specialization || "কুরআন শিক্ষক"})
                     </option>
                   ))}
                 </select>
