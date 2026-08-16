@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -18,10 +15,8 @@ import {
   Globe,
   Share2,
   Video,
-  UserCheck,
 } from "lucide-react";
 import { getSiteSettings } from "@/data/siteSettingsStorage";
-import TeacherApplyModal from "./TeacherApplyModal";
 
 const SOCIAL_ICONS: Record<string, any> = {
   facebook: Facebook,
@@ -40,7 +35,6 @@ const SOCIAL_ICONS: Record<string, any> = {
 };
 
 export default function Footer() {
-  const [isTeacherModalOpen, setIsTeacherModalOpen] = useState(false);
   const settings = getSiteSettings();
   const activeSocialLinks = (settings.socialLinks || []).filter((s) => s.active);
 
@@ -83,14 +77,13 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <button
-                  type="button"
-                  onClick={() => setIsTeacherModalOpen(true)}
-                  className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors text-left cursor-pointer text-sm font-medium"
+                <Link
+                  href="/join-as-teacher"
+                  className="hover:text-teal-200 flex items-center space-x-1.5 transition-colors text-sm font-medium"
                 >
                   <ChevronRight className="w-3.5 h-3.5 text-teal-300 flex-shrink-0" />
                   <span>শিক্ষক হিসেবে যুক্ত হন</span>
-                </button>
+                </Link>
               </li>
             </ul>
           </div>
@@ -177,8 +170,6 @@ export default function Footer() {
       <div className="pt-8 text-center text-xs text-teal-200/80 font-medium">
         <p>{settings.copyrightText || "Copyright © JibonQuran 2026. All Right Reserved."}</p>
       </div>
-      {/* Teacher Application Modal */}
-      <TeacherApplyModal isOpen={isTeacherModalOpen} onClose={() => setIsTeacherModalOpen(false)} />
     </footer>
   );
 }
