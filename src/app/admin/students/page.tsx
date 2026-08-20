@@ -31,6 +31,7 @@ import {
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState<StudentRecord[]>([]);
   const [teachersList, setTeachersList] = useState<ExtendedTeacherRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("সব");
   const [selectedPackage, setSelectedPackage] = useState<string>("সব");
@@ -50,20 +51,28 @@ export default function AdminStudentsPage() {
   const [assignedTeacher, setAssignedTeacher] = useState("নির্ধারিত নয়");
 
   useEffect(() => {
-    fetchStudentsAction().then((data) => {
-      if (Array.isArray(data)) {
-        setStudents(data);
-      }
-    });
+    async function loadStudentsData() {
+      try {
+        setLoading(true);
+        const [studentsData, teachersRes] = await Promise.allSettled([
+          fetchStudentsAction(),
+          fetch("/api/teachers").then((r) => r.json()),
+        ]);
 
-    fetch("/api/teachers")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success && Array.isArray(data.teachers)) {
-          setTeachersList(data.teachers);
+        if (studentsData.status === "fulfilled" && Array.isArray(studentsData.value)) {
+          setStudents(studentsData.value);
         }
-      })
-      .catch(() => {});
+        if (teachersRes.status === "fulfilled" && teachersRes.value?.success && Array.isArray(teachersRes.value.teachers)) {
+          setTeachersList(teachersRes.value.teachers);
+        }
+      } catch (err) {
+        console.error("Failed to load students:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadStudentsData();
   }, []);
 
   const openAddModal = () => {
@@ -255,7 +264,34 @@ export default function AdminStudentsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-800">
-              {filteredStudents.length === 0 ? (
+              {loading ? (
+                [1, 2, 3, 4, 5].map((i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="p-4 space-y-2">
+                      <div className="h-4 w-16 bg-slate-200 rounded" />
+                      <div className="h-4 w-36 bg-slate-200 rounded" />
+                      <div className="h-3 w-24 bg-slate-100 rounded" />
+                    </td>
+                    <td className="p-4 space-y-1.5">
+                      <div className="h-4 w-28 bg-slate-200 rounded" />
+                      <div className="h-3 w-32 bg-slate-100 rounded" />
+                    </td>
+                    <td className="p-4 space-y-1.5">
+                      <div className="h-5 w-24 bg-slate-200 rounded-md" />
+                      <div className="h-3 w-36 bg-slate-100 rounded" />
+                    </td>
+                    <td className="p-4">
+                      <div className="h-4 w-28 bg-slate-200 rounded" />
+                    </td>
+                    <td className="p-4">
+                      <div className="h-7 w-24 bg-slate-200 rounded-lg" />
+                    </td>
+                    <td className="p-4 text-right">
+                      <div className="h-8 w-20 bg-slate-200 rounded-xl ml-auto" />
+                    </td>
+                  </tr>
+                ))
+              ) : filteredStudents.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="p-8 text-center text-slate-500">
                     কোনো শিক্ষার্থী পাওয়া যায়নি

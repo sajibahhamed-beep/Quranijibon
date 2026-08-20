@@ -1,16 +1,44 @@
 [
   {
-    "id": "TCH-1786878049526",
-    "name": "aaaa",
+    "id": "TCH-101",
+    "name": "হাফেজ মাওলানা রফিকুল ইসলাম",
     "gender": "পুরুষ",
-    "phone": "aaaaaaaa",
-    "email": "aaaaaaaaaaa@gmail.com",
-    "specialization": "aaaaaaaaaaa",
-    "activeStudents": 0,
-    "status": "নতুন আবেদন",
-    "joinedDate": "2026-08-16",
-    "experience": "১-২ বছর",
+    "phone": "+880 1711-223344",
+    "email": "rafiqul.islam@example.com",
+    "specialization": "তাজবীদ ও কিরাত স্পেশালিস্ট",
+    "activeStudents": 8,
+    "status": "সক্রিয়",
+    "joinedDate": "2026-06-15",
+    "experience": "৫+ বছর",
     "workType": "স্বল্প সম্মানী",
-    "notes": "aaaaaaaaaa"
+    "notes": "মদিনা ইসলামি বিশ্ববিদ্যালয়ের থিওলজি গ্রাজুয়েট"
+  },
+  {
+    "id": "TCH-102",
+    "name": "উস্তাজা মরিয়ম খাতুন",
+    "gender": "মহিলা",
+    "phone": "+880 1822-334455",
+    "email": "mariam.khatun@example.com",
+    "specialization": "মহিলা ও শিশু শিক্ষা বিশেষজ্ঞ",
+    "activeStudents": 6,
+    "status": "সক্রিয়",
+    "joinedDate": "2026-07-01",
+    "experience": "৩+ বছর",
+    "workType": "স্বল্প সম্মানী",
+    "notes": "নূরানী কায়দা ও নাজেরা স্পেশালিস্ট"
+  },
+  {
+    "id": "TCH-103",
+    "name": "হাফেজ ক্বারী আব্দুল্লাহ আল-মামুন",
+    "gender": "পুরুষ",
+    "phone": "+880 1933-445566",
+    "email": "abdullah.mamun@example.com",
+    "specialization": "হিফজুল কুরআন ও মাখরাজ",
+    "activeStudents": 5,
+    "status": "সক্রিয়",
+    "joinedDate": "2026-07-20",
+    "experience": "৪+ বছর",
+    "workType": "স্বেচ্ছাসেবী",
+    "notes": "আন্তর্জাতিক ক্বিরাত প্রতিযোগিতা বিজয়ী"
   }
 ]

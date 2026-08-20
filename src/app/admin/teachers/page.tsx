@@ -23,6 +23,7 @@ import { ExtendedTeacherRecord } from "@/data/teachersStorage";
 
 export default function AdminTeachersPage() {
   const [teachers, setTeachers] = useState<ExtendedTeacherRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [genderFilter, setGenderFilter] = useState<string>("সব");
   const [statusFilter, setStatusFilter] = useState<string>("সব");
@@ -45,6 +46,7 @@ export default function AdminTeachersPage() {
 
   const fetchTeachers = async () => {
     try {
+      setLoading(true);
       const res = await fetch("/api/teachers");
       const data = await res.json();
       if (data.success && Array.isArray(data.teachers)) {
@@ -52,6 +54,8 @@ export default function AdminTeachersPage() {
       }
     } catch (err) {
       console.error("Failed to load teachers:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -266,7 +270,34 @@ export default function AdminTeachersPage() {
 
       {/* Teachers Grid Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTeachers.length === 0 ? (
+        {loading ? (
+          [1, 2, 3, 4, 5, 6].map((i) => (
+            <div
+              key={i}
+              className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-xs animate-pulse flex flex-col justify-between"
+            >
+              <div className="space-y-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-200" />
+                    <div className="space-y-1.5">
+                      <div className="h-4 w-28 bg-slate-200 rounded" />
+                      <div className="h-3 w-16 bg-slate-100 rounded" />
+                    </div>
+                  </div>
+                  <div className="h-8 w-16 bg-slate-100 rounded-xl" />
+                </div>
+                <div className="h-7 w-full bg-slate-100 rounded-lg" />
+                <div className="space-y-2 py-2 border-y border-slate-100">
+                  <div className="h-3.5 w-3/4 bg-slate-100 rounded" />
+                  <div className="h-3.5 w-1/2 bg-slate-100 rounded" />
+                  <div className="h-3.5 w-2/3 bg-slate-100 rounded" />
+                </div>
+              </div>
+              <div className="h-8 w-full bg-slate-100 rounded-xl mt-2" />
+            </div>
+          ))
+        ) : filteredTeachers.length === 0 ? (
           <div className="col-span-full py-16 text-center text-slate-500 bg-white border border-slate-200 rounded-3xl shadow-xs">
             কোনো শিক্ষক তথ্য পাওয়া যায়নি
           </div>

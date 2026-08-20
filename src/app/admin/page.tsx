@@ -27,42 +27,41 @@ export default function AdminDashboardPage() {
   const [teachers, setTeachers] = useState<ExtendedTeacherRecord[]>([]);
   const [donations, setDonations] = useState<DonationRecord[]>([]);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("সব");
 
   useEffect(() => {
-    fetchStudentsAction().then((data) => {
-      if (Array.isArray(data)) {
-        setStudents(data);
+    async function loadDashboardData() {
+      try {
+        setLoading(true);
+        const [studentsData, teachersRes, donationsRes, blogsRes] = await Promise.allSettled([
+          fetchStudentsAction(),
+          fetch("/api/teachers").then((r) => r.json()),
+          fetch("/api/donations").then((r) => r.json()),
+          fetch("/api/blogs").then((r) => r.json()),
+        ]);
+
+        if (studentsData.status === "fulfilled" && Array.isArray(studentsData.value)) {
+          setStudents(studentsData.value);
+        }
+        if (teachersRes.status === "fulfilled" && teachersRes.value?.success && Array.isArray(teachersRes.value.teachers)) {
+          setTeachers(teachersRes.value.teachers);
+        }
+        if (donationsRes.status === "fulfilled" && donationsRes.value?.success && Array.isArray(donationsRes.value.donations)) {
+          setDonations(donationsRes.value.donations);
+        }
+        if (blogsRes.status === "fulfilled" && blogsRes.value?.success && Array.isArray(blogsRes.value.posts)) {
+          setBlogs(blogsRes.value.posts);
+        }
+      } catch (err) {
+        console.error("Failed to load dashboard data:", err);
+      } finally {
+        setLoading(false);
       }
-    });
+    }
 
-    fetch("/api/teachers")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success && Array.isArray(data.teachers)) {
-          setTeachers(data.teachers);
-        }
-      })
-      .catch(() => {});
-
-    fetch("/api/donations")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success && Array.isArray(data.donations)) {
-          setDonations(data.donations);
-        }
-      })
-      .catch(() => {});
-
-    fetch("/api/blogs")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success && Array.isArray(data.posts)) {
-          setBlogs(data.posts);
-        }
-      })
-      .catch(() => {});
+    loadDashboardData();
   }, []);
 
   // Metrics
@@ -147,7 +146,11 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <span className="text-3xl font-black text-slate-900">{totalStudentsCount}</span>
+            {loading ? (
+              <div className="h-9 w-20 bg-slate-200 rounded-lg animate-pulse my-0.5" />
+            ) : (
+              <span className="text-3xl font-black text-slate-900">{totalStudentsCount}</span>
+            )}
             <span className="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
               <TrendingUp className="w-3.5 h-3.5 mr-1" />
               লাইভ ডাটা
@@ -165,9 +168,13 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <span className="text-3xl font-black text-slate-900">{activeTeachersCount} জন</span>
+            {loading ? (
+              <div className="h-9 w-24 bg-slate-200 rounded-lg animate-pulse my-0.5" />
+            ) : (
+              <span className="text-3xl font-black text-slate-900">{activeTeachersCount} জন</span>
+            )}
             <span className="text-xs font-bold text-slate-600">
-              {maleTeachersCount} পুরুষ / {femaleTeachersCount} মহিলা
+              {loading ? "..." : `${maleTeachersCount} পুরুষ / ${femaleTeachersCount} মহিলা`}
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-2 font-medium">তাজবীদ ও হিফজ স্পেশালিস্ট</p>
@@ -182,9 +189,13 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <span className="text-3xl font-black text-amber-600">{monthlyRevenue}</span>
+            {loading ? (
+              <div className="h-9 w-24 bg-slate-200 rounded-lg animate-pulse my-0.5" />
+            ) : (
+              <span className="text-3xl font-black text-amber-600">{monthlyRevenue}</span>
+            )}
             <span className="inline-flex items-center text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-              {donations.length} টি পেমেন্ট
+              {loading ? "..." : `${donations.length} টি পেমেন্ট`}
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-2 font-medium">সাদাকা ও স্পন্সরশিপ সহ</p>
@@ -199,9 +210,13 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <span className="text-3xl font-black text-rose-600">{pendingApplicationsCount} টি</span>
+            {loading ? (
+              <div className="h-9 w-20 bg-slate-200 rounded-lg animate-pulse my-0.5" />
+            ) : (
+              <span className="text-3xl font-black text-rose-600">{pendingApplicationsCount} টি</span>
+            )}
             <span className="text-xs font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
-              {pendingApplicationsCount > 0 ? "জরুরি রেসপন্স" : "আপ-টু-ডেট"}
+              {loading ? "..." : pendingApplicationsCount > 0 ? "জরুরি রেসপন্স" : "আপ-টু-ডেট"}
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-2 font-medium">যোগাযোগ ও টিচার অ্যাসাইন বাকি</p>
@@ -266,7 +281,28 @@ export default function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-800">
-                {filteredStudents.length === 0 ? (
+                {loading ? (
+                  [1, 2, 3, 4].map((i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td className="p-4 space-y-2">
+                        <div className="h-4 w-32 bg-slate-200 rounded" />
+                        <div className="h-3 w-24 bg-slate-100 rounded" />
+                      </td>
+                      <td className="p-4">
+                        <div className="h-5 w-20 bg-slate-200 rounded" />
+                      </td>
+                      <td className="p-4">
+                        <div className="h-4 w-28 bg-slate-200 rounded" />
+                      </td>
+                      <td className="p-4">
+                        <div className="h-7 w-24 bg-slate-200 rounded-lg" />
+                      </td>
+                      <td className="p-4 text-right">
+                        <div className="h-4 w-12 bg-slate-200 rounded ml-auto" />
+                      </td>
+                    </tr>
+                  ))
+                ) : filteredStudents.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="p-8 text-center text-slate-500">
                       কোনো তথ্য পাওয়া যায়নি
@@ -346,7 +382,18 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-3">
-              {blogs.length === 0 ? (
+              {loading ? (
+                [1, 2, 3].map((i) => (
+                  <div key={i} className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2 animate-pulse">
+                    <div className="h-4 w-16 bg-slate-200 rounded" />
+                    <div className="h-4 w-full bg-slate-200 rounded" />
+                    <div className="flex justify-between">
+                      <div className="h-3 w-20 bg-slate-100 rounded" />
+                      <div className="h-3 w-16 bg-slate-100 rounded" />
+                    </div>
+                  </div>
+                ))
+              ) : blogs.length === 0 ? (
                 <p className="text-xs text-slate-400 py-4 text-center">কোনো ব্লগ পাওয়া যায়নি</p>
               ) : (
                 blogs.slice(0, 3).map((post) => (

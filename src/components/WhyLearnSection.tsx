@@ -92,8 +92,8 @@ export default function WhyLearnSection() {
             <div className="relative aspect-video w-full">
               <iframe
                 className="w-full h-full"
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                title="Quranijibon Intro Video"
+                src="https://www.youtube.com/embed/8L2_FUG5t6o?autoplay=1"
+                title="কুরআন জীবন পরিচিতি ও তিলাওয়াত ভিডিও"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
